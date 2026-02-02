@@ -357,7 +357,7 @@ run_simulations <- function(
       # store output
       per_rep[[k]] <- dplyr::bind_cols(
         tibble::tibble(scenario_id = parameter_grid$scenario_id, rep = r),
-        tibble::as_tibble(parameter_grid |> select(-scenario_id)),
+        tibble::as_tibble(parameter_grid |> dplyr::select(-scenario_id)),
         tibble::as_tibble(ans)
 )
     }
