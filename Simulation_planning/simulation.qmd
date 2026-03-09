@@ -30,61 +30,110 @@ simulate_agreement_and_cosine_data_shared_RE <- function(
   regcheckhuman_agreement = qlogis(0.75), # value in qlogis is mean regcheck-human agreement
   
   # ...for RQ2
-  beta_intercept_cosine  = 0.82, # mean human-human cosine similarity
-  regcheckhuman_cosine = 0.82, # mean regcheck-human cosine similarity
+  beta_intercept_cosine  = 0.80, # baseline mean human-human cosine similarity
+  regcheckhuman_cosine = 0.74, # baseline mean regcheck-human cosine similarity
   
 
   # random intercepts for models 
   sd_dimension_agreement = .7, # random effect for dimension on agreement; logit scale
   sd_paper_agreement     = .7, # random effect for paper on agreement; logit scale
-  sd_dimension_cosine   = 0.1, # random effect for dimension on cosine
-  sd_paper_cosine       = 0.1, # random effect for paper on cosine
+  sd_rater_agreement = 0.2, # random effect for raters (both slots) on agreement; logit scale
+  sd_human_pair_agreement = 0.2, # random effect for human_pair on agreement; logit scale
+  sd_dimension_cosine   = 0.06, # baseline random effect for dimension on cosine
+  sd_paper_cosine       = 0.06, # baseline random effect for paper on cosine
+  sd_rater_cosine = 0.04, # random effect for raters (both slots) on cosine
+  sd_human_pair_cosine = 0.04, # random effect for human_pair on cosine
 
   # intercorrelations
   rho_row = 0.3, # correlation between agreement and cosine similarity
   sd_row_agreement = 0.7,   # defined on logit scale
-  sd_row_cosine   = 0.1,  # defined on cosine scale
+  sd_row_cosine   = 0.09,  # baseline row-level cosine SD
 
   # design
-  number_of_raters = 2, # number of raters
+  number_of_raters = 5, # total number of human raters in the pool
+  raters_per_paper = 2, # preregistered design: 2 coders per paper
   seed = NULL, 
-  clip_cosine_01 = TRUE # this is to make sure cosine doesn't go outside possible values
+  clip_cosine_01 = TRUE # clipping can attenuate mean differences when values are near 0/1
 ) {
   
-  # define differences for model contrast codes
-  # rq1
-  beta_humanregcheck_agreement <- regcheckhuman_agreement - beta_intercept_agreement
-  # rq2
-  beta_humanregcheck_cosine <- regcheckhuman_cosine - beta_intercept_cosine
+  # define mean differences against the human-human reference
+  beta_regcheck_agreement <- regcheckhuman_agreement - beta_intercept_agreement
+  beta_regcheck_cosine <- regcheckhuman_cosine - beta_intercept_cosine
   
   # set seed if specified
   if (!is.null(seed)) set.seed(seed)
   # stop if correlation values are impossible
   stopifnot(abs(rho_row) < 1)
+  stopifnot(number_of_raters >= 2)
+  stopifnot(raters_per_paper == 2)
+  stopifnot(raters_per_paper <= number_of_raters)
+  stopifnot(sd_rater_agreement >= 0)
+  stopifnot(sd_human_pair_agreement >= 0)
+  stopifnot(sd_rater_cosine >= 0)
+  stopifnot(sd_human_pair_cosine >= 0)
 
   # arbitrary identifiers for papers and dimensions
   paper_ids <- paste0("P", seq_len(n_papers))
   dims      <- paste0("D", seq_len(n_dims))
+  rater_ids <- seq_len(number_of_raters)
+  rater_pool_labels <- paste0("R", rater_ids)
 
-  # create basic data: papers x dimensions
-  base <- expand.grid(
-    paper_id  = paper_ids,
-    dimension = dims,
-    stringsAsFactors = FALSE
+  # Randomly assign two human coders per paper from the full rater pool.
+  assigned_raters <- lapply(
+    seq_len(n_papers),
+    function(i) sort(sample(rater_ids, raters_per_paper, replace = FALSE))
   )
+  names(assigned_raters) <- paper_ids
 
-  data_humanhuman <- base |> mutate(rater_pair = "human_human")
-  data_humanregcheck <- bind_rows(rep(list(base), number_of_raters)) |> # repeat the base per n human raters
-    mutate(rater_pair = "human_regcheck",
-           rater_id = rep(seq_len(number_of_raters), each = nrow(base))) 
-  
-  # create combined, labelled base data
-  data <- bind_rows(data_humanhuman, data_humanregcheck)
+  # Build preregistered comparison rows:
+  # human1_human2, regcheck_human1, regcheck_human2
+  data <- bind_rows(lapply(paper_ids, function(pid) {
+    h1 <- assigned_raters[[pid]][1]
+    h2 <- assigned_raters[[pid]][2]
+    pair_id <- paste0("R", h1, "__R", h2)
+    h1_label <- paste0("R", h1)
+    h2_label <- paste0("R", h2)
+
+    bind_rows(
+      tibble(
+        paper_id = pid,
+        dimension = dims,
+        comparison_type = "human1_human2",
+        rater1_id = h1_label,
+        rater2_id = h2_label,
+        human_pair = pair_id
+      ),
+      tibble(
+        paper_id = pid,
+        dimension = dims,
+        comparison_type = "regcheck_human1",
+        rater1_id = "RegCheck",
+        rater2_id = h1_label,
+        human_pair = pair_id
+      ),
+      tibble(
+        paper_id = pid,
+        dimension = dims,
+        comparison_type = "regcheck_human2",
+        rater1_id = "RegCheck",
+        rater2_id = h2_label,
+        human_pair = pair_id
+      )
+    )
+  }))
 
   # ensure factors are correctly specified 
-  data$rater_pair <- factor(data$rater_pair, levels = c("human_human", "human_regcheck"))
-  data$dimension  <- factor(data$dimension)
-  data$paper_id   <- factor(data$paper_id)
+  data$comparison_type <- factor(
+    data$comparison_type,
+    levels = c("human1_human2", "regcheck_human1", "regcheck_human2")
+  )
+  data$dimension <- factor(data$dimension)
+  data$paper_id  <- factor(data$paper_id)
+  rater_levels <- c("RegCheck", rater_pool_labels)
+  data$rater1_id <- factor(data$rater1_id, levels = rater_levels)
+  data$rater2_id <- factor(data$rater2_id, levels = rater_levels)
+  data$human_pair <- factor(data$human_pair)
+  human_pair_levels <- levels(data$human_pair)
 
   # Shared random effect draws (raw ~ N(0,1)), then scaled per outcome
   
@@ -94,26 +143,40 @@ simulate_agreement_and_cosine_data_shared_RE <- function(
   
   v_paper_raw <- rnorm(n_papers, 0, 1)
   names(v_paper_raw) <- paper_ids
+  rater_raw <- rnorm(length(rater_levels), 0, 1)
+  names(rater_raw) <- rater_levels
+  human_pair_raw <- rnorm(length(human_pair_levels), 0, 1)
+  names(human_pair_raw) <- human_pair_levels
 
   # scale for agreement
   u_dim_agreement <- sd_dimension_agreement * u_dim_raw
   v_paper_agreement <- sd_paper_agreement * v_paper_raw
+  rater_agreement <- sd_rater_agreement * rater_raw
+  human_pair_agreement <- sd_human_pair_agreement * human_pair_raw
 
   # scale for cosine
   u_dim_cosine <- sd_dimension_cosine * u_dim_raw
   v_paper_cosine <- sd_paper_cosine * v_paper_raw
+  rater_cosine <- sd_rater_cosine * rater_raw
+  human_pair_cosine <- sd_human_pair_cosine * human_pair_raw
   
 
   # Linear predictors (without row-level noise)
   lp_agree <- beta_intercept_agreement +
-    beta_humanregcheck_agreement * (data$rater_pair == "human_regcheck") +
+    beta_regcheck_agreement * (data$comparison_type != "human1_human2") +
     u_dim_agreement[as.character(data$dimension)] +
-    v_paper_agreement[as.character(data$paper_id)]
+    v_paper_agreement[as.character(data$paper_id)] +
+    rater_agreement[as.character(data$rater1_id)] +
+    rater_agreement[as.character(data$rater2_id)] +
+    human_pair_agreement[as.character(data$human_pair)]
 
   mu_cos <- beta_intercept_cosine +
-    beta_humanregcheck_cosine * (data$rater_pair == "human_regcheck") +
+    beta_regcheck_cosine * (data$comparison_type != "human1_human2") +
     u_dim_cosine[as.character(data$dimension)] +
-    v_paper_cosine[as.character(data$paper_id)]
+    v_paper_cosine[as.character(data$paper_id)] +
+    rater_cosine[as.character(data$rater1_id)] +
+    rater_cosine[as.character(data$rater2_id)] +
+    human_pair_cosine[as.character(data$human_pair)]
 
   # add row-level noise from correlations
   Sigma <- matrix(
@@ -128,6 +191,7 @@ simulate_agreement_and_cosine_data_shared_RE <- function(
 
   # Outcomes
   data$agreement <- rbinom(nrow(data), 1, plogis(lp_agree + eps_agree))
+  data$agree <- data$agreement
   data$cos_sim   <- mu_cos + eps_cos
   if (clip_cosine_01) data$cos_sim <- pmin(1, pmax(0, data$cos_sim))
 
@@ -145,119 +209,103 @@ analyze_simulated_data <- function(data,
                                    conf = 0.95, 
                                    n_draws_delta = 4000) {
   
-  # initialise empty output list
   out <- list()
-
-  # agreement fit - rq1
-  fit_agreement <- suppressWarnings(tryCatch(
-    glmer(agreement ~ rater_pair + (1|dimension) + (1|paper_id),
-          data = data, family = binomial(),
-          control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))),
-    error = function(e) NULL
-  ))
-
-  # cosine fit - rq2
-  fit_cosine <- suppressWarnings(tryCatch(
-    lmer(cos_sim ~ rater_pair + (1|dimension) + (1|paper_id),
-         data = data,
-         control = lmerControl(check.conv.singular = "ignore")),
-    error = function(e) NULL
-  ))
-
-  # check if fits are in order
-  out$ok_agree <- !is.null(fit_agreement)
-  out$ok_cos   <- !is.null(fit_cosine)
-
-  # observed correlation (should be broadly consistent with rho_raw)
-  out$obs_cor <- suppressWarnings(cor(data$agreement, data$cos_sim))
-
-  # define z for computing CIs
   z <- qnorm(1 - (1 - conf) / 2)
+  a <- (1 - conf) / 2
 
-  
-  
-  # Extract probability-scaled coefficients for RQ1 model
-  if (out$ok_agree) {
-    fe <- fixef(fit_agreement)
-    V  <- tryCatch(vcov(fit_agreement), error = function(e) NULL)
+  classify_claim <- function(ci_lo, ci_hi, margin) {
+    if (is.na(ci_lo) || is.na(ci_hi) || is.na(margin)) return("no_fit")
+    if (ci_lo > -margin) return("noninferior")
+    if (ci_hi < -margin) return("inferior")
+    "inconclusive"
+  }
 
-    alpha_hat <- unname(fe["(Intercept)"]) # human_human log-odds at RE=0
-    beta_hat  <- unname(fe["rater_pairhuman_regcheck"]) # human_regcheck - human_human on log-odds
+  hh_cos <- data$cos_sim[data$comparison_type == "human1_human2"]
+  hh_agreement <- data$agreement[data$comparison_type == "human1_human2"]
+  out$rq1_margin <- 0.5 * stats::sd(hh_agreement, na.rm = TRUE)
+  out$rq2_margin <- 0.5 * stats::sd(hh_cos, na.rm = TRUE)
 
-    # get coefs
-    out$agree_beta0_hat  <- alpha_hat
-    out$agree_betahuman_regcheck_hat <- beta_hat
+  # RQ1 model (agreement)
+  fit_rq1 <- suppressWarnings(tryCatch(
+    glmer(
+      agree ~ comparison_type + (1 | paper_id) + (1 | dimension) + (1 | rater1_id) + (1 | rater2_id),
+      data = data,
+      family = binomial(link = "logit"),
+      control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
+    ),
+    error = function(e) NULL
+  ))
 
-    # probability-scale point estimates 
-    p_human_human_hat <- plogis(alpha_hat)
-    p_human_regcheck_hat <- plogis(alpha_hat + beta_hat)
-    out$agree_phuman_human_hat <- p_human_human_hat
-    out$agree_phuman_regcheck_hat <- p_human_regcheck_hat
-    out$agree_delta_hat_prob <- p_human_regcheck_hat - p_human_human_hat
+  # RQ2 model (cosine)
+  fit_rq2 <- suppressWarnings(tryCatch(
+    lmer(
+      cos_sim ~ comparison_type + (1 | paper_id) + (1 | dimension) + (1 | rater1_id) + (1 | rater2_id),
+      data = data,
+      control = lmerControl(check.conv.singular = "ignore")
+    ),
+    error = function(e) NULL
+  ))
 
-    # Wald CI for beta on logit scale 
-    if (!is.null(V) && all(c("(Intercept)","rater_pairhuman_regcheck") %in% rownames(V))) {
-      se_beta <- sqrt(unname(V["rater_pairhuman_regcheck","rater_pairhuman_regcheck"]))
-      out$agree_ci_width_betahuman_regcheck_logit <- 2 * z * se_beta
-    } else {
-      out$agree_ci_width_betahuman_regcheck_logit <- NA_real_
-    }
+  out$ok_rq1 <- !is.null(fit_rq1)
+  out$ok_rq2 <- !is.null(fit_rq2)
 
-    # MVN draws of (alpha, beta) -> transform to Delta on probability scale
-    if (!is.null(V) && all(c("(Intercept)","rater_pairhuman_regcheck") %in% rownames(V))) {
-      idx <- c("(Intercept)", "rater_pairhuman_regcheck")
-      V2 <- V[idx, idx, drop = FALSE]
+  # RQ1: contrast on probability scale via MVN draws of fixed effects
+  out$rq1_delta_hat <- NA_real_
+  out$rq1_ci_lo <- NA_real_
+  out$rq1_ci_hi <- NA_real_
+  if (out$ok_rq1) {
+    fe <- fixef(fit_rq1)
+    V <- tryCatch(vcov(fit_rq1), error = function(e) NULL)
+    needed <- c("(Intercept)", "comparison_typeregcheck_human1", "comparison_typeregcheck_human2")
 
+    if (!is.null(V) && all(needed %in% names(fe)) && all(needed %in% rownames(V))) {
+      alpha_hat <- unname(fe["(Intercept)"])
+      beta1_hat <- unname(fe["comparison_typeregcheck_human1"])
+      beta2_hat <- unname(fe["comparison_typeregcheck_human2"])
+
+      out$rq1_delta_hat <- 0.5 * (plogis(alpha_hat + beta1_hat) + plogis(alpha_hat + beta2_hat)) - plogis(alpha_hat)
+
+      V3 <- V[needed, needed, drop = FALSE]
       draws <- MASS::mvrnorm(
         n = n_draws_delta,
-        mu = c(alpha_hat, beta_hat),
-        Sigma = V2
+        mu = c(alpha_hat, beta1_hat, beta2_hat),
+        Sigma = V3
       )
 
-      alpha <- draws[, 1]
-      beta  <- draws[, 2]
-      delta_prob <- plogis(alpha + beta) - plogis(alpha)
-
-      a <- (1 - conf) / 2
+      delta_prob <- 0.5 * (plogis(draws[, 1] + draws[, 2]) + plogis(draws[, 1] + draws[, 3])) - plogis(draws[, 1])
       ci <- unname(quantile(delta_prob, probs = c(a, 1 - a), na.rm = TRUE))
-
-      out$agree_delta_ci_lo_prob <- ci[1]
-      out$agree_delta_ci_hi_prob <- ci[2]
-      out$agree_delta_ci_width_prob <- ci[2] - ci[1]
-    } else {
-      out$agree_delta_ci_lo_prob <- NA_real_
-      out$agree_delta_ci_hi_prob <- NA_real_
-      out$agree_delta_ci_width_prob <- NA_real_
+      out$rq1_ci_lo <- ci[1]
+      out$rq1_ci_hi <- ci[2]
     }
-
-  } else {
-    out$agree_beta0_hat <- out$agree_betahuman_regcheck_hat <- NA_real_
-    out$agree_phuman_human_hat <- out$agree_phuman_regcheck_hat <- NA_real_
-    out$agree_delta_hat_prob <- NA_real_
-    out$agree_delta_ci_lo_prob <- out$agree_delta_ci_hi_prob <- out$agree_delta_ci_width_prob <- NA_real_
-    out$agree_ci_width_betahuman_regcheck_logit <- NA_real_
   }
+  out$rq1_claim <- classify_claim(out$rq1_ci_lo, out$rq1_ci_hi, out$rq1_margin)
+  out$rq1_claim_noninferior <- as.integer(out$rq1_claim == "noninferior")
+  out$rq1_claim_inferior <- as.integer(out$rq1_claim == "inferior")
 
-  
-  
-  # Cosine fit RQ2 (betahuman_regcheck is already on cosine scale)
-  if (out$ok_cos) {
-    fe <- fixef(fit_cosine)
-    V  <- tryCatch(vcov(fit_cosine), error = function(e) NULL)
+  # RQ2: contrast on cosine scale
+  out$rq2_delta_hat <- NA_real_
+  out$rq2_ci_lo <- NA_real_
+  out$rq2_ci_hi <- NA_real_
+  if (out$ok_rq2) {
+    fe <- fixef(fit_rq2)
+    V <- tryCatch(vcov(fit_rq2), error = function(e) NULL)
+    needed <- c("comparison_typeregcheck_human1", "comparison_typeregcheck_human2")
 
-    # get coefs
-    out$cos_beta0_hat  <- unname(fe["(Intercept)"])
-    out$cos_betahuman_regcheck_hat <- unname(fe["rater_pairhuman_regcheck"])
+    if (!is.null(V) && all(needed %in% names(fe)) && all(needed %in% rownames(V))) {
+      beta1 <- unname(fe["comparison_typeregcheck_human1"])
+      beta2 <- unname(fe["comparison_typeregcheck_human2"])
+      out$rq2_delta_hat <- 0.5 * (beta1 + beta2)
 
-    if (!is.null(V) && "rater_pairhuman_regcheck" %in% rownames(V)) {
-      se <- sqrt(unname(V["rater_pairhuman_regcheck","rater_pairhuman_regcheck"]))
-      out$cos_ci_width_betahuman_regcheck <- 2 * z * se
-    } else {
-      out$cos_ci_width_betahuman_regcheck <- NA_real_
+      V2 <- V[needed, needed, drop = FALSE]
+      w <- matrix(c(0.5, 0.5), nrow = 1)
+      se_delta <- sqrt(as.numeric(w %*% V2 %*% t(w)))
+      out$rq2_ci_lo <- out$rq2_delta_hat - z * se_delta
+      out$rq2_ci_hi <- out$rq2_delta_hat + z * se_delta
     }
-  } else {
-    out$cos_beta0_hat <- out$cos_betahuman_regcheck_hat <- out$cos_ci_width_betahuman_regcheck <- NA_real_
   }
+  out$rq2_claim <- classify_claim(out$rq2_ci_lo, out$rq2_ci_hi, out$rq2_margin)
+  out$rq2_claim_noninferior <- as.integer(out$rq2_claim == "noninferior")
+  out$rq2_claim_inferior <- as.integer(out$rq2_claim == "inferior")
 
   as.data.frame(out)
 }
@@ -276,24 +324,38 @@ make_param_grid <- function(
   beta_intercept_agreement,
   regcheckhuman_agreement,
   n_papers,
+  n_dims = 9,
+  number_of_raters,
+  raters_per_paper,
   beta_intercept_cosine,
   regcheckhuman_cosine,
   sd_dimension_agreement,
   sd_paper_agreement,
+  sd_rater_agreement,
+  sd_human_pair_agreement,
   sd_dimension_cosine,
   sd_paper_cosine,
+  sd_rater_cosine,
+  sd_human_pair_cosine,
   rho_row
 ) {
   expand.grid(
     beta_intercept_agreement = beta_intercept_agreement,
     regcheckhuman_agreement = regcheckhuman_agreement,
     n_papers = n_papers,
+    n_dims = n_dims,
+    number_of_raters = number_of_raters,
+    raters_per_paper = raters_per_paper,
     beta_intercept_cosine = beta_intercept_cosine,
     regcheckhuman_cosine = regcheckhuman_cosine,
     sd_dimension_agreement = sd_dimension_agreement,
     sd_paper_agreement = sd_paper_agreement,
+    sd_rater_agreement = sd_rater_agreement,
+    sd_human_pair_agreement = sd_human_pair_agreement,
     sd_dimension_cosine = sd_dimension_cosine,
     sd_paper_cosine = sd_paper_cosine,
+    sd_rater_cosine = sd_rater_cosine,
+    sd_human_pair_cosine = sd_human_pair_cosine,
     rho_row = rho_row,
     KEEP.OUT.ATTRS = FALSE,
     stringsAsFactors = FALSE
@@ -304,13 +366,13 @@ make_param_grid <- function(
 run_simulations <- function(
   param_grid,
   n_reps = 200,
-  n_dims = 9,
-  number_of_raters = 2,
   seed = 1,
   # keep nuisance fixed (change if you want)
   sd_row_agreement = 0.7,
-  sd_row_cosine = 0.06,
-  clip_cosine_01 = TRUE
+  sd_row_cosine = 0.09,
+  clip_cosine_01 = TRUE,
+  conf = 0.95,
+  n_draws_delta = 4000
 ) {
   
   # set seed
@@ -318,6 +380,16 @@ run_simulations <- function(
 
   # assign scenario ids
   param_grid$scenario_id <- seq_len(nrow(param_grid))
+
+  required_cols <- c(
+    "beta_intercept_agreement", "regcheckhuman_agreement", "n_papers",
+    "n_dims", "number_of_raters", "raters_per_paper",
+    "beta_intercept_cosine", "regcheckhuman_cosine",
+    "sd_dimension_agreement", "sd_paper_agreement", "sd_rater_agreement", "sd_human_pair_agreement",
+    "sd_dimension_cosine", "sd_paper_cosine", "sd_rater_cosine", "sd_human_pair_cosine",
+    "rho_row"
+  )
+  stopifnot(all(required_cols %in% names(param_grid)))
 
   # create object for storing output
   per_rep <- vector("list", nrow(param_grid) * n_reps)
@@ -334,31 +406,40 @@ run_simulations <- function(
       # simulate dataset
       data <- simulate_agreement_and_cosine_data_shared_RE(
         n_papers = parameter_grid$n_papers,
-        n_dims = n_dims,
+        n_dims = parameter_grid$n_dims,
         beta_intercept_agreement  = parameter_grid$beta_intercept_agreement,
         regcheckhuman_agreement = parameter_grid$regcheckhuman_agreement,
         beta_intercept_cosine    = parameter_grid$beta_intercept_cosine,
         regcheckhuman_cosine   = parameter_grid$regcheckhuman_cosine,
         sd_dimension_agreement = parameter_grid$sd_dimension_agreement,
         sd_paper_agreement     = parameter_grid$sd_paper_agreement,
+        sd_rater_agreement = parameter_grid$sd_rater_agreement,
+        sd_human_pair_agreement = parameter_grid$sd_human_pair_agreement,
         sd_dimension_cosine   = parameter_grid$sd_dimension_cosine,
         sd_paper_cosine       = parameter_grid$sd_paper_cosine,
+        sd_rater_cosine = parameter_grid$sd_rater_cosine,
+        sd_human_pair_cosine = parameter_grid$sd_human_pair_cosine,
         rho_row = parameter_grid$rho_row,
         sd_row_agreement = sd_row_agreement,
         sd_row_cosine   = sd_row_cosine,
-        number_of_raters = number_of_raters,
+        number_of_raters = parameter_grid$number_of_raters,
+        raters_per_paper = parameter_grid$raters_per_paper,
         seed = NULL,
         clip_cosine_01 = clip_cosine_01
       )
 
       # run analysis 
-      ans <- analyze_simulated_data(data, conf = 0.95, n_draws_delta = 4000)
+      ans <- analyze_simulated_data(data, conf = conf, n_draws_delta = n_draws_delta)
 
-      # store output
+      # store only core replicate-level non-inferiority outputs
       per_rep[[k]] <- dplyr::bind_cols(
         tibble::tibble(scenario_id = parameter_grid$scenario_id, rep = r),
-        tibble::as_tibble(parameter_grid |> dplyr::select(-scenario_id)),
-        tibble::as_tibble(ans)
+        tibble::as_tibble(ans) |>
+          dplyr::select(
+            ok_rq1, ok_rq2,
+            rq1_margin, rq1_delta_hat, rq1_ci_lo, rq1_ci_hi, rq1_claim,
+            rq2_margin, rq2_delta_hat, rq2_ci_lo, rq2_ci_hi, rq2_claim
+          )
 )
     }
 
@@ -367,14 +448,6 @@ run_simulations <- function(
 
   # create raw simulation output of all reps and scenarios
   per_rep <- dplyr::bind_rows(per_rep)
-
-  # Summarise per scenario
-  get_summaries <- function(x) c(
-    mean = mean(x, na.rm = TRUE),
-    median = median(x, na.rm = TRUE),
-    p90 = unname(quantile(x, 0.90, na.rm = TRUE)),
-    p95 = unname(quantile(x, 0.95, na.rm = TRUE))
-  )
 
   # split by scenario/param combo
   by_scenario <- split(per_rep, per_rep$scenario_id)
@@ -385,31 +458,19 @@ run_simulations <- function(
       scenario_id = data$scenario_id[1],
       n_reps = nrow(data),
 
-      agree_fit_rate = mean(data$ok_agree),
-      cos_fit_rate   = mean(data$ok_cos),
+      rq1_fit_rate = mean(data$ok_rq1),
+      rq1_power_noninferior = mean(data$rq1_claim == "noninferior"),
+      rq1_power_inferior = mean(data$rq1_claim == "inferior"),
+      rq1_rate_inconclusive = mean(data$rq1_claim == "inconclusive"),
+      rq1_delta_hat_mean = mean(data$rq1_delta_hat, na.rm = TRUE),
+      rq1_noninferiority_margin_mean = mean(data$rq1_margin, na.rm = TRUE),
 
-      obs_cor_mean = mean(data$obs_cor, na.rm = TRUE),
-      obs_cor_p50  = median(data$obs_cor, na.rm = TRUE),
-
-      agree_betahuman_regcheck_hat_mean = mean(
-        data$agree_betahuman_regcheck_hat, na.rm = TRUE
-        ),
-      cos_betahuman_regcheck_hat_mean   = mean(
-        data$cos_betahuman_regcheck_hat, na.rm = TRUE
-        ),
-
-      agree_delta_ci_width_prob_mean = get_summaries(
-        data$agree_delta_ci_width_prob
-        )["mean"],
-      agree_delta_ci_width_prob_p90 = get_summaries(
-        data$agree_delta_ci_width_prob
-        )["p90"],
-      cos_ci_width_betahuman_regcheck_mean = get_summaries(
-        data$cos_ci_width_betahuman_regcheck
-        )["mean"],
-      cos_ci_width_betahuman_regcheck_p90 = get_summaries(
-        data$cos_ci_width_betahuman_regcheck
-        )["p90"],
+      rq2_fit_rate = mean(data$ok_rq2),
+      rq2_power_noninferior = mean(data$rq2_claim == "noninferior"),
+      rq2_power_inferior = mean(data$rq2_claim == "inferior"),
+      rq2_rate_inconclusive = mean(data$rq2_claim == "inconclusive"),
+      rq2_delta_hat_mean = mean(data$rq2_delta_hat, na.rm = TRUE),
+      rq2_noninferiority_margin_mean = mean(data$rq2_margin, na.rm = TRUE),
 
       stringsAsFactors = FALSE
     )
@@ -424,7 +485,10 @@ run_simulations <- function(
   )
   per_scenario <- per_scenario[order(per_scenario$scenario_id), ]
 
-  list(per_rep = per_rep, per_scenario = per_scenario)
+  list(
+    power_by_scenario = per_scenario,
+    per_rep_claims = per_rep
+  )
 }
 
 
@@ -436,33 +500,50 @@ run_simulations <- function(
 ```{r}
 
 # Choose values to run (edit as needed)
-param_grid <- make_param_grid(
-  beta_intercept_agreement  = qlogis(c(0.75, 0.78)),
-  regcheckhuman_agreement = qlogis(c(0.75, 0.78)),   # example: human_regcheck probs relative to human_human=0.78
-  n_papers     = c(50, 100, 150),
-  beta_intercept_cosine    = c(0.78, 0.82),
-  regcheckhuman_cosine   = c(0.78, 0.82),
-  sd_dimension_agreement = c(1),
-  sd_paper_agreement     = c(1),
-  sd_dimension_cosine   = c(0.07),
-  sd_paper_cosine       = c(0.07),
-  rho_row            = c(0.3, 0.5)
+cosine_profiles <- tibble::tribble(
+  ~cosine_profile, ~beta_intercept_cosine, ~regcheckhuman_cosine, ~sd_dimension_cosine, ~sd_paper_cosine,
+  "optimistic",     0.84,                  0.80,                  0.05,                 0.05,
+  "baseline",       0.80,                  0.74,                  0.06,                 0.06,
+  "conservative",   0.74,                  0.66,                  0.08,                 0.08
 )
+
+param_grid <- dplyr::bind_rows(lapply(seq_len(nrow(cosine_profiles)), function(i) {
+  profile <- cosine_profiles[i, ]
+
+  make_param_grid(
+    beta_intercept_agreement  = qlogis(c(0.75, 0.78)),
+    regcheckhuman_agreement = qlogis(c(0.75, 0.78)),
+    n_papers     = 100, # c(50, 100, 150),
+    n_dims = 9,
+    number_of_raters = 5,
+    raters_per_paper = 2,
+    beta_intercept_cosine    = profile$beta_intercept_cosine,
+    regcheckhuman_cosine   = profile$regcheckhuman_cosine,
+    sd_dimension_agreement = c(1),
+    sd_paper_agreement     = c(1),
+    sd_rater_agreement = c(0.2),
+    sd_human_pair_agreement = c(0.2),
+    sd_dimension_cosine   = profile$sd_dimension_cosine,
+    sd_paper_cosine       = profile$sd_paper_cosine,
+    sd_rater_cosine = c(0.04),
+    sd_human_pair_cosine = c(0.04),
+    rho_row            = c(0.3, 0.5)
+  ) |>
+    dplyr::mutate(cosine_profile = profile$cosine_profile)
+}))
 
 # Run the full simulation set
 all_simulations <- run_simulations(
   param_grid = param_grid,
   n_reps = 10,      # increase for final planning
-  n_dims = 9,
-  number_of_raters = 2,
   seed = 123
 )
 
 # Results:
-per_rep <- all_simulations$per_rep
-per_scenario <- all_simulations$per_scenario
+power_by_scenario <- all_simulations$power_by_scenario
+per_rep_claims <- all_simulations$per_rep_claims
 
-head(per_scenario)
+head(power_by_scenario)
 
 
 ```
