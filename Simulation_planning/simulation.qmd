@@ -355,7 +355,7 @@ analyse_regcheck_study_data <- function(
 
 ```
 
-## Define function runners 
+## Define function runners
 
 for single run (test) and full run
 
@@ -574,7 +574,7 @@ parameter_grid <- crossing(
   random_effect_parameters
 ) |>
   mutate(
-    number_of_simulations = 2,
+    number_of_simulations = 1000,
     seed = 123
   )
 
