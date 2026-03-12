@@ -606,6 +606,8 @@ simulation_results <- parameter_grid |>
     )
   )
 
+write_csv("results/simulation_results.csv")
+
 simulation_results_long <- simulation_results |>
   unnest(simulation_output)
 
