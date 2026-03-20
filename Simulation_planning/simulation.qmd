@@ -1066,7 +1066,7 @@ parameter_grid <- crossing(
   random_effect_parameters
 ) |>
   mutate(
-    number_of_simulations = 2,
+    number_of_simulations = 1000,
     seed = 123
   )
 
@@ -1098,10 +1098,10 @@ one_simulation_round2$simulated_data |>
   count(comparison_label)
 
 # check correlation is roughly rocovered since I had some difficulty with this
-cor(one_simulation$simulated_data$agree, 
-    one_simulation$simulated_data$cosine_similarity)
+cor(one_simulation_round2$simulated_data$agree, 
+    one_simulation_round2$simulated_data$cosine_similarity)
 
-one_simulation$simulated_data |>
+one_simulation_round2$simulated_data |>
   count(rater_pair, sort = TRUE)
 
 
@@ -1137,6 +1137,9 @@ simulation_results_round2 <- parameter_grid |>
 
 simulation_results_long_round2 <- simulation_results_round2 |>
   unnest(simulation_output)
+
+write_csv(simulation_results_round2, "results/round2_results.csv")
+write_csv(simulation_results_long_round2, "results/round2_results_long.csv")
 
 ```
 
@@ -1296,7 +1299,7 @@ plot_noninferiority_criterion_round2 <- noninferiority_criterion_overall_effect_
     panel.grid.minor = element_blank()
   )
 
-plot_number_of_papers_round2
+plot_noninferiority_criterion_round2
 
 
 
