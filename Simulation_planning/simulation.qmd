@@ -1141,6 +1141,7 @@ simulation_results_long_round2 <- simulation_results_round2 |>
 write_csv(simulation_results_round2, "results/round2_results.csv")
 write_csv(simulation_results_long_round2, "results/round2_results_long.csv")
 
+
 ```
 
 ## summarise simulation results
@@ -1300,6 +1301,107 @@ plot_noninferiority_criterion_round2 <- noninferiority_criterion_overall_effect_
   )
 
 plot_noninferiority_criterion_round2
+
+
+
+```
+
+# Round 3
+
+Based on conversations and round 2 results: we can reduce the number of parameter combinations further (focus only on 100 papers), and now add a third effect size scenario: no effect (i.e., true equivalence).
+
+1.  Can use round2 analysis function
+2.  Can use round2 runners.
+3.  Just need to define a new parameter grid.
+
+We want to specifically optimise for: (i) when equivalent, ensure noninferiority rate is about 80%; (ii) when moderately different (i.e., 0.1 difference), ensure noninferiority rate is less than or equal to 5%; (iii) if multiple cases are found like this, opt for the criterion that minimises noninferiority rates for small differences.
+
+## Define new parameter grid
+
+```{r}
+
+scenario_parameters <- tribble(
+  ~scenario_label,
+  ~human_human_agreement,
+  ~ai_human_agreement,
+  ~human_human_cosine,
+  ~ai_human_cosine,
+  "equivalent",    0.80, 0.80, 0.60, 0.60,
+  "small_difference", 0.80, 0.75, 0.60, 0.55,
+  "moderate_difference", 0.80, 0.70, 0.60, 0.50,
+) |>
+  mutate(
+    intercept_agreement_logit = qlogis(human_human_agreement),
+    agreement_comparison_effect_logit =
+      qlogis(ai_human_agreement) - qlogis(human_human_agreement),
+    intercept_cosine_logit = qlogis(human_human_cosine),
+    cosine_comparison_effect_logit =
+      qlogis(ai_human_cosine) - qlogis(human_human_cosine),
+    true_agreement_deficit = human_human_agreement - ai_human_agreement,
+    true_cosine_deficit = human_human_cosine - ai_human_cosine
+  )
+
+design_parameters <- crossing(
+  number_of_papers = c(100),
+  number_of_raters = c(5),
+  number_of_raters_per_paper = c(2),
+  latent_outcome_correlation = c(0.6),
+  noninferiority_criterion = c(0.5, 0.4, 0.3, 0.2)
+)
+
+random_effect_parameters <- tibble(
+  random_effect_rater = 0.30,
+  random_effect_dimension = 0.25,
+  random_effect_paper = 0.40
+)
+
+# final parameter grid
+parameter_grid <- crossing(
+  design_parameters,
+  scenario_parameters,
+  random_effect_parameters
+) |>
+  mutate(
+    number_of_simulations = 1000,
+    seed = 123
+  )
+
+
+```
+
+## Run simulation
+
+```{r}
+
+simulation_results_round3 <- parameter_grid |>
+  mutate(
+    simulation_output = pmap(
+      .l = list(
+        number_of_simulations = number_of_simulations,
+        number_of_papers = number_of_papers,
+        number_of_raters = number_of_raters,
+        number_of_raters_per_paper = number_of_raters_per_paper,
+        noninferiority_criterion = noninferiority_criterion,
+        intercept_agreement_logit = intercept_agreement_logit,
+        agreement_comparison_effect_logit = agreement_comparison_effect_logit,
+        intercept_cosine_logit = intercept_cosine_logit,
+        cosine_comparison_effect_logit = cosine_comparison_effect_logit,
+        latent_outcome_correlation = latent_outcome_correlation,
+        random_effect_rater = random_effect_rater,
+        random_effect_dimension = random_effect_dimension,
+        random_effect_paper = random_effect_paper,
+        seed = seed
+      ),
+      .f = run_many_regcheck_simulations_round2
+    )
+  )
+
+
+simulation_results_long_round3 <- simulation_results_round3 |>
+  unnest(simulation_output)
+
+write_csv(simulation_results_round3, "results/round3_results.csv")
+write_csv(simulation_results_long_round3, "results/round3_results_long.csv")
 
 
 
