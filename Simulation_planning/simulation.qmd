@@ -1404,5 +1404,166 @@ write_csv(simulation_results_round3, "results/round3_results.csv")
 write_csv(simulation_results_long_round3, "results/round3_results_long.csv")
 
 
+simulation_results_long_round3 <- read_csv("results/round3_results_long.csv")
+```
+
+## Summarise
+
+```{r}
+
+simulation_summary_round3 <- simulation_results_long_round3 |>
+  group_by(
+    scenario_label,
+    number_of_papers,
+    number_of_raters,
+    number_of_raters_per_paper,
+    noninferiority_criterion,
+    latent_outcome_correlation,
+    human_human_agreement,
+    ai_human_agreement,
+    human_human_cosine,
+    ai_human_cosine,
+    true_agreement_deficit,
+    true_cosine_deficit
+  ) |>
+  summarise(
+    proportion_converged = mean(model_converged, na.rm = TRUE),
+
+    mean_agreement_margin = mean(agreement_noninferiority_margin, na.rm = TRUE),
+    mean_cosine_margin = mean(cosine_noninferiority_margin, na.rm = TRUE),
+
+    agreement_noninferiority_rate = mean(agreement_noninferior, na.rm = TRUE),
+    cosine_noninferiority_rate = mean(cosine_noninferior, na.rm = TRUE),
+    joint_noninferiority_rate = mean(
+      agreement_noninferior & cosine_noninferior,
+      na.rm = TRUE
+    ),
+
+    .groups = "drop"
+  ) |>
+  mutate(
+    agreement_margin_position = classify_margin_position(
+      true_deficit = true_agreement_deficit,
+      average_margin = mean_agreement_margin
+    ),
+    cosine_margin_position = classify_margin_position(
+      true_deficit = true_cosine_deficit,
+      average_margin = mean_cosine_margin
+    ),
+    joint_margin_position = case_when(
+      agreement_margin_position == "inside_margin" &
+        cosine_margin_position == "inside_margin" ~ "inside_margin",
+      agreement_margin_position == "outside_margin" |
+        cosine_margin_position == "outside_margin" ~ "outside_margin",
+      TRUE ~ "near_margin"
+    )
+  )
+
+
+
+```
+
+## quantify noninferiority
+
+```{r}
+
+noninferiority_criterion_overall_effect_round3 <- simulation_summary_round3 |>
+  group_by(
+    number_of_papers,
+    noninferiority_criterion,
+    scenario_label,
+    joint_margin_position
+  ) |>
+  summarise(
+    mean_joint_noninferiority_rate = mean(joint_noninferiority_rate, na.rm = TRUE),
+    mean_agreement_noninferiority_rate = mean(agreement_noninferiority_rate, na.rm = TRUE),
+    mean_cosine_noninferiority_rate = mean(cosine_noninferiority_rate, na.rm = TRUE),
+    mean_convergence_rate = mean(proportion_converged, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+noninferiority_criterion_overall_effect_round3
+
+paper_count_decision_table_round3 <- noninferiority_criterion_overall_effect_round3 |>
+  pivot_wider(
+    names_from = joint_margin_position,
+    values_from = c(
+      mean_joint_noninferiority_rate,
+      mean_agreement_noninferiority_rate,
+      mean_cosine_noninferiority_rate
+    )
+  )
+
+paper_count_decision_table_round3
+
+
+
+```
+
+## Plot
+
+```{r}
+
+plot_noninferiority_criterion_round3 <- noninferiority_criterion_overall_effect_round3 |>
+  mutate(
+    joint_margin_position = factor(
+      joint_margin_position,
+      levels = c("inside_margin", "near_margin", "outside_margin")
+    )
+  ) |>
+  pivot_longer(
+    cols = c(
+      mean_joint_noninferiority_rate,
+      mean_agreement_noninferiority_rate,
+      mean_cosine_noninferiority_rate
+    ),
+    names_to = "outcome_type",
+    values_to = "noninferiority_rate"
+  ) |>
+  mutate(
+    outcome_type = recode(
+      outcome_type,
+      mean_joint_noninferiority_rate = "Joint",
+      mean_agreement_noninferiority_rate = "Agreement",
+      mean_cosine_noninferiority_rate = "Cosine"
+    ),
+    noninferiority_criterion = as.factor(noninferiority_criterion)
+  ) |>
+  ggplot(
+    aes(
+      x = scenario_label,
+      y = noninferiority_rate,
+      group = noninferiority_criterion,
+      color = noninferiority_criterion
+    )
+  ) +
+  geom_hline(
+    yintercept = c(0.05, 0.80),
+    linewidth = 0.4,
+    alpha = 0.5
+  ) +
+  geom_point(size = 2.5) +
+  geom_line(linewidth = 0.7) +
+  facet_wrap(~ outcome_type, nrow = 3) +
+  scale_y_continuous(
+    limits = c(0, 1),
+    breaks = seq(0, 1, by = 0.1)
+  ) +
+  labs(
+    x = "Noninferiority criterion",
+    y = "Non-inferiority conclusion rate",
+    linetype = "True position relative to margin",
+    shape = "True position relative to margin",
+    title = "Operating characteristics by number of papers",
+    subtitle = "Rates of concluding non-inferiority when the true deficit is inside, near, or outside the margin"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+
+plot_noninferiority_criterion_round3
+
 
 ```
