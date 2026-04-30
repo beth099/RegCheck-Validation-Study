@@ -1,0 +1,100 @@
+---
+title: "llm_classifier_results"
+output: html_document
+date: "2026-04-02"
+---
+
+```{r setup, include=FALSE}
+library(readr)
+library(tidyverse)
+library(readxl)
+
+
+prereg_classified <- read_csv("prereg_classified.csv")
+
+# add JEPLMC data
+prereg_classified_JEPLMC <- read_csv("prereg_classified_JEPLMC.csv") %>% 
+  select(-`Journal Title`)
+
+# combine these into one df
+prereg_classified <- bind_rows(prereg_classified, prereg_classified_JEPLMC)
+
+data_key <- bind_rows(
+  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2020"),
+  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2021"),
+  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2022"),
+  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2023"),
+  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2024"),
+  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2025")
+)
+
+```
+
+```{r}
+prereg_classified <- left_join(prereg_classified,
+                                 data_key %>% 
+                                  select(DOI, `Journal Title`),
+                                  by = "DOI") %>%  # add journal title to our dataset
+                            rename(journal_title = `Journal Title`)
+
+# Count the number of articles that use the OSF preregistration template for each journal (we need at least 20 per journal)
+prereg_classified %>% 
+  group_by(journal_title) %>% 
+  filter(uses_osf_template == TRUE) %>% 
+  summarise(n_articles = n_distinct(DOI)) %>% 
+  ungroup()
+
+# Save those that use the prereg template in a separate dataframe
+prereg_template <- prereg_classified %>% 
+  filter(uses_osf_template == TRUE)
+
+```
+
+
+```{r}
+# Randomly sample 20 articles per journal
+set.seed(28042026) # For reproducibility
+
+sample <- prereg_template %>% 
+  group_by(DOI) %>%
+  slice_sample(n = 1) %>%  # first select one study per article 
+  ungroup() %>%
+  group_by(journal_title) %>%
+  slice_sample(n = 20) %>%  # then sample 20 articles per journal
+  select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) %>% 
+  ungroup()
+  
+
+# Assign two coders to each article, ensure the same coder doesn't appear as both coder 1 and coder 2
+n <- nrow(sample)
+coders <- c("BC", "JC", "EK", "SaB", "SiB")
+
+# Generate all possible pairs where coder_1 != coder_2
+pairs <- expand.grid(coder_1 = coders, coder_2 = coders) %>%
+  filter(coder_1 != coder_2)
+
+# Repeat pairs to cover all rows and shuffle
+pairs <- pairs[rep(seq_len(nrow(pairs)), length.out = nrow(sample)), ]
+pairs <- pairs[sample(nrow(pairs)), ]
+
+# Assign to sample
+sample$coder_1 <- pairs$coder_1
+sample$coder_2 <- pairs$coder_2
+
+
+# Check balance
+table(sample$coder_1)
+table(sample$coder_2)
+
+# Check if any coder was assigned to coder_1 and coder_2 for a single article
+any(sample$coder_1 == sample$coder_2)
+```
+
+```{r}
+# Add article number for our reference
+sample <- sample %>% 
+  mutate(article_number = row_number()) %>% 
+  select(-reasoning)
+```
+
+

@@ -1,0 +1,177 @@
+---
+title: "finding_preregistered_articles"
+output: html_document
+date: "2026-03-24"
+---
+
+```{r setup, include=FALSE}
+# Load packages
+library(xml2)
+library(stringr)
+library(dplyr)
+library(readxl)
+```
+
+# Load and filter data key
+
+```{r}
+# Load data key (we only need articles from 5 specific journals)
+path <- "PsycArticles/data_key (1).xlsx"
+
+data_key <- excel_sheets(path) |>
+  purrr::map_dfr(~ read_xlsx(path, sheet = .x))
+
+target_journals <- c(
+  "Journal of Experimental Psychology: General",
+  "Emotion",
+  "Journal of Personality and Social Psychology",
+  "Journal of Experimental Psychology: Human Perception and Performance",
+  "Journal of Experimental Psychology: Learning, Memory, and Cognition"
+)
+
+
+data_key_filtered <- data_key |>
+  filter(`Journal Title` %in% target_journals,
+         substr(UID, 1, 4) %in% c("2020", "2021", "2022", "2023", "2024", "2025"))
+```
+
+# Unzipping
+
+```{r eval = FALSE}
+# only need to do this once, so this code won't run unless you remove eval = FALSE
+# unzip the year-batch zips
+batch_zips <- list.files("PsycArticles", pattern = "^\\d{4}_\\d+\\.zip$", full.names = TRUE)
+
+for (zip in batch_zips) {
+  out_dir <- tools::file_path_sans_ext(zip)
+  dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+  unzip(zip, exdir = out_dir)
+}
+
+```
+
+```{r eval = FALSE}
+# only need to do this once, so this code won't run unless you remove eval = FALSE
+# unzip only the UIDs in data_key_filtered
+target_uids <- data_key_filtered$UID
+
+# we only want to work out of the zips from 2020 and above 
+batch_zips <- list.files("PsycArticles", pattern = "^\\d{4}_\\d+\\.zip$", full.names = TRUE) |>
+  Filter(f = \(x) as.integer(substr(basename(x), 1, 4)) >= 2020, x = _)
+
+for (uid in target_uids) {
+  matching_zip <- list.files(
+    path = batch_zips |> tools::file_path_sans_ext(),
+    pattern = paste0("^", uid, "\\.zip$"),
+    full.names = TRUE
+  )
+  
+  if (length(matching_zip) == 0) {
+    message("Not found: ", uid)
+    next
+  }
+  
+  out_dir <- file.path("processed_articles", uid)
+  dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+  unzip(matching_zip[1], exdir = out_dir)
+}
+```
+
+
+```{r}
+article_dirs <- list.dirs("processed_articles", recursive = FALSE)
+
+fulltext_data <- purrr::map_dfr(article_dirs, function(dir) {
+  uid <- basename(dir)
+  fulltext_file <- list.files(dir, pattern = "_fulltext\\.xml$", full.names = TRUE)
+  
+  if (length(fulltext_file) == 0) {
+    return(tibble(uid = uid, fulltext = NA_character_))
+  }
+  
+  text <- read_xml(fulltext_file[1]) |> xml_text()
+  tibble(uid = uid, fulltext = text)
+})
+```
+
+
+```{r config}
+# --- search for articles that might be preregistered ---
+
+prereg_keywords <- c(
+  "preregistered", "pre-registered",
+  "preregistration", "pre-registration"
+)
+
+extract_context <- function(text, pattern, chars_around = 100) {
+  if (is.na(text)) return(list())
+  
+  matches <- stringr::str_locate_all(text, stringr::regex(pattern, ignore_case = TRUE))[[1]]
+  if (nrow(matches) == 0) return(list())
+  
+  results <- purrr::map(seq_len(nrow(matches)), function(i) {
+    start <- max(1, matches[i, "start"] - chars_around)
+    end <- min(nchar(text), matches[i, "end"] + chars_around)
+    keyword <- substr(text, matches[i, "start"], matches[i, "end"])
+    context <- substr(text, start, end)
+    
+    # check 30 chars before keyword for negation
+    pre_window <- substr(text, max(1, matches[i, "start"] - 30), matches[i, "start"] - 1)
+    is_negated <- stringr::str_detect(pre_window, stringr::regex("not|non", ignore_case = TRUE))
+    
+    if (is_negated) return(NULL)
+    
+    list(keyword = keyword, context = context)
+  })
+  
+  purrr::compact(results)
+}
+
+pattern <- paste(prereg_keywords, collapse = "|")
+
+fulltext_data <- fulltext_data |>
+  mutate(
+    prereg_context = purrr::map(fulltext, ~ extract_context(.x, pattern))
+  )
+
+# extract OSF links (we only want articles that might be preregistered using OSF's template)
+
+fulltext_filtered <- fulltext_data |>
+  filter(stringr::str_detect(fulltext, stringr::regex("osf\\.io", ignore_case = TRUE))) |>
+   mutate(
+    osf_links = stringr::str_extract_all(
+      fulltext_data$fulltext[match(uid, fulltext_data$uid)], 
+      stringr::regex("osf\\.io/\\S+", ignore_case = TRUE)
+    ),
+    osf_links = purrr::map_chr(osf_links, ~ paste(.x, collapse = " ||| "))
+  ) |>
+  mutate(prereg_found = purrr::map_lgl(prereg_context, ~ length(.x) > 0)) |>
+  filter(prereg_found) |>
+  mutate(
+    prereg_context_text = purrr::map(prereg_context, function(contexts) {
+      purrr::map_chr(contexts, ~ .x$context) |> paste(collapse = " ||| ")
+    }),
+    prereg_keyword_matched = purrr::map(prereg_context, function(contexts) {
+      purrr::map_chr(contexts, ~ .x$keyword) |> paste(collapse = " ||| ")
+    })
+  ) |>
+  select(-fulltext, -prereg_context) |>
+  mutate(prereg_context_text = as.character(prereg_context_text),
+         prereg_keyword_matched = as.character(prereg_keyword_matched))
+
+fulltext_filtered <- fulltext_filtered |>
+  mutate(
+    n_matches = stringr::str_count(prereg_keyword_matched, "\\|\\|\\|") + 1
+  )
+
+# add doi
+fulltext_filtered <- fulltext_filtered |>
+  left_join(data_key |> select(UID, DOI), by = c("uid" = "UID")) %>% 
+  # add full text
+  left_join(fulltext_data |> select(fulltext, uid), by = "uid")
+
+write.csv(fulltext_filtered, file = "fulltext_filtered.csv")
+```
+
+
+
