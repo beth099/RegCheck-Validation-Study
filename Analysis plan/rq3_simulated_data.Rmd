@@ -1,0 +1,75 @@
+---
+title: "rq3_simulated_data"
+output: html_document
+date: "2026-04-20"
+---
+
+```{r}
+set.seed(123)
+
+# --- Hyperparameter grid ---
+hyperparams <- bind_rows(
+  # GPT-5.1 and gpt-oss-120b: vary reasoning effort
+  expand_grid(
+    parser           = c("GROBID", "DPT-2"),
+    embedding        = c("text-embedding-3-large", "text-embedding-3-small", "Qwen3-Embedding-8B"),
+    llm              = c("GPT-5.1", "gpt-oss-120b"),
+    reasoning_effort = c("Low", "Medium", "High"),
+    temperature      = NA_character_,
+    append_outputs   = c("Yes", "No")
+  ),
+  # Llama: vary temperature
+  expand_grid(
+    parser           = c("GROBID", "DPT-2"),
+    embedding        = c("text-embedding-3-large", "text-embedding-3-small", "Qwen3-Embedding-8B"),
+    llm              = "Llama-3.3-70B",
+    reasoning_effort = NA_character_,
+    temperature      = c("0", "0.5", "1"),
+    append_outputs   = c("Yes", "No")
+  )
+) %>%
+  mutate(hyperparam_id = row_number())
+
+
+# --- Simulate base RC vs human data ---
+dois       <- paste0("doi_", 1:100)
+dimensions <- c("hypothesis", "datas", "inex", "samplesize",
+                "manvars", "measurevars", "stats", "transf", "missd")
+human_coders <- c("BC", "JC")
+
+base <- expand_grid(doi = dois, dimension = dimensions, human_coder = human_coders) %>%
+  mutate(
+    doi        = as.integer(factor(doi)),
+    cosine          = rbeta(n(), shape1 = 5, shape2 = 2),  # skewed towards high similarity
+    deviation_agree = rbinom(n(), size = 1, prob = 0.7)
+  )
+
+# --- Simulate RQ3 data ---
+data_rq3_cosine <- cross_join(hyperparams, base) %>%
+  mutate(cosine = pmin(1, pmax(0, cosine + rnorm(n(), mean = 0, sd = 0.05))))
+
+data_rq3_agree <- cross_join(hyperparams, base) %>%
+  mutate(
+    deviation_agree = if_else(
+      runif(n()) < 0.1,
+      1L - deviation_agree,
+      deviation_agree
+    )
+  )
+
+data_rq3 <- data_rq3_cosine %>%
+  select(-deviation_agree) %>%   # drop the base version
+  left_join(
+    data_rq3_agree %>% select(hyperparam_id, doi, dimension, human_coder, deviation_agree),
+    by = c("hyperparam_id", "doi", "dimension", "human_coder")
+  )
+
+
+data_rq3 <- data_rq3 %>% 
+  rename(doi = paper_id)
+  
+write_csv(data_rq3, "data_rq3_simulated.csv")
+```
+
+
+

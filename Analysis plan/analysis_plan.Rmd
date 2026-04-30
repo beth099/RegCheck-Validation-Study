@@ -1,0 +1,521 @@
+---
+title: "pilot reliabilities"
+output: html_document
+date: "2026-03-10"
+---
+
+```{r setup, include=FALSE}
+# Load packages
+library(readr)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+
+library(krippendorffsalpha)
+library(snow)
+library(httr2) # for calculating cosine similarity
+
+library(lme4)
+library(emmeans)
+
+# Read in data
+data <- read_csv("test_pilot_data.csv", locale = locale(encoding = "latin1"))
+
+options(scipen = 999) #turn off scientific notation
+options(digits = 2)
+```
+
+# Initial cleaning of pilot data that we shouldn't need on the real data
+```{r}
+data <- data %>% 
+  filter(doi != "10.3758/s13423-017-1395-4") %>% # filter out a paper that only one person coded
+  mutate(
+    measurvars_prereg = pmap_chr(
+      select(., paste0("measurvars_prereg_", 4:13)),
+      ~ { vals <- c(...); paste(vals[!is.na(vals) & vals != ""], collapse = " | ") }
+    ),
+    measurvars_paper = pmap_chr(
+      select(., paste0("measurvars_paper_", 4:13)),
+      ~ { vals <- c(...); paste(vals[!is.na(vals) & vals != ""], collapse = " | ") }
+    ),
+    measurvars_concerns = measurvars_serious  # rename for consistency with other seriousness variables
+  )
+```
+
+
+# Step 1: Pivot the data wider
+```{r}
+data_long <- data %>%
+  select(
+    doi, coder, study_num,
+    matches("^(hypothesis|datas|inex|samplesize|manvars|measurvars|stats|transf|missd)_(prereg|paper|notreg|deviation|concerns|conf|comments)$")
+  ) %>%
+  pivot_longer(
+    cols = -c(doi, coder, study_num),
+    names_to  = c("dimension", ".value"),
+    names_pattern = "^(.+?)_(prereg|paper|notreg|deviation|concerns|conf|comments)$"
+  )
+```
+
+# Step 2: Recode deviation decision into numeric value
+```{r }
+# Turn deviation decision into numeric value
+data_long <- data_long %>%
+  mutate(deviation = case_when(
+    deviation == "No"  ~ 0L,
+    deviation == "Yes" ~ 2L,
+    str_detect(deviation, regex("vague|too vague|not reported", ignore_case = TRUE)) ~ 1L,
+    TRUE ~ NA_integer_
+  ))
+
+# Define coder variables — update these if coder initials change
+rc_coder     <- "RC"
+human_coders <- sort(setdiff(unique(data_long$coder), rc_coder))
+```
+
+# Step 3: Convert to pairwise comparisons
+```{r}
+# Get all unique coder pairs
+coders <- unique(data_long$coder)
+coder_pairs <- combn(sort(coders), 2, simplify = FALSE)  # sort alphabetically (so that we don't get both BC_JC and JC_BC later)
+
+# Build one pairwise row per doi x dimension x pair
+data_pairs <- map_dfr(coder_pairs, function(pair) {
+  c1 <- pair[1]; c2 <- pair[2]
+  
+  left  <- data_long %>% filter(coder == c1) %>%
+    select(doi, study_num, dimension, 
+           prereg_c1 = prereg, paper_c1 = paper,
+           deviation_c1 = deviation, concerns_c1 = concerns)
+  
+  right <- data_long %>% filter(coder == c2) %>%
+    select(doi, dimension,
+           prereg_c2 = prereg, paper_c2 = paper,
+           deviation_c2 = deviation, concerns_c2 = concerns)
+  
+  left %>%
+    inner_join(right, by = c("doi", "dimension")) %>%
+    mutate(
+      coder1 = c1,
+      coder2 = c2,
+      coder_pair       = paste(c1, c2, sep = "_"),
+      comparison_type  = if_else(str_detect(coder_pair, "RC"), "rc_human", "human_human"),
+      deviation_agree  = as.integer(deviation_c1 == deviation_c2)
+    )
+})
+
+# For computing cosine similarity, we have two relevant columns: i) text from the prereg and ii) text from the paper.
+ # Let's compute cosine for each occasion, and treat this (the "source" of the quote) as a random effect.
+data_pairs_cosine <- data_pairs %>%
+  select(doi, study_num, dimension, coder1, coder2, coder_pair, 
+         comparison_type, deviation_agree,
+         prereg_c1, prereg_c2, paper_c1, paper_c2) %>%
+  pivot_longer(
+    cols = c(prereg_c1, prereg_c2, paper_c1, paper_c2),
+    names_to = c("source", "coder_num"),
+    names_pattern = "^(prereg|paper)_(c1|c2)$"
+  ) %>%
+  pivot_wider(names_from = coder_num, values_from = value) %>%
+  rename(text_c1 = c1, text_c2 = c2)
+
+data_pairs_agree <- data_pairs # We will use the non long form for the agree variable
+```
+
+# Step 4: Compute cosine similarity
+```{r}
+# --- HELPERS ---
+# Helper: get embeddings for a character vector (single API call)
+get_embeddings <- function(texts, 
+                           model = "text-embedding-3-large",
+                           api_key = Sys.getenv("OPENAI_API_KEY")) {
+  resp <- request("https://api.openai.com/v1/embeddings") %>%
+    req_auth_bearer_token(api_key) %>%
+    req_body_json(list(input = as.list(texts), model = model)) %>%
+    req_perform()
+  
+  resp_body_json(resp)$data %>%
+    map(~ unlist(.x$embedding))
+}
+
+# Helper: cosine similarity between two numeric vectors
+cosine_sim <- function(a, b) sum(a * b) / (sqrt(sum(a^2)) * sqrt(sum(b^2)))
+
+# --- RUN FUNCTIONS ---
+# Collect all unique non-empty texts across both columns and both coders
+all_texts <- data_pairs %>%
+  select(prereg_c1, prereg_c2, paper_c1, paper_c2) %>%
+  unlist(use.names = FALSE) %>%
+  { .[!is.na(.) & str_trim(.) != ""] } %>%
+  unique()
+
+# Single API call for all unique texts
+embeddings <- get_embeddings(all_texts)
+names(embeddings) <- all_texts
+
+lookup <- function(text) embeddings[[text]]
+
+data_pairs_cosine <- data_pairs_cosine %>%
+  mutate(
+    cosine = map2_dbl(text_c1, text_c2, function(a, b) {
+      if (is.na(a) || a == "" || is.na(b) || b == "") return(NA_real_)
+      cosine_sim(lookup(a), lookup(b))
+    })
+  ) %>% 
+  select(-deviation_agree) # this will be duplicated, so let's remove it.
+
+# Ensure columns are the right type
+data_pairs_cosine <- data_pairs_cosine %>%
+  mutate(comparison_type = factor(comparison_type, levels = c("human_human", "rc_human"))) 
+
+data_pairs_agree <- data_pairs_agree %>%
+  mutate(
+    comparison_type = factor(comparison_type, levels = c("human_human", "rc_human")),
+    deviation_agree = as.integer(deviation_agree)
+  )
+```
+
+# Analysis
+# RQ1: Cosine similarity
+Descriptives
+```{r}
+data_pairs_cosine %>% 
+  group_by(comparison_type) %>% 
+  summarise(
+    mean_cosine = mean(cosine, na.rm = TRUE),
+    sd_cosine = sd(cosine, na.rm = TRUE)
+  )
+```
+
+Inferential
+```{r}
+# Build the mlm
+m_rq1 <- lmer(
+  cosine ~ comparison_type + source + (1 | doi) + (1 | dimension) + (1 | coder_pair) + (1 |  doi:dimension:source),
+  data = data_pairs_cosine
+)
+
+# View the model output
+summary(m_rq1)
+
+# Non-inferiority check
+# criterion: 0.4 x SD of human-human cosine similarity
+ni_criterion <- data_pairs_cosine %>%
+  filter(comparison_type == "human_human") %>%
+  pull(cosine) %>%
+  sd(na.rm = TRUE) %>%
+  { . * 0.4 }
+
+# Contrast: rc_human vs human_human
+contrast_rq1 <- emmeans(m_rq1, ~ comparison_type) %>%
+  contrast("pairwise") %>%
+  confint()
+
+contrast_rq1
+
+# Non-inferiority check: lower CI must be above -ni_criterion
+# (i.e. RegCheck is not meaningfully worse than human-human)
+contrast_rq1$lower.CL > -ni_criterion
+```
+
+# RQ1a -- cosine similarity by dimension (descriptive)
+```{r}
+rq1a <- data_pairs_cosine %>%
+  filter(!is.na(cosine)) %>%
+  summarise(
+    mean_cosine = mean(cosine),
+    sd_cosine  = sd(cosine),
+    .by = c(dimension, comparison_type)
+  ) %>%
+  arrange(dimension, comparison_type)
+
+rq1a
+```
+
+# RQ2: Deviation agreement
+```{r}
+# Build mlm
+m_rq2 <- glmer(
+  deviation_agree ~ comparison_type + (1 | doi) + (1 | dimension) + (1 | coder_pair) +  (1 | doi:dimension),
+  data   = data_pairs_agree,
+  family = binomial(link = "logit")
+)
+
+# View the model output
+summary(m_rq2)
+
+# Non-inferiority test
+  # criterion: 0.2 x SD of human-human cosine similarity
+hh_agree <- data_pairs_agree %>%
+  filter(comparison_type == "human_human", !is.na(deviation_agree)) %>%
+  pull(deviation_agree)
+
+# Small epsilon to avoid qlogis(0) = -Inf and qlogis(1) = +Inf
+eps <- 0.01
+ni_criterion_rq2 <- sd(qlogis(pmin(pmax(hh_agree, eps), 1 - eps))) * 0.2
+
+# Contrast on the logit scale (no type = "response")
+contrast_rq2 <- emmeans(m_rq2, ~ comparison_type) %>%
+  contrast("pairwise") %>%
+  confint()
+
+contrast_rq2
+
+# Non-inferiority check
+contrast_rq2$asymp.LCL > -ni_criterion_rq2
+```
+
+# RQ2a: Deviation agreement by dimension
+```{r}
+# Percent agreement
+rq2a_agree <- data_pairs_agree %>%
+  filter(!is.na(deviation_agree)) %>%
+  summarise(
+    n_agree = sum(deviation_agree),
+    n_total = n(),
+    .by = c(dimension, comparison_type)
+  ) %>%
+  mutate(prop_agree = n_agree / n_total)
+
+# Krippendorff's alpha
+compute_alpha_by_dim <- function(coders_filter) {
+  data_long %>%
+    filter(coder %in% coders_filter, !is.na(deviation)) %>%
+    group_by(dimension) %>%
+    group_modify(function(d, key) {
+      wide <- d %>%
+        select(doi, coder, deviation) %>%
+        pivot_wider(names_from = coder, values_from = deviation) %>%
+        select(-doi) %>%
+        as.matrix()
+      fit <- tryCatch(
+        krippendorffs.alpha(wide, level = "ordinal", confint = FALSE),
+        error = function(e) NULL
+      )
+      tibble(alpha = if (is.null(fit)) NA_real_ else fit$alpha.hat)
+    }) %>%
+    ungroup()
+}
+
+rq2a_alpha <- bind_rows(
+  compute_alpha_by_dim(human_coders) %>% mutate(comparison_type = "human_human"),
+  compute_alpha_by_dim(c(human_coders, rc_coder)) %>% mutate(comparison_type = "rc_human")
+)
+
+# Join summary table
+rq2a <- rq2a_agree %>%
+  left_join(rq2a_alpha, by = c("dimension", "comparison_type")) %>%
+  arrange(dimension, comparison_type)
+rq2a
+```
+
+# RQ2b: False positives/ true positives (that humans missed) and false negative rate
+## Part 1. Deviations only RegCheck identifies
+```{r}
+# Wide format: one row per doi × dimension, one column per coder
+rq2b_wide <- data_long %>%
+  select(doi, dimension, coder, deviation, concerns) %>%
+  pivot_wider(names_from = coder, values_from = c(deviation, concerns)) %>%
+  rename(
+    rc      = paste0("deviation_", rc_coder),
+    coder_1 = paste0("deviation_", human_coders[1]),
+    coder_2 = paste0("deviation_", human_coders[2]),
+    sev_rc      = paste0("concerns_", rc_coder),
+    sev_coder_1 = paste0("concerns_", human_coders[1]),
+    sev_coder_2 = paste0("concerns_", human_coders[2])
+  )
+
+# Were there any deviations that only RegCheck identified?
+rq2b_wide_RC_only_dev <- rq2b_wide %>%
+  filter(rc == 2 & coder_1 != 2 & coder_2 != 2)
+
+# Total dimension comparisons (denominator)
+n_total <- nrow(rq2b_wide)
+
+# Calculate proportion with Wilson's CIs 
+rc_identified_prop <- prop.test(nrow(rq2b_wide_RC_only_dev), n = n_total, correct = FALSE)
+
+tibble(
+  "proportion" = rc_identified_prop$estimate,
+  "lower_ci" = rc_identified_prop$conf.int[1],
+  "upper_ci" = rc_identified_prop$conf.int[2]
+)
+```
+
+
+```{r}
+# Load pilot round 2 data
+round2_data <- read_csv("regcheck_validation_round2_check_test.csv")
+
+# Pivot long and clean
+round2_long <- round2_data %>% 
+  rename_with(
+    ~ str_replace(.x, "deviation_accuracy_(\\d)_3_TEXT", "deviation_accuracy_text_\\1"),
+    matches("_3_TEXT")
+  ) %>%
+  pivot_longer(
+    cols      = matches("_\\d$"),
+    names_to  = c(".value", "dim_num"),
+    names_pattern = "^(.+)_(\\d)$"
+  ) %>%
+  mutate(dim_num = as.integer(dim_num)) %>%
+  filter(!is.na(dimension) & dimension != "")
+
+denom_rc <- nrow(round2_long)
+
+# % RC flagged that were *not* deviations
+rc_false_pos <- round2_long %>% 
+  filter(deviation_accuracy == "No, the deviation RegCheck identified was not accurate.")
+rc_fp_prop <- prop.test(nrow(rc_false_pos), n = denom_rc, correct = FALSE)
+
+# % RC flagged that *were* deviations
+rc_true_pos <- round2_long %>% 
+  filter(deviation_accuracy == "Yes, RegCheck identified a true deviation.")
+rc_tp_prop <- prop.test(nrow(rc_true_pos), n = denom_rc, correct = FALSE)
+
+# For completeness, 'Other' category
+rc_other <- round2_long %>% 
+  filter(deviation_accuracy == "Other")
+rc_other_prop <- prop.test(nrow(rc_other), n = denom_rc, correct = FALSE)
+
+# Combined table
+bind_rows(
+  tibble(category = "True positive",  proportion = rc_tp_prop$estimate,    lower_ci = rc_tp_prop$conf.int[1],    upper_ci = rc_tp_prop$conf.int[2]),
+  tibble(category = "False positive", proportion = rc_fp_prop$estimate,    lower_ci = rc_fp_prop$conf.int[1],    upper_ci = rc_fp_prop$conf.int[2]),
+  tibble(category = "Other",          proportion = rc_other_prop$estimate, lower_ci = rc_other_prop$conf.int[1], upper_ci = rc_other_prop$conf.int[2])
+)
+
+"Severity counts for true positives"
+rc_true_pos %>%
+  count(deviation_severity, sort = TRUE)
+```
+
+## Part 2. Deviations RegCheck misses
+```{r}
+fn_one  <- rq2b_wide %>% filter(rc != 2 | is.na(rc), coder_1 == 2 | coder_2 == 2)
+fn_both <- rq2b_wide %>% filter(rc != 2 | is.na(rc), coder_1 == 2, coder_2 == 2)
+
+rc_missed <- fn_one %>% mutate(fn_type = "one_coder") %>%
+  bind_rows(fn_both %>% mutate(fn_type = "both_coders")) %>%
+  mutate(
+    severity_label = case_when(
+      fn_type == "one_coder"   & coder_1 == 2 ~ sev_coder_1,
+      fn_type == "one_coder"   & coder_2 == 2 ~ sev_coder_2,
+      fn_type == "both_coders" & sev_coder_1 == sev_coder_2 ~ sev_coder_1,
+      fn_type == "both_coders" ~ "Coders disagreed",
+      TRUE ~ NA_character_
+    ),
+    severity_label = case_when(
+      str_detect(severity_label, "serious")          ~ "Red",
+      str_detect(severity_label, "some significant") ~ "Orange",
+      str_detect(severity_label, "don")              ~ "Green",
+      TRUE ~ severity_label
+    )
+  )
+
+overall <- rc_missed %>%
+  count(fn_type)
+
+severity_rows <- rc_missed %>%
+  filter(!is.na(severity_label)) %>%
+  count(fn_type, severity_label)
+
+# Overall with CIs
+overall %>%
+  mutate(pct = n / n_total) %>%
+  pivot_wider(names_from = fn_type, values_from = c(n, pct)) %>%
+  mutate(
+    ci_lower_one  = map_dbl(n_one_coder,   ~ prop.test(.x, n_total, correct = FALSE)$conf.int[1]),
+    ci_upper_one  = map_dbl(n_one_coder,   ~ prop.test(.x, n_total, correct = FALSE)$conf.int[2]),
+    ci_lower_both = map_dbl(n_both_coders, ~ prop.test(.x, n_total, correct = FALSE)$conf.int[1]),
+    ci_upper_both = map_dbl(n_both_coders, ~ prop.test(.x, n_total, correct = FALSE)$conf.int[2])
+  ) %>%
+  select(pct_one_coder = pct_one_coder, ci_lower_one, ci_upper_one,
+         pct_both_coders = pct_both_coders, ci_lower_both, ci_upper_both)
+
+# Severity breakdown
+overall_counts <- overall %>%
+  pivot_wider(names_from = fn_type, values_from = n) %>%
+  rename(n_one_coder = one_coder, n_both_coders = both_coders)
+
+severity_rows %>%
+  mutate(pct = case_when(
+    fn_type == "one_coder"   ~ n / overall_counts$n_one_coder,
+    fn_type == "both_coders" ~ n / overall_counts$n_both_coders
+  )) %>%
+  select(severity_label, fn_type, pct) %>%
+  complete(severity_label, fn_type) %>%
+  pivot_wider(names_from = fn_type, values_from = pct) %>%
+  mutate(
+    one_coder   = if_else(severity_label == "Coders disagreed", "-",
+                          format(round(one_coder, 3), nsmall = 3)),
+    both_coders = format(round(both_coders, 3), nsmall = 3)
+  ) %>%
+  arrange(severity_label == "Coders disagreed") %>%
+  select(severity_label, one_coder, both_coders) %>%
+  rename(severity = severity_label, `% one coder` = one_coder, `% both coders` = both_coders)
+```
+
+
+# RQ3: Agreement x hyperparameter
+Note: this will require some cleaning to get the dataframe below (this data frame was simulated)
+```{r}
+# Load example data
+data_rq3 <- read_csv("data_rq3_simulated.csv")
+
+data_rq3 <- data_rq3 %>%
+  mutate(
+    llm = case_when(
+      !is.na(reasoning_effort) ~ paste0(llm, "_", reasoning_effort),
+      !is.na(temperature)      ~ paste0(llm, "_temp", temperature),
+      TRUE                     ~ llm
+    )
+  )
+
+# Build a combined hyperparameter predictor 
+data_rq3 <- data_rq3 %>%
+  mutate(
+    parser         = factor(parser,        levels = c("GROBID", "DPT-2")),
+    embedding      = factor(embedding,     levels = c("text-embedding-3-large",
+                                                       "text-embedding-3-small",
+                                                       "Qwen3-Embedding-8B")),
+    llm            = factor(llm,           levels = c("GPT-5.1_high",
+                                                       "GPT-5.1_medium",
+                                                       "GPT-5.1_low",
+                                                       "gpt-oss-120b_high",
+                                                       "gpt-oss-120b_medium",
+                                                       "gpt-oss-120b_low",
+                                                       "Llama-3.3-70B_temp0",
+                                                       "Llama-3.3-70B_temp0.5",
+                                                       "Llama-3.3-70B_temp1")),
+    append_outputs = factor(append_outputs, levels = c("No", "Yes"))
+  )
+
+# RQ3a: Cosine similarity hyperparameters
+m_rq3_cosine <- lmer(
+  cosine ~ parser + embedding + llm + append_outputs +
+    (1 | doi) + (1 | dimension) + (1 | human_coder) +  (1 | paper_id:dimension:human_coder),
+  data = data_rq3
+)
+summary(m_rq3_cosine)
+
+# Marginal means per predictor
+emmeans(m_rq3_cosine, ~ parser)
+emmeans(m_rq3_cosine, ~ embedding)
+emmeans(m_rq3_cosine, ~ llm)
+emmeans(m_rq3_cosine, ~ append_outputs)
+
+# RQ3b: Deviation agreement hyperparameters
+m_rq3_agree <- glmer(
+  deviation_agree ~ parser + embedding + llm + append_outputs +
+    (1 | doi) + (1 | dimension) + (1 | human_coder) +  (1 | paper_id:dimension:human_coder),
+  data   = data_rq3,
+  family = binomial(link = "logit")
+)
+summary(m_rq3_agree)
+
+# Marginal means per predictor (probability scale)
+emmeans(m_rq3_agree, ~ parser,         type = "response")
+emmeans(m_rq3_agree, ~ embedding,      type = "response")
+emmeans(m_rq3_agree, ~ llm,            type = "response")
+emmeans(m_rq3_agree, ~ append_outputs, type = "response")
+```

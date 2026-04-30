@@ -1,0 +1,570 @@
+StartDate,EndDate,coder,Title,doi,study_num,not_preregistered,not_preregistered_1_TEXT,hypothesis_notreg,hypothesis_prereg,hypothesis_paper,hypothesis_deviation,hypothesis_concerns,hypothesis_conf,hypothesis_comments,datas_notreg,datas_prereg,datas_paper,datas_deviation,datas_concerns,datas_conf,datas_comments,inex_notreg,inex_prereg,inex_paper,inex_deviation,inex_concerns,inex_conf,inex_comments,samplesize_notreg,samplesize_prereg,samplesize_paper,samplesize_deviation,samplesize_concerns,samplesize_conf,samplesize_comments,experimental,experimental_2_TEXT,manvars_notreg,manvars_prereg,manvars_paper,manvars_deviation,manvars_concerns,manvars_conf,manvars_comments,measurevars_notreg,measurvars_prereg_4,measurvars_prereg_5,measurvars_prereg_6,measurvars_prereg_7,measurvars_prereg_8,measurvars_prereg_9,measurvars_prereg_10,measurvars_prereg_11,measurvars_prereg_12,measurvars_prereg_13,measurvars_paper_4,measurvars_paper_5,measurvars_paper_6,measurvars_paper_7,measurvars_paper_8,measurvars_paper_9,measurvars_paper_10,measurvars_paper_11,measurvars_paper_12,measurvars_paper_13,measurvars_deviation,measurvars_serious,measurvars_conf,measurvars_comments,stats_notreg,stats_prereg,stats_paper,stats_deviation,stats_concerns,stats_conf,stats_comments,transf_notreg,transf_prereg,transf_paper,transf_deviation,transf_concerns,transf_conf,transf_comments,missd_notreg,missd_prereg,missd_paper,missd_deviation,missd_concerns,missd_conf,missd_comments,deviations_reported,Other,prereg_measurvars_conc,paper_measuredvars_conc,paper_measurvars_conc,prereg_measurvars_conc
+11/23/2025 7:05:50,11/23/2025 8:03:43,JC,Some People Heed Advice Less than Others: Agency (but Not Communion) Predicts Advice Taking,10.1002/bdm.2065,3,,,,"H1: Agency is negatively related to advice taking.
+H2: The effect of agency on advice taking is mediated by more positive ratings of the judge’s own expertise.
+[...]
+3.	Communion is positively related to advice taking,","...meaning that we did not replicate the unexpected communion effect observed in Study 2 
+[...]
+Contrary to our expectations, and despite greater sample size, we failed to replicate the general effect of agency on advice taking
+[...]
+Contrary to our expectations, and despite greater sample size, we failed to replicate  [...] the effect of agency on the decision to adjust 
+[...]
+Study 3 did not replicate the unexpected negative correlation of communion and advice taking observed for the weight estimates. ",Yes,🟠 I have some significant concerns about the deviation(s),Somewhat confident,Manuscript is very vague but reasonably confident there are deviations.,,"We aim to recruit participants from the same population as in the two original studies: undergraduate and graduate students at Georg-August-University Göttingen, recruited via the participant data-base ORSEE","Our stopping rule for data collection was to stop inviting participants to the lab once we hit the required sample size but to include all participants who had already signed
+up for the study at that point",The manuscript is Too vague to tell or information not reported,,Very confident,Too vague to tell but unlikely to be a deviation,,"We aim to recruit participants from the same population as in the two original studies: undergraduate and graduate students at Georg-August-University Göttingen, recruited via the participant data-base ORSEE. We will ask participants to provide written consent before participating in the study. Participants will be prohibited from participation if they previously participated in a judge-advisor study using the same stimuli (weight estimates and distance estimates). We will exclude participants from the analysis based on two criteria: first, if they report in the final questionnaire that they did not work on the task seriously; second, if they correctly guessed the hypothesis in a suspicion check (also part of the final questionnaire).
+[...]
+We will exclude participants from the analysis based on two criteria: first, if they report in the final questionnaire that they did not work on the task seriously; second, if they correctly guessed the hypothesis in a suspicion check (also part of the final questionnaire). Participants excluded in this fashion will be replaced to ensure the planned sample size.","Our stopping rule for data collection was to stop inviting participants to the lab once we hit the required sample size but to include all participants who had already signed up for the study at that point, resulting in a total sample size of 351 participants.",The manuscript is Too vague to tell or information not reported,,Mixed,,,"Our aspired sample size is 343 participants. 
+[...]
+We will gather data until our sample size meets or exceeds the required sample size of 343 participants. Since we will invite several participants for each session, the final sample size might slightly exceed 343 participants in order to avoid sending home excess participants in the final session. ","In Study 3, we aimed for a sample size of at least 343 participants. The minimum sample size results from a power analysis aiming for a power of .80 for a zero-order
+correlation of .15 (the correlation of agency and advice taking we observed in Studies 1 and 2) given a Type I error level of .05. Our stopping rule for data collection was to stop inviting participants to the lab once we hit the required sample size but to include all participants who had already signed up for the study at that point, resulting in a total sample size of 351 participants. ",No,,Very confident,,No (Option to leave a comment),Observational study,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Yes,🟠 I have some significant concerns about the deviation(s),Somewhat confident,"Manuscript is incredibly vague, but preregistration mentions measures that are simply not mentioned in paper (e.g., narcissism measures).",,"1.	Zero order correlations of the following variables: agency, communion, mean AT score, mean confidence shift, rating of judges’ own expertise.
+
+2.	A path model testing the effects of agency (H1) and communion on mean AT scores with participants’ ratings of their own expertise as a potential mediator of the agency effect (H2). We will use the R package lavaan to conduct this analysis and to infer the magnitude and 95% CI of the indirect effect.
+3.	A logistic multilevel regression of the decision to adjust on agency and communion. In this model, we will treat agency and communion as level 2 fixed effects. The model will contain random intercept for participant and for the stimuli, but no random slopes since the model does not contain level 1 predictors.","As in Study 2, we first analyzed participants’ mean AT scores
+collapsed over both judgment tasks because of substantial
+correlation of mean AT scores for the two tasks,
+r(351) = .56, p &lt; .001, and because the mean AT scores for
+the two tasks did not differ significantly (Mdistance = 24.56%;
+Mweight = 23.47%), t(350) = 1.55, p = .122. Again, participants were resistant to advice weighting it far less than
+50%, t(350) = 40.45, p &lt; .001, and this pattern holds for
+both judgment tasks individually, both t(350) &lt; 31.32, both
+ps &lt; .001. Other than in the previous studies, the zero-order
+correlation of agency and advice taking was not significant.
+[...]
+Neither was the correlation of communion and advice taking,
+although this effect was close to statistical significance. Splitting this analysis by judgment task showed that the correlation of agency and advice taking was absent in both tasks.
+In contrast, there was a significant positive correlation of
+communion and advice taking in the distance estimates. For
+the weight estimates, the corresponding correlation was positive but not significant, meaning that we did not replicate the
+unexpected communion effect observed in Study 2 (Table 4).
+[...]
+As in Study 1, our exploratory analysis of confidence shifts
+revealed that participants’ confidence increased from their
+initial to their final estimates (M = 3.44, SD = 1.07 vs.
+M = 3.68, SD = 1.12), t(350) = 14.68, p &lt; .001. As in Study
+2, the confidence shifts were significantly related to communion, but this time, the correlation originated from the distance estimates and was in the opposite direction (Table 4).
+[...]
+We next tested for mediation of the effects of agency and
+communion via participants’ rating of their own competence.
+[...]
+The results—both across judgment
+tasks and separated by judgment task—are displayed in
+Figure 3. Consistent with the analysis of the zero-order correlations, the effect of agency on advice taking (c1) was not
+significant, and this did not change when controlling for participants’ ratings of their own and their advisor’s expertise
+(c1
+0
+). The indirect effect of agency via ratings of judges’
+own competence emerged as it did in Studies 1 and 2. However, it was notably smaller, a1 × b = .029, p = .036, 95%
+CI [.055, .002]. When analyzing the judgment tasks separately, there was only evidence of mediation for distance estimates, a1 × b = .04, p = .009, 95% CI [.07, .01], but
+not for the weight estimates, a1 × b = .01, p = .228, 95%
+CI [.04, .01]. 
+[...]
+As in the previous studies, we predicted the decision to adjust
+towards the advice from agency and communion in a multilevel logistic regression with random intercepts for the specific pairs
+of cities nested within participants
+[...]
+ Because there was an interaction of communion and judgment
+task, we ran separate analyses for the two judgment tasks.
+[...]
+As in the previous studies, we investigated the correlation of
+agency and judges’ initial accuracy measured as their MAPE
+scores. Separate analyses by task revealed significantly lower initial
+MAPE scores with increasing agency for distance estimates,
+r(351) = .15, p = .005, but not for the weight estimates,
+r(351) = .04, p = .426. Concerning communion, there was neither an effect when analyzing across tasks, r(351) = .04,
+p = .485, nor when separating the analysis by task,
+r(351) = .03, p = .513, and r(351) = .09, p = .089, for the
+distance and weight estimates, respectively.",Yes,🟠 I have some significant concerns about the deviation(s),Very confident,,,"The self-ratings of task-related expertise will be an index comprised of three items:
+a)	the overall quality of their estimates on 7-point-likert-scales (1 = „very bad“, 7 = „very good”)
+b)	the belief about the number of trials in which their own initial estimates were within 10% of the true values
+c)	the belief about how they would rank among 100 hypothetical participants based on the accuracy of their estimates.
+We will z-standardized these items (the third item will be reverse-coded) and aggregate them into a composite measure of participants’ self-perceived task-related expertise. 
+
+The advice taking index (AT, Harvey & Fischer, 1997) will be calculated on each trial as follows: 
+AT = (initial estimate - final estimate)/(initial estimate - advice)
+We will then compute the mean AT scores per participants for both judgment tasks. The mean AT indicates the average percent weight participants placed on the advice. In line with previous research (e.g. Soll & Larrick, 2009), we will truncate the AT scores at 0 and 1 in order to prevent outliers from distorting the data. 
+
+We will calculate confidence shifts as the difference between judges’ confidence in the accuracy their final estimate and their confidence in the accuracy of their initial estimates. Positive values of this measure indicate that judges’ confidence increased after receiving advice.
+[...]
+We will z-standardize agency and communion in the analyses, so that changes in the criterion can be interpreted as the increaes/decreases in man AT scores when a person's agency (or communion) score is one SD above/below the mean. Since this is a linear transformation, it does not affect the relation between the variables of interest.","Instead of the single-item rating of competence we used in Study 2, we reverted to the
+three-item measure used in Study 1, as the latter might be
+more reliable. 
+[...]
+As in Study 2, we first analyzed participants’ mean AT scores
+collapsed over both judgment tasks because of substantial
+correlation of mean AT scores for the two tasks,
+r(351) = .56, p &lt; .001, and because the mean AT scores for
+the two tasks did not differ significantly (Mdistance = 24.56%;
+Mweight = 23.47%), t(350) = 1.55, p = .122. 
+[...]
+",Yes,🟢 I don’t have significant concerns about the deviation(s),Somewhat confident,Very vague but doesn't seem like they specify in preregistration that they'll pool AT scores from both tasks,,"The study will be run using a computer program that enforces data entry. Missing data is, therefore, not an issue. Only complete data sets will be considered in the analyses (based on previous experience we don't expect participants to drop out of the study prematurely, but those who do will be replaced to ensure the planned sample size).",NA,The manuscript is Too vague to tell or information not reported,,Very confident,Text input doesn't allow blank.,No,,,,,
+11/30/2025 16:54:45,11/30/2025 21:11:13,BC,Some People Heed Advice Less than Others: Agency (but Not Communion) Predicts Advice Taking,10.1002/bdm.2065,Study 3,,,,"H1: Agency is negatively related to advice taking.
+H2: The effect of agency on advice taking is mediated by more positive ratings of the judge’s own expertise.
+We will test the original Hypothesis 3 (communion is positively related to advice taking) in an exploratory fashion, for completeness.","Thus, we hypothesizeagentic individuals to follow another person’s advice less, andwe expect the effect of agency on advice taking to be mediatedby increased perceptions of one’s own task-speciﬁc compe-tence. [...]
+Thus, commu-nal individuals should heed advice more, and we expect morepositive evaluations of the advisor’s task-speciﬁc competenceto mediate this effect. ",No,,Somewhat uncertain,"Tricky to code this one bc we're avoiding exploratory hypotheses, but that is not entirely clear in the paper",,"We aim to recruit participants from the same population as in the two original studies: undergraduate and graduate students at Georg-August-University Göttingen, recruited via the participant data-base ORSEE.",[From Study 1: ...] university students,The manuscript is Too vague to tell or information not reported,,Somewhat confident,,,"We aim to recruit participants from the same population as in the two original studies: undergraduate and graduate students at Georg-August-University Göttingen, recruited via the participant data-base ORSEE.  [...] Participants will be prohibited from participation if they previously participated in a judge-advisor study using the same stimuli (weight estimates and distance estimates). We will exclude participants from the analysis based on two criteria: first, if they report in the final questionnaire that they did not work on the task seriously; second, if they correctly guessed the hypothesis in a suspicion check (also part of the final questionnaire). 
+
+The study will be run using a computer program that enforces data entry. Missing data is, therefore, not an issue. Only complete data sets will be considered in the analyses (based on previous experience we don't expect participants to drop out of the study prematurely, but those who do will be replaced to ensure the planned sample size).",[There's a mention of excluding participants who previously participated in a similar study for Study 1 but nothing in Study 3 so:] None,The manuscript is Too vague to tell or information not reported,,Somewhat confident,,,Our aspired sample size is 343 participants.,"Our stopping rule for data collection was to stop invit-ing participants to the lab once we hit the required samplesize but to include all participants who had already signedup for the study at that point, resulting in a total sample sizeof 351 participants.",Yes,🟢 I don’t have significant concerns about the deviation(s),Somewhat confident,,No (Option to leave a comment),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,No,,Somewhat confident,,,"1.	Zero order correlations of the following variables: agency, communion, mean AT score, mean confidence shift, rating of judges’ own expertise.
+
+2.	A path model testing the effects of agency (H1) and communion on mean AT scores with participants’ ratings of their own expertise as a potential mediator of the agency effect (H2). We will use the R package lavaan to conduct this analysis and to infer the magnitude and 95% CI of the indirect effect.
+
+3.	A logistic multilevel regression of the decision to adjust on agency and communion. In this model, we will treat agency and communion as level 2 fixed effects. The model will contain random intercept for participant and for the stimuli, but no random slopes since the model does not contain level 1 predictors.","[Table 4] Other than in the previous studies, the zero-ordercorrelation of agency and advice taking was not signiﬁcant. Neither was the correlation of communion and advice taking,although this effect was close to statistical signiﬁcance. Split-ting this analysis by judgment task showed that the correla-tion of agency and advice taking was absent in both tasks.In contrast, there was a signiﬁcant positive correlation ofcommunion and advice taking in the distance estimates. Forthe weight estimates, the corresponding correlation was posi-tive but not signiﬁcant, meaning that we did not replicate theunexpected communion effect observed in Study 2 (Table 4).
+
+The indirect effect of agency via ratings of judges’own competence emerged as it did in Studies 1 and 2. How-ever, it was notably smaller, a1 × b = .029, p = .036, 95%CI [.055, .002]. 
+
+As in the previous studies, we predicted the decision to adjusttowards the advice from agency and communion in a multilevellogistic regression with random intercepts for the speciﬁc pairsof cities nested within participants. As shown in Table 2, neitheragency nor communion predicted the decision to adjust. 
+
+[Not preregistered, but not really directly testing their hypothesis:]-----
+Accuracy of initial estimatesAs in the previous studies, we investigated the correlation ofagency and judges’ initial accuracy measured as their MAPEscores. Again, this correlation was negative but nonsigniﬁcantwhen analyzing across tasks, r(351) = .07, p = .178. ",No,,Mixed,"this paper gives a good example of a weird case for this variable, with a tonne of analyeses.
+- not sure about the random intercept thing with the mlm?",,"The self-ratings of task-related expertise will be an index comprised of three items:
+a)	the overall quality of their estimates on 7-point-likert-scales (1 = „very bad“, 7 = „very good”)
+b)	the belief about the number of trials in which their own initial estimates were within 10% of the true values
+c)	the belief about how they would rank among 100 hypothetical participants based on the accuracy of their estimates.
+We will z-standardized these items (the third item will be reverse-coded) and aggregate them into a composite measure of participants’ self-perceived task-related expertise. 
+
+The advice taking index (AT, Harvey & Fischer, 1997) will be calculated on each trial as follows: 
+AT = (initial estimate - final estimate)/(initial estimate - advice)
+We will then compute the mean AT scores per participants for both judgment tasks. The mean AT indicates the average percent weight participants placed on the advice. In line with previous research (e.g. Soll & Larrick, 2009), we will truncate the AT scores at 0 and 1 in order to prevent outliers from distorting the data. 
+
+We will calculate confidence shifts as the difference between judges’ confidence in the accuracy their final estimate and their confidence in the accuracy of their initial estimates. Positive values of this measure indicate that judges’ confidence increased after receiving advice. [...]
+
+We will z-standardize agency and communion in the analyses, so that changes in the criterion can be interpreted as the increaes/decreases in man AT scores when a person's agency (or communion) score is one SD above/below the mean.","We z-standardized these items (the third item wasreverse coded) and aggregated the three self-related itemsand the three advisor-related items into measures of per-ceived competence of the self (α = .75) and perceived com-petence of the advisor (α = .58)
+
+ The AT isdeﬁned as (ﬁnal estimate - initial estimate) / (advice - initialestimate). It equals the percent weight of advice when makingthe ﬁnal estimate. It is equals the percent weight of advicewhen making the ﬁnal estimate. We followed the commonprocedure to truncate the AT scores at 0 and 1 (e.g., Gino,Shang, & Croson, 2009; Soll & Larrick, 2009). 
+
+Therefore, we calculated shifts injudges’ conﬁdence between the initial and ﬁnal estimates.Participants rated the conﬁdence in the accuracy of their esti-mates in each trial twice on a 7-point Likert scale (1 = not atall conﬁdent and 7 = very conﬁdent). The conﬁdence shiftwas calculated as the difference between the two ratings. [..] In Studies 2 and 3, we computed an aggregatemeasure of accuracy across the two judgment tasks by ﬁrstz-standardizing MAPE scores by task and then averagingthe two z-scores
+
+
+[Table 2 Note:]Agency and communion were z-standardized; task was effect coded (1 = distance estimates and 1 = weight estimates)",No,,Mixed,"All the stuff I extracted from Indices is probably 'scoring' not 'transformation'
+Maybe deviation for accuracy? It's implied in the prereg that they'll combine them (bc the follow up analyses are running separate analyses)",,"The study will be run using a computer program that enforces data entry. Missing data is, therefore, not an issue. Only complete data sets will be considered in the analyses (based on previous experience we don't expect participants to drop out of the study prematurely, but those who do will be replaced to ensure the planned sample size).",None,The manuscript is Too vague to tell or information not reported,,Mixed,,No,,,,,
+12.01.2025 14:20,12.02.2025 01:22,RC,Some People Heed Advice Less than Others: Agency (but Not Communion) Predicts Advice Taking,10.1002/bdm.2065,3,,,,"H1: Agency is negatively related to advice taking.
+H2: The effect of agency on advice taking is mediated by more positive ratings of the judge’s own expertise.
+3.	Communion is positively related to advice taking, 
+Note: ""we will test H3 exploratively""","We designed Study 3 to provide a stronger test of the hypoth-
+esis that perceived own task-specific competence mediates
+the effect of agency on advice taking.",Yes,🟠 I have some significant concerns about the deviation(s),Somewhat confident,,,"We aim to recruit participants from the same population as in the two original studies: undergraduate and graduate students at Georg-August-University Göttingen, recruited via the participant data-base ORSEE. ","Study 3: ""Otherwise, Study 3 was identical to Study 2 with one exception"" (no exceptions regarding data source mentioned
+Study 2: ""Study 2 was similar to Study 1 with the following exceptions""; only exception relevant for data source: ""we recruited only naïve participants who had no prior experience with the JAS""
+Study 1: Participants were 191 university students. (...) Participants were invited to an online survey measuring (among other variables) agency and communion. They then signed up for a laboratory study a few days later (median
+time lag = 6 days, SD = 4.53 days). ",The manuscript is Too vague to tell or information not reported,,Somewhat confident,,,"Participants will be prohibited from participation if they previously participated in a judge-advisor study using the same stimuli (weight estimates and distance estimates). We will exclude participants from the analysis based on two criteria: first, if they report in the final questionnaire that they did not work on the task seriously; second, if they correctly guessed the hypothesis in a suspicion check (also part of the final questionnaire). Participants excluded in this fashion will be replaced to ensure the planned sample size of 343 paticipants (see below).",we recruited only naïve participants who had no prior experience with the JAS.,Yes,🟠 I have some significant concerns about the deviation(s),Very confident,in a way this is neither a deviation nor too vague to tell -- the manuscript just doesn't contain enough information,,343,351,No,,Somewhat confident,they preregistered that they might overshoot. The paper states the same target sample size and explains that they indeed went beyond it in order to make use of all participants who had already been recruited before study completion was certain.,No (Option to leave a comment),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Yes,🟠 I have some significant concerns about the deviation(s),Mixed,"There is one clear deviation which I think is an error and which I'm not concerned about: The AT is defined as AT = (initial estimate - final estimate)/(initial estimate - advice) in the prerg and as (final estimate - initial estimate) / (advice - initial estimate) in the paper.
+
+However, there's a bunch of wiggle room on other measures that is difficult to evaluate because prereg and/or paper aren't specific enough, such as ""As in Study 2, we first analyzed participants’ mean AT scores
+collapsed over both judgment tasks""",,"In accordance with the two original studies, we plan to do the following analyses:
+
+1.	Zero order correlations of the following variables: agency, communion, mean AT score, mean confidence shift, rating of judges’ own expertise.
+
+2.	A path model testing the effects of agency (H1) and communion on mean AT scores with participants’ ratings of their own expertise as a potential mediator of the agency effect (H2). We will use the R package lavaan to conduct this analysis and to infer the magnitude and 95% CI of the indirect effect.
+
+3.	A logistic multilevel regression of the decision to adjust on agency and communion. In this model, we will treat agency and communion as level 2 fixed effects. The model will contain random intercept for participant and for the stimuli, but no random slopes since the model does not contain level 1 predictors.","Again, partici-
+pants were resistant to advice weighting it far less than
+50%, t(350) = 40.45, p &lt; .001, and this pattern holds for
+both judgment tasks individually, both t(350) &lt; 31.32, both
+ps &lt; .001. Other than in the previous studies, the zero-order
+correlation of agency and advice taking was not significant.
+Neither was the correlation of communion and advice taking,
+although this effect was close to statistical significance. Split-
+ting this analysis by judgment task showed that the correla-
+tion of agency and advice taking was absent in both tasks.
+In contrast, there was a significant positive correlation of
+communion and advice taking in the distance estimates. For
+the weight estimates, the corresponding correlation was posi-
+tive but not significant, meaning that we did not replicate the
+unexpected communion effect observed in Study 2 (Table 4).
+
+Analysis of confidence shifts
+As in Study 1, our exploratory analysis of confidence shifts
+revealed that participants’ confidence increased from their
+initial to their final estimates (M = 3.44, SD = 1.07 vs.
+M = 3.68, SD = 1.12), t(350) = 14.68, p &lt; .001. As in Study
+2, the confidence shifts were significantly related to commu-
+nion, but this time, the correlation originated from the dis-
+tance estimates and was in the opposite direction (Table 4).
+
+Mediation analysis
+We next tested for mediation of the effects of agency and
+communion via participants’ rating of their own competence.
+Because we did not measure ratings of advisor competence
+in Study 3, the path model is somewhat simpler than those
+in the previous studies. The results—both across judgment
+tasks and separated by judgment task—are displayed in
+Figure 3. Consistent with the analysis of the zero-order cor-
+relations, the effect of agency on advice taking (c1) was not
+significant, and this did not change when controlling for par-
+ticipants’ ratings of their own and their advisor’s expertise
+(c10). The indirect effect of agency via ratings of judges’
+own competence emerged as it did in Studies 1 and 2. How-
+ever, it was notably smaller, a1 × b = .029, p = .036, 95%
+CI [.055, .002]. When analyzing the judgment tasks sep-
+arately, there was only evidence of mediation for distance es-
+timates, a1 × b = .04, p = .009, 95% CI [.07, .01], but
+not for the weight estimates, a1 × b = .01, p = .228, 95%
+CI [.04, .01]. In sum, the results provide at least partial sup-
+port for the mediation hypothesis even when ruling out post
+hoc justification as an alternative explanation.
+
+Analysis of decision to adjust
+As in the previous studies, we predicted the decision to adjust
+towards the advice from agency and communion in a multilevel
+logistic regression with random intercepts for the specific pairs
+of cities nested within participants. As shown in Table 2, neither
+agency nor communion predicted the decision to adjust. Be-
+cause there was an interaction of communion and judgment
+task, we ran separate analyses for the two judgment tasks. How-
+ever, both models were consistent in that neither agency nor
+communion predicted the decision to adjust, all zs &lt; 1.46, all
+ps &gt; .145. Apparently, the interaction was due to a descriptively
+larger effect of communion in the distance estimates as com-
+pared with the weight estimates (b = 0.10 vs. b = 0.01).
+Because agency and communion neither covaried with the
+AT scores nor with the decision to adjust in Study 3, we de-
+cided to omit the follow-up analyses we ran in the previous
+studies. Absent the effects mentioned earlier, finding that
+agency and communion are uncorrelated to the AT scores
+when excluding trials, in which the judges chose to retain
+their initial estimates, would be uninformative.
+
+Accuracy of initial estimates
+As in the previous studies, we investigated the correlation of
+agency and judges’ initial accuracy measured as their MAPE
+scores. Again, this correlation was negative but nonsignificant
+when analyzing across tasks, r(351) = .07, p = .178. Sepa-
+rate analyses by task revealed significantly lower initial
+MAPE scores with increasing agency for distance estimates,
+r(351) = .15, p = .005, but not for the weight estimates,
+r(351) = .04, p = .426. Concerning communion, there was nei-
+ther an effect when analyzing across tasks, r(351) = .04,
+p = .485, nor when separating the analysis by task,
+r(351) = .03, p = .513, and r(351) = .09, p = .089, for the
+distance and weight estimates, respectively.",Yes,🟠 I have some significant concerns about the deviation(s),Somewhat uncertain,"1. Not all zero-order correlations are reported; non-significant results are then split by task which wasn't preregistered.
+
+2. Path models are also reported across tasks and then split by task, which wasn't preregistered.
+
+3. Not sure if the random intercepts that are reported are really the same as what was preregistered -- prereg is too vague. Not clear if agency and communion are treated as fixed effects as preregistered. Interaction is investigated and subsequently the analysis is again split by task, neither of which was preregistered.",,"We will z-standardize agency and communion in the analyses, so that changes in the criterion can be interpreted as the increaes/decreases in man AT scores when a person's agency (or communion) score is one SD above/below the mean. Since this is a linear transformation, it does not affect the relation between the variables of interest.","From Study 1:
+We z-standardized these items (the third item was
+reverse coded) and aggregated the three self-related items
+and the three advisor-related items into measures of per-
+ceived competence of the self (α = .75) and perceived com-
+petence of the advisor (α = .58).",No,,Somewhat confident,,,"The study will be run using a computer program that enforces data entry. Missing data is, therefore, not an issue. Only complete data sets will be considered in the analyses (based on previous experience we don't expect participants to drop out of the study prematurely, but those who do will be replaced to ensure the planned sample size).",Not reported.,The manuscript is Too vague to tell or information not reported,,Somewhat confident,,No,,,,,
+11.12.2025 02:14,11.12.2025 02:45,JC,A Preregistered Study of Competing Predictions Suggests That Men Do Overestimate Women�s Sexual Intent,10.1177/0956797616675474,1,,,,"1.	Experimental Condition 1 will replicate the results of PK Study 3, in that women will report what other women “want” significantly more than what they “say” they want. We will test this prediction using a dependent (paired-samples) t-test comparing the average of the 15 items for column 2 (what women say) to the average of column 3 (what women want). The average for column 3 should be significantly greater than that in column 2. 
+1.1.	Though not a central hypothesis, we also expect that, consistent with past research, across both Conditions, Column 1 averages of sexual intentions (what I want) will be significantly lower than both column 2 and column 3 (tested with separate dependent samples t-tests.)
+2.	Experimental Condition 2 will replicate the results of PK Study 3, in that women will report what other women “want” significantly more than what they “say” they want. We will test this prediction using a dependent samples t-test comparing the average of the 15 items for column 2 (what women want) to the average of column 3 (what women say). The average for column 2 should be significantly greater than that in column 3. 
+3.	The between-group comparisons between the mean of Condition 1 “what others actually want” and the mean of Condition 2 “what others actually want” will be significantly different. Specifically, the mean in Condition 1 will be higher than in Condition 2. We will test this with an independent groups t-test.
+4.	The between-group comparisons between the mean of Condition 1 “what others say” and the mean of Condition 2 “what others say” will be significantly different. Specifically, the mean in Condition 1 will be higher than in Condition 2. We will test this with an independent groups t-test.
+5.	The between-group comparisons between the mean of column 2 across Conditions 1 and 2 will not be significant. That is, people will respond with the same number to “What others want’ and “What others say” when they are presented first (in column 2) .We will test this with an independent groups t-test. We will also use bootstrapped confidence intervals to place constraints on the maximum size of this effect indicated by the data. 
+6.	There will be a main effect of Condition, such that people give higher average responses across columns 2 and 3 in Condition 1 than Condition 2. This will be tested with an independent groups t-test after averaging the two columns.","A Gricean interpretation predicts that women responding to the “say” question first and women responding to the “want” question first would respond identically, as they would be indicating their beliefs about what other women want. Only when one question is asked after the other would women differentiate their responses to them. In contrast, if Perilloux and Kurzban are correct, question order should be irrelevant.
+To investigate these competing possibilities, we conducted a preregistered experiment (see www.osf.io/5tejq/) with an online sample of women and varied the order in which Perilloux and Kurzban’s questions were asked. We predicted that responses to the “say” and “want” questions would be equivalent when they were asked first, whereas Perilloux and Kurzban confirmed their prediction that ratings for the “want” question would be higher than ratings for the “say” question regardless of the order of the questions (personal communication, April 19, 2016). 
+[...]
+Simple-effects analyses revealed that this interaction was consistent with our preregistered hypotheses: As shown in Figure 1, ratings for the “say” and “want” questions were equivalent when these questions were asked first 
+[...]
+women’s differential responses to the “say” and “want” questions in Perilloux and Kurzban’s study were driven by question-order effects and language conventions, rather than by women’s chronic underreporting of their sexual intentions",The manuscript is Too vague to tell or information not reported,,Somewhat confident,Assuming we're not looking at supplementary materials,,Amazon Mturk,Amazon Mechanical Turk,No,,Very confident,,,"We will recruit a sample of participants through Amazon Mturk, who have previously reported being female and between the ages of 18 and 75 in separately conducted demographic screening studies. We will also ask for demographic details within the current survey to confirm and remove anyone who now reports a demographic profile that does not fit our requirements (this includes the requirement to be predominantly or exclusively heterosexual). We will continue recruiting until the sample of complete and demographically valid responses reaches 800 (200 in each condition). We will then eliminate cases in which respondents provide the same numeric rating for all items in a column (suggesting that they are not attending to the survey). There will also be a test question asking participants to identify the current President of the United States of America (all participants will be U.S. residents). Respondents who respond incorrectly will be eliminated. ",A detailed description of the method and analyses is presented in the Supplemental Material available online; we provide a brief overview here. We recruited 414 heterosexual women living in the United States (mean age = 37.7 years) through Amazon Mechanical Turk.,The manuscript is Too vague to tell or information not reported,,Very confident,,,800,414,Yes,🔴 I have serious concerns about the deviation(s),Somewhat confident,,,,,The key experimental manipulation is Condition – the way in which the sexual intent questions will be presented to participants. This variable has four levels (two relevant to the confirmatory analyses) as described in Study Information. ,"Some participants answered the “say” question first (the same order as Perilloux and Kurzban used), and others answered the “want” question first. ",No,,Somewhat confident,,,,,,,,,,,,,,,,,,,,,,,3,,Somewhat confident,,,"We will use a series of t-tests to compare the averages of columns within Condition as well as between Conditions. We will use dependent-sample t-tests for within-Condition comparisons and independent groups t-tests for between-Condition comparisons, as indicated in the hypotheses section. We will conduct these tests using the default settings in R version 3.2.5 (which uses Welsh's correction for independent groups t-tests).
+","A mixed-model analysis of variance revealed a significant interaction between the order of the questions (“say” question first vs. “want” question first) and question type (“say” vs. “want”), F(1, 412) = 43.43, p &lt; .001. Simple-effects analyses revealed that this interaction was consistent with our preregistered hypotheses: As shown in Figure 1, ratings for the “say” and “want” questions were equivalent when these questions were asked first, t(412) = 0.66, p &gt; .25, Bayes factor favoring the null hypothesis (BF01) = 7.43, 95% confidence interval (CI) of the difference = [−0.12, 0.25]. Only when participants were asked a follow-up question did they adjust their answers. This adjustment was upward if they were next asked what women actually want, t(206) = 3.67, 95% CI of the difference = [0.08, 0.27], dz = 0.26, p &lt; .001, and downward if they were next asked what women say, t(206) = −5.71, 95% CI of the difference = [−0.35,−0.17], dz = 0.40, p &lt; .001",Yes,🟠 I have some significant concerns about the deviation(s),Somewhat confident,,,"For each column, the mean of responses to the 15 items will be taken.  
+[...]
+No transformations or recoding is anticipated. ","Participants’ mean estimates of what other women say their sexual intentions are and what they actually want, as a function of the order in which these questions are asked (see note 1). 
+[...]
+Perilloux and Kurzban’s rating scale was from −3 to +3. For ease of comparison between their study and ours, we subtracted 4 from the scores we report.",Yes,🟢 I don’t have significant concerns about the deviation(s),Very confident,,,"Participants who do not complete the survey will be removed from the sample. Content validation in Qualtrics will be checked to require answers, thus removing the possibility of missing data from completed surveys. Should missing data nonetheless appear somehow, responses to the key DV columns will be averaged and included in analyses if 10 or more responses out of 15 are given.",NA,The manuscript is Too vague to tell or information not reported,,Somewhat confident,,No,,,,,
+11.12.2025 01:09,11.12.2025 03:01,BC,A Preregistered Study of Competing Predictions Suggests That Men Do Overestimate Women�s Sexual Intent,10.1177/0956797616675474,1,,,,"1.	Experimental Condition 1 will replicate the results of PK Study 3, in that women will report what other women “want” significantly more than what they “say” they want. We will test this prediction using a dependent (paired-samples) t-test comparing the average of the 15 items for column 2 (what women say) to the average of column 3 (what women want). The average for column 3 should be significantly greater than that in column 2. 
+1.1.	Though not a central hypothesis, we also expect that, consistent with past research, across both Conditions, Column 1 averages of sexual intentions (what I want) will be significantly lower than both column 2 and column 3 (tested with separate dependent samples t-tests.)
+2.	Experimental Condition 2 will replicate the results of PK Study 3, in that women will report what other women “want” significantly more than what they “say” they want. We will test this prediction using a dependent samples t-test comparing the average of the 15 items for column 2 (what women want) to the average of column 3 (what women say). The average for column 2 should be significantly greater than that in column 3. 
+3.	The between-group comparisons between the mean of Condition 1 “what others actually want” and the mean of Condition 2 “what others actually want” will be significantly different. Specifically, the mean in Condition 1 will be higher than in Condition 2. We will test this with an independent groups t-test.
+4.	The between-group comparisons between the mean of Condition 1 “what others say” and the mean of Condition 2 “what others say” will be significantly different. Specifically, the mean in Condition 1 will be higher than in Condition 2. We will test this with an independent groups t-test.
+5.	The between-group comparisons between the mean of column 2 across Conditions 1 and 2 will not be significant. That is, people will respond with the same number to “What others want’ and “What others say” when they are presented first (in column 2) .We will test this with an independent groups t-test. We will also use bootstrapped confidence intervals to place constraints on the maximum size of this effect indicated by the data. 
+6.	There will be a main effect of Condition, such that people give higher average responses across columns 2 and 3 in Condition 1 than Condition 2. This will be tested with an independent groups t-test after averaging the two columns.","We predicted that responses to the “say” and “want” questions would be equivalent when they were asked first, whereas Perilloux and Kurzban confirmed their prediction that ratings for the “want” question would be higher than ratings for the “say” question regardless of the order of the questions (personal communication, April 19, 2016).",The manuscript is Too vague to tell or information not reported,,Very uncertain,,,"We will recruit a sample of participants through Amazon Mturk, who have previously reported being female and between the ages of 18 and 75 in separately conducted demographic screening studies. ",We recruited 414 heterosexual women living in the United States (mean age = 37.7 years) through Amazon Mechanical Turk.,No,,Somewhat confident,what counts as data source vs. inclusion criteria?,,"We will recruit a sample of participants through Amazon Mturk, who have previously reported being female and between the ages of 18 and 75 in separately conducted demographic screening studies. We will also ask for demographic details within the current survey to confirm and remove anyone who now reports a demographic profile that does not fit our requirements (this includes the requirement to be predominantly or exclusively heterosexual). We will continue recruiting until the sample of complete and demographically valid responses reaches 800 (200 in each condition). We will then eliminate cases in which respondents provide the same numeric rating for all items in a column (suggesting that they are not attending to the survey). There will also be a test question asking participants to identify the current President of the United States of America (all participants will be U.S. residents). Respondents who respond incorrectly will be eliminated.
+[...]
+To summarize the exclusion rules, in order to be included in analyses, participants must report being a) female b) between the ages of 18 and 75 c) predominantly or exclusively heterosexual AND d) correctly answer the test question e) not provide the same numeric rating for all 15 responses in any column.",None.,The manuscript is Too vague to tell or information not reported,,Somewhat confident,,,"The sample size will be 800 participants overall, which represents 200 participants in each of our four Conditions. Since within each Condition, participants respond to all DVs, this represents a sample size of 200 per cell. ",We recruited 414 heterosexual women living in the United States (mean age = 37.7 years) through Amazon Mechanical Turk. ,Yes,🔴 I have serious concerns about the deviation(s),Somewhat confident,what's happened here? Am i missing something??,,,,"The key experimental manipulation is Condition – the way in which the sexual intent questions will be presented to participants. This variable has four levels (two relevant to the confirmatory analyses) as described in Study Information.
+
+This study is a four-group, randomized mixed design. That is, participants will be randomly assigned to one of four Conditions, within which they will answer repeated measures (responding to 3 columns of the sexual interest scale). Responses will be compared both between and within Conditions.","Some participants answered the “say” question first (the same order as Perilloux and Kurzban used), and others answered the “want” question first.",The manuscript is Too vague to tell or information not reported,,Very uncertain,Not sure what the other two levels are but Im confused,,,,,,,,,,,,,,,,,,,,,,3,,Somewhat confident,"They explicitly say the extra variables they collect will NOT be used in their analysis, so i dont think they count for our definition of third variable",,"We will use a series of t-tests to compare the averages of columns within Condition as well as between Conditions. We will use dependent-sample t-tests for within-Condition comparisons and independent groups t-tests for between-Condition comparisons, as indicated in the hypotheses section. We will conduct these tests using the default settings in R version 3.2.5 (which uses Welsh's correction for independent groups t-tests).","Simple-effects analyses revealed that this interaction was consistent with our preregistered hypotheses: As shown in Figure 1, ratings for the “say” and “want” questions were equivalent when these questions were asked first, t(412) = 0.66, p &gt; .25, Bayes factor favoring the null hypothesis (BF01) = 7.43, 95% confidence interval (CI) of the difference = [−0.12, 0.25].  Only when participants were asked a follow-up question did they adjust their answers. This adjustment was upward if they were next asked what women actually want, t(206) = 3.67, 95% CI of the difference = [0.08, 0.27], dz = 0.26, p &lt; .001, and downward if they were next asked what women say, t(206) = −5.71, 95% CI of the difference = [−0.35,−0.17], dz = 0.40, p &lt; .001. ",No,,Mixed,does the BF count as a deviation?,,No transformations or recoding is anticipated. ,None mentioned,No,,Somewhat uncertain,,,"Participants who do not complete the survey will be removed from the sample. Content validation in Qualtrics will be checked to require answers, thus removing the possibility of missing data from completed surveys. Should missing data nonetheless appear somehow, responses to the key DV columns will be averaged and included in analyses if 10 or more responses out of 15 are given.",None.,The manuscript is Too vague to tell or information not reported,,Somewhat confident,,No,,,,,
+11.12.2025 02:38,11.12.2025 03:04,RC,A Preregistered Study of Competing Predictions Suggests That Men Do Overestimate Women�s Sexual Intent,10.1177/0956797616675474,1,,,,"1.	Experimental Condition 1 will replicate the results of PK Study 3, in that women will report what other women “want” significantly more than what they “say” they want. We will test this prediction using a dependent (paired-samples) t-test comparing the average of the 15 items for column 2 (what women say) to the average of column 3 (what women want). The average for column 3 should be significantly greater than that in column 2. 
+1.1.	Though not a central hypothesis, we also expect that, consistent with past research, across both Conditions, Column 1 averages of sexual intentions (what I want) will be significantly lower than both column 2 and column 3 (tested with separate dependent samples t-tests.)
+2.	Experimental Condition 2 will replicate the results of PK Study 3, in that women will report what other women “want” significantly more than what they “say” they want. We will test this prediction using a dependent samples t-test comparing the average of the 15 items for column 2 (what women want) to the average of column 3 (what women say). The average for column 2 should be significantly greater than that in column 3. 
+3.	The between-group comparisons between the mean of Condition 1 “what others actually want” and the mean of Condition 2 “what others actually want” will be significantly different. Specifically, the mean in Condition 1 will be higher than in Condition 2. We will test this with an independent groups t-test.
+4.	The between-group comparisons between the mean of Condition 1 “what others say” and the mean of Condition 2 “what others say” will be significantly different. Specifically, the mean in Condition 1 will be higher than in Condition 2. We will test this with an independent groups t-test.
+5.	The between-group comparisons between the mean of column 2 across Conditions 1 and 2 will not be significant. That is, people will respond with the same number to “What others want’ and “What others say” when they are presented first (in column 2) .We will test this with an independent groups t-test. We will also use bootstrapped confidence intervals to place constraints on the maximum size of this effect indicated by the data. 
+6.	There will be a main effect of Condition, such that people give higher average responses across columns 2 and 3 in Condition 1 than Condition 2. This will be tested with an independent groups t-test after averaging the two columns.","We predicted that responses to the “say” and “want” questions would be equivalent when they were asked first, whereas Perilloux and Kurzban confirmed their prediction that ratings for the “want” question would be higher than ratings for the “say” question regardless of the order of the questions (personal communication, April 19, 2016).",Yes,🔴 I have serious concerns about the deviation(s),Very confident,,,We will recruit a sample of participants through Amazon Mturk,We recruited 414 heterosexual women living in the United States (mean age = 37.7 years) through Amazon Mechanical Turk.,No,,Very confident,,,"who have previously reported being female and between the ages of 18 and 75 in separately conducted demographic screening studies. We will also ask for demographic details within the current survey to confirm and remove anyone who now reports a demographic profile that does not fit our requirements (this includes the requirement to be predominantly or exclusively heterosexual). We will continue recruiting until the sample of complete and demographically valid responses reaches 800 (200 in each condition). We will then eliminate cases in which respondents provide the same numeric rating for all items in a column (suggesting that they are not attending to the survey). There will also be a test question asking participants to identify the current President of the United States of America (all participants will be U.S. residents). Respondents who respond incorrectly will be eliminated.
+
+To summarize the exclusion rules, in order to be included in analyses, participants must report being a) female b) between the ages of 18 and 75 c) predominantly or exclusively heterosexual AND d) correctly answer the test question e) not provide the same numeric rating for all 15 responses in any column.",Not reported.,The manuscript is Too vague to tell or information not reported,,Very confident,,,"The sample size will be 800 participants overall, which represents 200 participants in each of our four Conditions. Since within each Condition, participants respond to all DVs, this represents a sample size of 200 per cell. ","We recruited 414 heterosexual women living in the
+United States (mean age = 37.7 years) through Amazon
+Mechanical Turk.",Yes,🔴 I have serious concerns about the deviation(s),Very confident,,,,,"Before the experimental section participants will report their age and ethnicity. After the experimental section all participants will then report their relationship status, their sexual orientation, their current income, their level of religious affiliation, their employment status, their biological sex, where they currently live and for how long they have lived there, and their languages spoken, in order of fluency. None of these variables are intended for use in our central analyses, but rather are measured for consistency with the original study, so that we can characterize the sample, and for some possible exploratory follow-up analyses",--,The manuscript is Too vague to tell or information not reported,,Somewhat confident,,,,,,,,,,,,,,,,,,,,,,,3,,Very uncertain,--,,"We will use a series of t-tests to compare the averages of columns within Condition as well as between Conditions. We will use dependent-sample t-tests for within-Condition comparisons and independent groups t-tests for between-Condition comparisons, as indicated in the hypotheses section. We will conduct these tests using the default settings in R version 3.2.5 (which uses Welsh's correction for independent groups t-tests).","A mixed-model analysis of variance revealed a significant
+interaction between the order of the questions
+(“say” question first vs. “want” question first) and question
+type (“say” vs. “want”), F(1, 412) = 43.43, p &lt; .001.
+
+As shown
+in Figure 1, ratings for the “say” and “want” questions
+were equivalent when these questions were asked first,
+t(412) = 0.66, p &gt; .25, Bayes factor favoring the null
+hypothesis (BF01) = 7.43, 95% confidence interval (CI) of
+the difference = [−0.12, 0.25].",Yes,🟠 I have some significant concerns about the deviation(s),Somewhat confident,,,No transformations or recoding is anticipated. ,Not reported.,The manuscript is Too vague to tell or information not reported,,Somewhat confident,,,"Participants who do not complete the survey will be removed from the sample. Content validation in Qualtrics will be checked to require answers, thus removing the possibility of missing data from completed surveys. Should missing data nonetheless appear somehow, responses to the key DV columns will be averaged and included in analyses if 10 or more responses out of 15 are given.",Not reported.,The manuscript is Too vague to tell or information not reported,,Very confident,,No,,,,,
+11/30/2025 21:55:22,11/30/2025 22:44:28,BC,Successfully Striving for Happiness: Socially Engaged Pursuits Predict Increases in Life Satisfaction,10.1177/0956797618761660,1,,,,"Individuals who come up with socially engaged ways to increase/maintain their life satisfaction will show higher levels of concurrent life satisfaction relative to individuals who solely come up with individualistic ways.
+
+Individuals who come up with socially engaged ways to increase/maintain their life satisfaction will experience positive changes in life satisfaction relative to individuals who solely come up with individualistic ways.","In this study, we investigated whether individuals who described socially engaged strategies for improving their life satisfaction experienced more positive changes than individuals who described nonsocial strategies.",The manuscript is Too vague to tell or information not reported,,Mixed,"the manuscript is vaguer in terms of positive changes, and also doesnt make the direction of the hypothesis super clear.",,The data have been collected as a part of the Innovation Sample of the Socio-Economic Panel Study (SOEP-IS).,"Data came from the German Socio-Economic Panel Study (SOEP; Wagner, Frick, & Schupp, 2007) Innovation Sample (SOEP IS; Richter & Schupp, 2015). ",No,,Very confident,,,We excluded those respondents that did answer the open-ended question about life satisfaction but did not report any active strategies how to maintain/increase their life satisfaction (see also the described coding procedure for the independent variable). This lead to the exclusion of 668 of the 1340 text answers; resulting in 672 valid answers which were coded for socially engaged pursuit of happiness.,"In 2014, a total of 6,638 respondents took part in the SOEP IS; in 2015, 5,897 respondents took part in the survey; 1,120 of the respondents in 2014 were not surveyed in 2015, leaving a total of 5,518 respondents who participated in both years.  [...]
+
+Of the 5,518 respondents who participated in both 2014 and 2015, 4 did not answer the life-satisfaction item in at least 1 of the 2 years and were thus excluded from further analysis, leaving 5,514. [...]
+
+The focal preregistered analysis stated that we would compare individuals with socially engaged strategies such as “helping others” (n = 184) with individuals with other, nonsocial strategies, such as “stop smoking” (n = 398). Overall, this analysis included 582 respondents (53.78% female) who were slightly younger on average (M = 46.87 years, SD = 14.53) compared with the first analysis. This analysis was registered after the SOEP IS data (2014 and 2015) had been collected but before the texts had been rated and before we looked at the life-satisfaction data. Thus, the variables necessary to run the focal analysis did not exist when the analyses and hypotheses were preregistered. Refer to the preregistration form and an additional timeline of the project on the OSF for details about the preregistration.",Yes,🟠 I have some significant concerns about the deviation(s),Mixed,"Based on the last segment extracted from the text it looks like some details were unknown at the time of preregistering, so i assume there was a deviation (otherwise, it's 'manuscript was too vague to tell').
+
+Normally, given this is secondary data, I would have some concerns. Julia Rohrer being first author greatly decreases that though...",,"We will include all SOEP-IS respondents that answered (1) the open-ended text question on ideas regarding life satisfaction (n = 1364), (2) the one-item measure of life satisfaction in 2014 (n = 6,638), and (3) the one-item measure of life satisfaction in 2015 (n = 5,897) in all analyses. Total sample comprised of 1,198 respondents.","The focal preregistered analysis stated that we would compare individuals with socially engaged strategies such as “helping others” (n = 184) with individuals with other, nonsocial strategies, such as “stop smoking” (n = 398). Overall, this analysis included 582 respondents (53.78% female) who were slightly younger on average (M = 46.87 years, SD = 14.53) compared with the first analysis. This analysis was registered after the SOEP IS data (2014 and 2015) had been collected but before the texts had been rated and before we looked at the life-satisfaction data. Thus, the variables necessary to run the focal analysis did not exist when the analyses and hypotheses were preregistered. Refer to the preregistration form and an additional timeline of the project on the OSF for details about the preregistration.",Yes,🟠 I have some significant concerns about the deviation(s),Mixed,,No (Option to leave a comment),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,No,,Somewhat uncertain,uncertain mostly about the second coding (running low on time to code this),,"(1) Comparison of life satisfaction at baseline (t1) between the groups ""socially engaged pursuit"" and ""individualistic pursuit"" using an unpaired t-test.
+Tests the hypothesis that individuals with socially engaged pursuit of happiness report higher levels of concurrent life satisfaction.
+
+(2) t-test comparing the difference scores (life satisfaction t2-life satisfaction t1) between the two groups ""socially engaged pursuit"" and ""individualistic pursuit""
+Tests the hypothesis that the group of individuals with socially engaged pursuit experiences more positive changes in life satisfaction than the group with individualistic pursuit.
+
+(3) Regression analysis predicting life satisfaction at t2 from life satisfaction at t1 and group variable (""socially engaged pursuit""/""individualistic pursuit"").
+Coefficient of interest is the effect of the group variable
+Tests the hypothesis that, given the same life satisfaction at t1, an individual with a socially engaged pursuit experiences more positive changes in life satisfaction than an individual with individualistic pursuit.","In 2014, individuals who described a socially engaged strategy reported slightly higher levels of life satisfaction (M = 7.57) than individuals who described only nonsocial strategies (M = 7.29), d = 0.18, 95% CI = [0.01, 0.36], t(342.86) = −2.03, p = .043 (see Fig. 1b).
+
+From 2014 to 2015, the group reporting a social strategy showed a slight increase in mean satisfaction of 0.19 scale points; d = 0.13, 95% CI = [0.08, 0.33], t(183) = 1.99, p = .047. By contrast, the mean life satisfaction in the group reporting nonsocial strategies remained virtually unchanged, with a decrease of 0.02 scale points, d = −0.01, 95% CI = [−0.15, 0.13], t(397) = −0.26, p = .792.
+
+We ran a linear regression model predicting life satisfaction in 2015 from life satisfaction in 2014 and created a binary indicator reflecting social strategies (0 = only nonsocial strategies, 1 = at least one social strategy). The results indicated that, controlling for baseline differences in life satisfaction, socially engaged strategies had a positive effect on life satisfaction in 2015, b = 0.33, SE = 0.12, p = .005 (see Table S2 in the Supplemental Material for the complete regression output). This effect equals 0.21 SD units of the life-satisfaction scale, 95% CI = [0.06, 0.36].2",No,,Somewhat uncertain,,,no transformations planned ,Not reported,No,,Somewhat confident,"They do technically transform a categorical variable into a binary variable for the regression, but that's the only way you would analyse that variable",,"Only complete cases (life satisfaction t1, life satisfaction t2, socially engaged pursuit of happiness y/n) will be analyzed.","Of the 5,518 respondents who participated in both 2014 and 2015, 4 did not answer the life-satisfaction item in at least 1 of the 2 years and were thus excluded from further analysis, leaving 5,514.
+
+On the screen, the following words were displayed: “What could you do to ensure that you will be more satisfied in the future or continue to be as satisfied as you already are? What are your ideas?” with the additional instructions “Please take some time to reply and express your ideas in a few words.” A total of 1,178 respondents answered this open-ended question.",No,,Mixed,the flow of participants is hard to follow in this study,No,"RE: deviations mentioned, sort of but not really?
+""This analysis was registered after the SOEP IS data (2014 and 2015) had been collected but before the texts had been rated and before we looked at the life-satisfaction data. Thus, the variables necessary to run the focal analysis did not exist when the analyses and hypotheses were preregistered. Refer to the preregistration form and an additional timeline of the project on the OSF for details about the preregistration.""",,,,
+11/23/2025 9:07:47,11/23/2025 9:58:28,JC,Successfully Striving for Happiness: Socially Engaged Pursuits Predict Increases in Life Satisfaction,10.1177/0956797618761660,1,,,,"Individuals who come up with socially engaged ways to increase/maintain their life satisfaction will show higher levels of concurrent life satisfaction relative to individuals who solely come up with individualistic ways.
+
+Individuals who come up with socially engaged ways to increase/maintain their life satisfaction will experience positive changes in life satisfaction relative to individuals who solely come up with individualistic ways.
+
+[...]
+Tests the hypothesis that individuals with socially engaged pursuit of happiness report higher levels of concurrent life satisfaction.
+[...]
+Tests the hypothesis that the group of individuals with socially engaged pursuit experiences more positive changes in life satisfaction than the group with individualistic pursuit.
+[...]
+Tests the hypothesis that, given the same life satisfaction at t1, an individual with a socially engaged pursuit experiences more positive changes in life satisfaction than an individual with individualistic pursuit.","In this study, we investigated whether individuals
+who described socially engaged strategies for improving
+their life satisfaction experienced more positive changes
+than individuals who described nonsocial strategies.
+[...]
+One year later, life satisfaction was assessed again, allowing us to test whether
+mentions of active pursuits of happiness per se were
+associated with life satisfaction and whether strategies
+involving social engagement—but not nonsocial
+strategies—increased well-being.
+[...]
+In addition, we
+assessed the extent to which our results were robust to
+the potential threat of unobserved confounding and
+tested whether the effects of social strategies were mediated by the frequency with which respondents actually
+socialized. 
+[...]
+The focal preregistered analysis stated that we would
+compare individuals with socially engaged strategies
+such as “helping others” (n = 184) with individuals with
+other, nonsocial strategies, such as “stop smoking” (n =
+398).
+[...]
+ In addition to this model, which had
+been registered as the central test of our hypothesis, we also
+compared difference scores (life satisfaction in 2015 – life satisfaction in 2014) between the two groups (social: M = 0.19, nonsocial: M = −0.02), which tested a slightly different hypothesis:
+Ignoring initial differences, which of the two groups “gained”
+more life satisfaction?",No,,Somewhat confident,,,The data have been collected as a part of the Innovation Sample of the Socio-Economic Panel Study (SOEP-IS). ,"Data came from the German Socio-Economic Panel
+Study (SOEP; Wagner, Frick, & Schupp, 2007) Innovation Sample (SOEP IS; Richter & Schupp, 2015).",No,,Very confident,,,"We will include all SOEP-IS respondents that answered (1) the open-ended text question on ideas regarding life satisfaction (n = 1364), (2) the one-item measure of life satisfaction in 2014 (n = 6,638), and (3) the one-item measure of life satisfaction in 2015 (n = 5,897) in all analyses. Total sample comprised of 1,198 respondents.
+[...]
+We excluded those respondents that did answer the open-ended question about life satisfaction but did not report any active strategies how to maintain/increase their life satisfaction (see also the described coding procedure for the independent variable). This lead to the exclusion of 668 of the 1340 text answers; resulting in 672 valid answers which were coded for socially engaged pursuit of happiness.
+[...]
+No exclusion of outliers is planned.","Of the 5,518 respondents
+who participated in both 2014 and 2015, 4 did not
+answer the life-satisfaction item in at least 1 of the 2
+years and were thus excluded from further analysis,
+leaving 5,514.
+[...]
+The initial analysis compared individuals who reported
+strategies for how they could actively maintain or
+improve their well-being (n = 582) with individuals who
+answered the question differently—either by making a
+general statement, such as “everything is fine” or “there
+is not much I could change,” or describing a specific
+idea or wishes that did not necessarily imply an action
+taken by the respective individual, such as “different
+politics would improve life” (n = 596, of which 370
+made a general statement and 226 gave only nonactive
+ideas). Overall, the analysis included 1,178 respondents
+(54.16% female) who had an average age of 50.97 years
+in 2014 (SD = 17.85).
+[...]
+The focal preregistered analysis stated that we would
+compare individuals with socially engaged strategies
+such as “helping others” (n = 184) with individuals with
+other, nonsocial strategies, such as “stop smoking” (n =
+398). ",The manuscript is Too vague to tell or information not reported,,Somewhat confident,,,"In 2014, 5,868 respondents (52.1% female) in 3,721 households participated in the SOEP-IS. The SOEP-IS spans the whole adult age range from 17 to 96 years (M = 51.79 years, SD = 18.31 years) and is a randomly drawn representative sample of private households in Germany. The sample consists of respondents with differing levels of education (19.0% low education: ISCED-Scores 0, 1, and 2; 56.2% medium education: ISCED-Scores 3 and 4; and 24.8% high education: ISCED-Scores 5 and 6; ISCED-1997; OECD, 1999), work situations (36.4% working full-time, 17.5% working part-time, 30.0% retired, 16.1% not working), and marital statuses (25.5% single, 56.7% married, 10.0% divorced, 7.8% widowed). In addition, 27.8% of the respondents live in households with children aged 16 years or younger.
+[...]
+We will include all SOEP-IS respondents that answered (1) the open-ended text question on ideas regarding life satisfaction (n = 1364), (2) the one-item measure of life satisfaction in 2014 (n = 6,638), and (3) the one-item measure of life satisfaction in 2015 (n = 5,897) in all analyses. Total sample comprised of 1,198 respondents.
+[...]
+We excluded those respondents that did answer the open-ended question about life satisfaction but did not report any active strategies how to maintain/increase their life satisfaction (see also the described coding procedure for the independent variable). This lead to the exclusion of 668 of the 1340 text answers; resulting in 672 valid answers which were coded for socially engaged pursuit of happiness.","Of the 5,518 respondents
+who participated in both 2014 and 2015, 4 did not
+answer the life-satisfaction item in at least 1 of the 2
+years and were thus excluded from further analysis,
+leaving 5,514.
+[...]
+Of the 5,514 left in the analysis,
+only 1,547 were assigned to the more detailed wellbeing module.
+[...]
+ A total of 1,178 respondents answered this
+open-ended question.
+This final sample of 1,178 respondents did not differ
+from the original sample of 5,518 SOEP IS respondents
+with respect to gender, age, years of education, employment status, or marital status (all ps &gt; .133).
+[...]
+The initial analysis compared individuals who reported
+strategies for how they could actively maintain or
+improve their well-being (n = 582) with individuals who
+answered the question differently—either by making a
+general statement, such as “everything is fine” or “there
+is not much I could change,” or describing a specific
+idea or wishes that did not necessarily imply an action
+taken by the respective individual, such as “different
+politics would improve life” (n = 596, of which 370
+made a general statement and 226 gave only nonactive
+ideas). Overall, the analysis included 1,178 respondents
+(54.16% female) who had an average age of 50.97 years
+in 2014 (SD = 17.85).",Yes,🟠 I have some significant concerns about the deviation(s),Somewhat confident,,No (Option to leave a comment),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Yes,🟢 I don’t have significant concerns about the deviation(s),Very confident,deviations are noted,,"(1) Comparison of life satisfaction at baseline (t1) between the groups ""socially engaged pursuit"" and ""individualistic pursuit"" using an unpaired t-test.
+Tests the hypothesis that individuals with socially engaged pursuit of happiness report higher levels of concurrent life satisfaction.
+
+(2) t-test comparing the difference scores (life satisfaction t2-life satisfaction t1) between the two groups ""socially engaged pursuit"" and ""individualistic pursuit""
+Tests the hypothesis that the group of individuals with socially engaged pursuit experiences more positive changes in life satisfaction than the group with individualistic pursuit.
+
+(3) Regression analysis predicting life satisfaction at t2 from life satisfaction at t1 and group variable (""socially engaged pursuit""/""individualistic pursuit"").
+Coefficient of interest is the effect of the group variable
+Tests the hypothesis that, given the same life satisfaction at t1, an individual with a socially engaged pursuit experiences more positive changes in life satisfaction than an individual with individualistic pursuit.
+[...]
+Because such a high number of participants did not report active strategies but instead answered in a different way, we intend to also explore whether there are any differences in level/change in life satisfaction between participants reporting an active strategy and participants reporting no active strategy.
+
+In case we find no differences between the individuals reporting socially engaged pursuit of happiness versus other pursuits of happiness, we will pool those individuals and compare this ""active"" group with the group of respondents reporting no strategy.
+In case we do find differences between the individuals reporting socially engaged pursuit of happiness versus other pursuits of happiness, we will not pool thes","Individuals who did not report a strategy had slightly
+higher levels of life satisfaction (M = 7.49) than individuals who reported a strategy (M = 7.38), but this
+difference was negligible, d = 0.07, 95% confidence
+interval (CI) = [−0.04, 0.19], t(1175.9) = 1.23, p = .212 
+[...]
+From 2014 to 2015,
+the group reporting no strategy showed a slight increase
+in mean satisfaction of 0.10 scale points, d = 0.07, 95%
+CI = [−0.05, 0.18], t(595) = 1.86, p = .063. The group
+reporting a strategy showed a negligible increase of 0.05
+scale points, d = 0.03, 95% CI = [−0.09, 0.15], t(581) =
+0.77, p = .441.
+[...]
+We ran a linear model in which we predicted life
+satisfaction in 2015 from two predictors: life satisfaction
+in 2014 and a binary indicator reflecting whether the
+respondent reported a strategy or not (0 = no strategy
+reported, 1 = at least one strategy reported).
+[...]
+In our central analysis, we compared two subgroups of
+the respondents who described an active strategy in
+their answer: Individuals who described at least one
+socially engaged strategy and individuals who reported
+only nonsocial strategies. In 2014, individuals who
+described a socially engaged strategy reported slightly
+higher levels of life satisfaction (M = 7.57) than individuals who described only nonsocial strategies (M =
+7.29), d = 0.18, 95% CI = [0.01, 0.36], t(342.86) = −2.03,
+p = .043 (see Fig. 1b). 
+[...]
+We ran a linear regression model predicting life satisfaction in 2015 from life satisfaction in 2014 and created a binary indicator reflecting social strategies (0 =
+only nonsocial strategies, 1 = at least one social strategy). 
+[...]
+Oster (2016) developed a method that allows researchers to assess the
+extent to which an effect is robust to unobserved confounding on the basis of changes in coefficients and
+changes in explained variance when controlling for
+observed confounding. The procedure can be used to
+answer the question of the extent to which unobserved
+confounders would need to affect selection into the
+group of treated respondents (i.e., respondents reporting socially engaged strategies) in order to negate the
+observed effect.3
+ This analysis indicated that the selection based on unobserved confounders would need to
+be 1.47 times as important as the selection based on
+the observed confounder (life satisfaction in 2014) to
+render the effect of socially engaged strategies on life
+satisfaction in 2015 zero, which can be considered a
+robust effect according to the standard suggested by
+Oster (2016). 
+[...]
+Therefore, we additionally ran an unpreregistered
+mediation analysis to test whether the relationship between
+strategies and life satisfaction could in part be explained by
+socializing with friends, relatives, or neighbors.
+[...]
+Among the respondents who had
+reported an active idea, those who reported a socially
+engaged strategy in 2014 reported more frequent socializing (social: Mdn = 4; nonsocial: Mdn = 3, z = −3.46,
+p &lt; .001, or when we treated socializing as a continuous
+variable, social: M = 3.42; nonsocial: M = 3.19; d = 0.32,
+95% CI = [0.15, 0.50]), t(410.98) = −3.81, p &lt; .001.
+[...]
+To test whether more frequent socializing could
+partly explain the relationship between socially engaged
+strategies and life satisfaction, we ran a mediation analysis in Mplus (Version 7.4; Muthén & Muthén, 2012). In
+our model, we predicted life satisfaction in 2015 from
+life satisfaction in 2014, whether or not respondents
+had reported a socially engaged strategy in 2014 and
+socializing in 2015 (treated as an ordinal variable). Furthermore, we predicted socializing in 2015 from the
+strategies reported in 2014, and we allowed life satisfaction in 2014 to correlate with socializing in 2015 and
+strategies reported in 2014. 
+[...]
+In addition to the central preregistered analysis, we ran
+exploratory analyses including additional independent
+variables (i.e., alternative categories of strategies) and
+additional dependent variables (i.e., alternative measures
+of well-being). Details and results can be found in the
+Supplemental Material.",Yes,🟢 I don’t have significant concerns about the deviation(s),Very confident,,,no transformations planned ,NA,No,,Somewhat confident,,,"Only complete cases (life satisfaction t1, life satisfaction t2, socially engaged pursuit of happiness y/n) will be analyzed.","No explicit text about this, but clear from context that it is consistent with preregistration",No,,Mixed,,Yes,"Some deviations were specified; others less clear (e.g., samples).",,,,
+,11/23/2025 9:58:28,RC,Successfully Striving for Happiness: Socially Engaged Pursuits Predict Increases in Life Satisfaction,10.1177/0956797618761660,1,,,,Individuals who come up with socially engaged ways... will show higher levels... and positive changes,we investigated whether individuals who described socially engaged strategies... experienced more positive changes,No,,,,,"SOEP-IS longitudinal panel (2014, 2015)",Data came from the German Socio-Economic Panel Study (SOEP IS),No,,,,,include respondents answering text + life satisfaction both waves; exclude no active strategies,"final sample of 1,178 respondents... exclusions based on missing answers",The manuscript is Too vague to tell or information not reported,,,,,"Total sample comprised of 1,198 respondents","final sample of 1,178 respondents",Yes,,,,,,,,,,,,,,life satisfaction t1/t2; coded socially engaged pursuit,,,,,,,,,,life satisfaction 2014/2015; coded strategies,,,,,,,,,,No,,,,,t-tests and regression predicting t2 from t1 + group,linear model predicting life satisfaction 2015 from 2014 and group,No,,,,,no transformations planned,no explicit transformations reported,No,,,,,only complete cases analyzed,excluded missing responses,No,,,,,,,,,
+02.10.2026 02:27,02.10.2026 03:02,BC,A hard-to-read font reduces the framing effect in a large sample.,10.3758/s13423-017-1395-4,3,,,,"We test the directional hypothesis that presenting the ""Asian disease"" scenario in a hard-to-read font to one group of participants will diminish the well-described framing effect (in comparison to a group of participants who answer the same scenario in an easy-to-read font).","Therefore, we tested whether hard-to-read fonts diminish
+framing effects as one of the most prominent and well replicated decision biases.",No,,Somewhat confident,,,"Participants will be recruited via the panel of a German online survey system (https://www.soscisurvey.de), which we used previously for data collection (Oganian, Korn, Heekeren, 2016, JEP:LMC, Language Switching—But Not Foreign Language Use Per Se—Reduces he Framing Effect).","As in Experiment 2, we used the online system
+SoSci Survey, which offers the opportunity to recruit participants of an associated panel. ",No,,Very confident,,,"Inclusion criteria for data analysis: 
+a) Completed questionnaire (includes answers of the framing question, the control framing question, and questions about mother tongue, age, and readability), 
+b) German mother tongue (self-report), 
+c) age between 18 and 60, 
+d) comments in a question at the end of questionnaire indicate no knowledge of framing or disfluency effects (i.e., we ask the question ""Have you previously encountered the type of question asked here (from your studies, from reading books, etc.)? If so, please explain."" and exclude participants whose answer includes the words ""Asian disease"", ""framing"", ""disfluency"", ""hard-to-read font"", ""Kahneman"" ).
+
+No data will be excluded (from the participants who met the inclusion criteria). ","Participants were included if a)
+German was their only mother tongue, b) age was between
+18 and 60 years, c) they indicated their sex, d) they completed
+all framing questions, and e) comments at the end of questionnaire indicated no knowledge of framing or disfluency effects.",Yes,🟢 I don’t have significant concerns about the deviation(s),Somewhat confident,,,"Our targeted sample size is 712 participants.
+[...]
+Data will be collected until the number of participants who meet the inclusion criteria reaches the targeted sample size. We will check the number of participants who meet the inclusion criteria one week after data collection. If the number is more than 10% below the targeted sample size, we will ask the panel administrator to recruit more participants via email in order to reach the targeted sample size. If the number exceeds the targeted sample size, data collection will be stopped (and the survey will be taken offline). After a week from the start of data collection, this procedure will be repeated every second day until the targeted sample size is reached. ","In accordance with the preregistration, we checked after 7 days
+and then again in intervals of 2 days whether the number of
+participants meeting the inclusion criteria (which were the
+same as in Experiment 2) was above 712. After 9 days, 835
+participants had started the questionnaire and 732 participants
+(mean age = 39.0 years, SD = 11.93; 63% female) met the
+inclusion criteria.",No,,Very confident,,Yes,,,"We use the classic ""Asian disease"" framing scenario, which is presented in the gain or in the loss frame (for the English wording see Table 1 in Oganian, et al., 2016). 
+The text is presented in a hard-to-read font (Monotype Corsiva; printed in gray; RGB 190, 190, 190) or in an easy-to-read font (Arial; printed in black).
+The study follows a 2 (frame: gain/loss) x 2 (font: easy-/hard-to-read) design. Both factors are between-subjects.
+[...]
+As a control scenario, we will present a scenario, in which no framing effect should emerge because the gain and loss frames differ in their expected value (see Oganian, et al., 2016 for details and Table 1 for the wording of the used ""unemployment problem"").","As in Experiment 1, we used
+Monotype Corsiva (printed in gray; RGB 190, 190, 190, 9-
+point) as hard-to-read font. Because this font is not installed on
+many systems, we implemented all relevant texts as pictures.
+The fluent font was Arial (printed in black, 9-point).
+Participants were randomly allocated to conditions and dropouts were balanced (final sample: easy-to-read font: N = 378;
+hard-to-read font: N = 354). 
+
+Fourth, we focused on the
+best-validated framing question, the classic BAsian disease^
+scenario (along with the control scenario). ",No,,Mixed,,,"The outcome measure is the response to the framing scenario, i.e., choice of sure option (see option A in Table 1 in Oganian, et al., 2016) or risky option (option B).","As a manipulation check, participants will rate the readability of the presented font on a 7-point scale (with 1 not easy-to-read at all and 7 very easy-to-read). ","As a first covariate, participants complete the 33-items version of the German ""need for cognition"" scale (Bless, Fellhauer, Bohner, Schwarz, 1999, Zentrum für Umfragen, Methoden und Analysen -ZUMA- (Ed.): Need for cognition: eine Skala zur Erfassung von Engagement und Freude bei Denkaufgaben).","As a second covariate, participants complete the 7-items version of the Berlin Numeracy Test (Cokely, Galesic, Schulz, Ghazal, Garcia-Retamero, 2012, Judgment and Decision Making, Measuring Risk Literacy: The Berlin Numeracy Test).",,,,,,, Participants answered the classicBAsian disease^ scenario [...]," Participants answered the [...] readability, and prior knowledge of the scenarios. ","Afterwards, participants were asked to complete the 33-items NFC scale [...]","Afterwards, participants were asked to complete [...] the 7-items BNT questionnaire.",,,,,,,No,,Somewhat confident,,,"We will use a logistic regression to analyze the binary outcome variable (choice of sure or risky option). The predictors include the factors frame, font, and their interaction. Our main hypothesis concerns the interaction effect.","The registered, confirmatory hypothesis testing indicated that
+the interaction effect of frame X font was significant, p =
+0.044 one-sided, indicating that the hard-to-read font reduced the framing effect (Tables 1 and 2). The main effect
+of frame was highly significant, but the main effect of
+font did not reach significance.
+
+[See Table 2]",No,,Somewhat confident,,,We will use dummy coding for the binary predictors with the gain frame and easy-to-read font as reference categories.,Not reported.,The manuscript is Too vague to tell or information not reported,,Mixed,,,"Missing data on the following questions is an exclusion criterion; The ""Asian disease"" framing question, the control framing question, and questions about mother tongue, age, and readability (see inclusion criteria).
+Participans with missing data on the two covariates will be excluded from the follow-up analyses.",Not reported,The manuscript is Too vague to tell or information not reported,,Very confident,,No,,"Measured Variable 1, Measured Variable 2, Measured Variable  3, Measured Variable 4, Measured Variable 5, Measured Variable 6, Measured Variable 7, Measured Variable 8, Measured Variable 9, Measured Variable 10","Measured Variable 1, Measured Variable 2, Measured Variable 3, Measured Variable 4, Measured Variable 5, Measured Variable 6, Measured Variable 7, Measured Variable 8, Measured Variable 9, Measured Variable 10"," Participants answered the classicBAsian disease^ scenario [...]| Participants answered the [...] readability, and prior knowledge of the scenarios. |Afterwards, participants were asked to complete the 33-items NFC scale [...]|Afterwards, participants were asked to complete [...] the 7-items BNT questionnaire.","The outcome measure is the response to the framing scenario, i.e., choice of sure option (see option A in Table 1 in Oganian, et al., 2016) or risky option (option B).|As a manipulation check, participants will rate the readability of the presented font on a 7-point scale (with 1 not easy-to-read at all and 7 very easy-to-read). |As a first covariate, participants complete the 33-items version of the German ""need for cognition"" scale (Bless, Fellhauer, Bohner, Schwarz, 1999, Zentrum für Umfragen, Methoden und Analysen -ZUMA- (Ed.): Need for cognition: eine Skala zur Erfassung von Engagement und Freude bei Denkaufgaben).|As a second covariate, participants complete the 7-items version of the Berlin Numeracy Test (Cokely, Galesic, Schulz, Ghazal, Garcia-Retamero, 2012, Judgment and Decision Making, Measuring Risk Literacy: The Berlin Numeracy Test)."
+,11.10.2025 12:58,RC,A hard-to-read font reduces the framing effect in a large sample.,10.3758/s13423-017-1395-4,Experiment 3,,,,"We test the directional hypothesis that presenting the ""Asian disease"" scenario in a hard-to-read font to one group of participants will diminish the well-described framing effect (in comparison to a group of participants who answer the same scenario in an easy-to-read font).",We tested the directional hypothesis that a hard-to-read font reduces the framing effect and therefore used a one-tailed test for the interaction effect in a logistic regression (under the large sample approximation).,No,,Very confident,,,"Online (e.g., m-turk, prolific)","Online (e.g., m-turk, prolific)",No,,Very confident,,,"Inclusion criteria for data analysis: 
+a) Completed questionnaire (includes answers of the framing question, the control framing question, and questions about mother tongue, age, and readability), 
+b) German mother tongue (self-report), 
+c) age between 18 and 60, 
+d) comments in a question at the end of questionnaire indicate no knowledge of framing or disfluency effects (i.e., we ask the question ""Have you previously encountered the type of question asked here (from your studies, from reading books, etc.)? If so, please explain."" and exclude participants whose answer includes the words ""Asian disease"", ""framing"", ""disfluency"", ""hard-to-read font"", ""Kahneman"" ).","Participants were included if a) German was their only mother tongue, b) age was between
+18 and 60 years, c) they indicated their sex, d) they completed all framing questions, and e) comments at the end of questionnaire indicated no knowledge of framing or disfluency effects.",Yes,__ I have some significant concerns about the deviation(s),Mixed,,,Our targeted sample size is 712 participants.,732,No,__ I don�t have significant concerns about the deviation(s),Very confident,,,,,"We use the classic ""Asian disease"" framing scenario, which is presented in the gain or in the loss frame (for the English wording see Table 1 in Oganian, et al., 2016). 
+The text is presented in a hard-to-read font (Monotype Corsiva; printed in gray; RGB 190, 190, 190) or in an easy-to-read font (Arial; printed in black).
+The study follows a 2 (frame: gain/loss) x 2 (font: easy-/hard-to-read) design. Both factors are between-subjects.","As in Experiment 1, we used BMonotype Corsiva^ (printed in gray; RGB 190, 190, 190, 9-
+point) as hard-to-read font. Because this font is not installed on many systems, we implemented all relevant texts as pictures. The fluent font was BArial^ (printed in black, 9-point). Participants were randomly allocated to conditions and drop-outs were balanced (final sample: easy-to-read font: N = 378; hard-to-read font: N = 354). Participants answered the classic BAsian disease^ scenario and the control scenario, followed by questions about demography, readability, and prior knowledge of the scenarios.",No,,Somewhat confident,,,"The outcome measure is the response to the framing scenario, i.e., choice of sure option (see option A in Table 1 in Oganian, et al., 2016) or risky option (option B).
+As a manipulation check, participants will rate the readability of the presented font on a 7-point scale (with 1 not easy-to-read at all and 7 very easy-to-read).","Response to framing scenario: Not described for Experiment 3
+
+Manipulation check: ""As expected, participants rated the easy-to-read font (mean � SD: 6.1 � 1.3) as easier than the hard-to-read font (3.4 � 1.6; t(729) = 25.1, p < 10-99). Participants in the easy-to-read font condition indicated less often that they zoomed into the text (proportion indicating zooming = 0.05) than those in the hard-to-read font condition (0.12; _2(1) = 9.7, p < 0.005; zooming was not an exclusion criterion).""",,,,,,,,,,,,,,,,,,,Either the preregistration or the manuscript are too vague to tell,__ I have some significant concerns about the deviation(s),Mixed,,,"We will use a logistic regression to analyze the binary outcome variable (choice of sure or risky option). The predictors include the factors frame, font, and their interaction. Our main hypothesis concerns the interaction effect.",We tested the directional hypothesis that a hard-to-read font reduces the framing effect and therefore used a one-tailed test for the interaction effect in a logistic regression (under the large sample approximation).,Yes,__ I have serious concerns about the deviation(s),Somewhat confident,,,We will use dummy coding for the binary predictors with the gain frame and easy-to-read font as reference categories.,none,Either the preregistration or the manuscript are too vague to tell,__ I don�t have significant concerns about the deviation(s),,,,"Missing data on the following questions is an exclusion criterion; The ""Asian disease"" framing question, the control framing question, and questions about mother tongue, age, and readability (see inclusion criteria).
+Participans with missing data on the two covariates will be excluded from the follow-up analyses.","Afterwards, participants were asked to complete the 33-items NFC scale and the 7-items BNT questionnaire. For the main analyses of the framing question, we also included par-
+ticipants who did not complete these two scales (as detailed in the preregistration). The exploratory analyses regarding NFC and BNT rely on smaller numbers of participants than the main analyses (NFC: N = 673; BNT: N = 575).",No,NA/ No deviation,Somewhat confident,,No,,,,,
+,11.10.2025 14:09,JC,A hard-to-read font reduces the framing effect in a large sample.,10.3758/s13423-017-1395-4,3,,,,"We test the directional hypothesis that presenting the ""Asian disease"" scenario in a hard-to-read font to one group of participants will diminish the well-described framing effect (in comparison to a group of participants who answer the same scenario in an easy-to-read font).",We tested the directional hypothesis that a hard-to-read font reduces the framing effect and therefore used a one-tailed test for the interaction effect in a logistic regression,No,,Very confident,,,"Online (e.g., m-turk, prolific)","Online (e.g., m-turk, prolific)",No,,Very confident,,,"Inclusion criteria for data analysis: 
+a) Completed questionnaire (includes answers of the framing question, the control framing question, and questions about mother tongue, age, and readability), 
+b) German mother tongue (self-report), 
+c) age between 18 and 60, 
+d) comments in a question at the end of questionnaire indicate no knowledge of framing or disfluency effects (i.e., we ask the question ""Have you previously encountered the type of question asked here (from your studies, from reading books, etc.)? If so, please explain."" and exclude participants whose answer includes the words ""Asian disease"", ""framing"", ""disfluency"", ""hard-to-read font"", ""Kahneman"" ).","Participants were included if a) German was their only mother tongue, b) age was between 18 and 60 years, c) they indicated their sex, d) they completed all framing questions, and e) comments at the end of questionnaire indicated no knowledge of framing or disfluency effects.",No,__ I don�t have significant concerns about the deviation(s),Very confident,,,712,732,Yes,__ I don�t have significant concerns about the deviation(s),Very confident,,,,,"We use the classic ""Asian disease"" framing scenario, which is presented in the gain or in the loss frame (for the English wording see Table 1 in Oganian, et al., 2016). 
+The text is presented in a hard-to-read font (Monotype Corsiva; printed in gray; RGB 190, 190, 190) or in an easy-to-read font (Arial; printed in black).
+The study follows a 2 (frame: gain/loss) x 2 (font: easy-/hard-to-read) design. Both factors are between-subjects.","As in Experiment 1, we used �Monotype Corsiva� (printed in gray; RGB 190, 190, 190, 9-point) as hard-to-read font. Because this font is not installed on many systems, we implemented all relevant texts as pictures. The fluent font was �Arial� (printed in black, 9-point). Participants were randomly allocated to conditions and dropouts were balanced (final sample: easy-to-read font: N = 378; hard-to-read font: N = 354). Participants answered the classic �Asian disease� scenario and the control scenario.",No,NA/ No deviation,Mixed,,,"As a first covariate, participants complete the 33-items version of the German ""need for cognition"" scale (Bless, Fellhauer, Bohner, Schwarz, 1999, Zentrum f�r Umfragen, Methoden und Analysen -ZUMA- (Ed.): Need for cognition: eine Skala zur Erfassung von Engagement und Freude bei Denkaufgaben).
+As a second covariate, participants complete the 7-items version of the Berlin Numeracy Test (Cokely, Galesic, Schulz, Ghazal, Garcia-Retamero, 2012, Judgment and Decision Making, Measuring Risk Literacy: The Berlin Numeracy Test).[...] The outcome measure is the response to the framing scenario, i.e., choice of sure option (see option A in Table 1 in Oganian, et al., 2016) or risky option (option B).
+As a manipulation check, participants will rate the readability of the presented font on a 7-point scale (with 1 not easy-to-read at all and 7 very easy-to-read). 
+As a control scenario, we will present a scenario, in which no framing effect should emerge because the gain and loss frames differ in their expected value (see Oganian, et al., 2016 for details and Table 1 for the wording of the used ""unemployment problem"").","Fifth, to explore individual differences in need for cognition and statistical abilities, we administered the German versions of the Need for Cognition Scale (NFC) (Bless, W�nke, Bohner, Fellhauer, & Schwarz, 1994) and the Berlin Numeracy Test (BNT) (Cokely, Galesic, Schulz, Ghazal, & Garcia-Retamero, 2012). [...] Participants answered the classic �Asian disease� scenario and the control scenario, followed by questions about demography, readability, and prior knowledge of the scenarios.",No,,,,,,,,,,,,,,,,,,No,,Mixed,,,"We will use a logistic regression to analyze the binary outcome variable (choice of sure or risky option). The predictors include the factors frame, font, and their interaction. Our main hypothesis concerns the interaction effect.",logistic regression,No,,Somewhat confident,,,We will use dummy coding for the binary predictors with the gain frame and easy-to-read font as reference categories.,Not reported.,No,NA/ No deviation,,,,"Missing data on the following questions is an exclusion criterion; The ""Asian disease"" framing question, the control framing question, and questions about mother tongue, age, and readability (see inclusion criteria).
+Participans with missing data on the two covariates will be excluded from the follow-up analyses.",Not reported.,Either the preregistration or the manuscript are too vague to tell,__ I don�t have significant concerns about the deviation(s),Mixed,,No,,,,,
+,,JC,A new study ,10.0001/105,1,,,,An example of a hypothesis.,Our first hypothesis was that. Additionally,Yes,🔴 I have serious concerns about the deviation(s),Very confident,,,"Online (e.g., m-turk, prolific)","Online (e.g., m-turk, prolific)",No,,Very confident,,,We will include participants aged 40 and over.,We  included participants aged 40 and over.,No,,Very confident,,,601,680,Yes,🟠 I have some significant concerns about the deviation(s),Very confident,,No,,,xx,xx,No,,,,,xx,,,,,,,,,,xx,,,,,,,,,,No,,,,,"We will use a logistic regression to analyze the binary outcome variable (choice of sure or risky option). The predictors include the factors frame, font, and their interaction. Our main hypothesis concerns the interaction effect.",logistic regression,No,,Somewhat confident,,,no transformations planned,We log transformed our wellbeing variable�,Yes,__ I don�t have significant concerns about the deviation(s),Mixed,,,Not reported.,Not reported.,No,,,,No,,,,,
+,,BC,A new study ,10.0001/105,1,,,,An example of a hypothesis.,Our first hypothesis was that. Additionally,Yes,🔴 I have serious concerns about the deviation(s),Very confident,,,"Online (e.g., m-turk, prolific)","Online (e.g., m-turk, prolific)",No,,Very confident,,,We will include participants aged 40 and over.,We  included participants aged 40 and over.,No,,Very confident,,,601,680,Yes,🟠 I have some significant concerns about the deviation(s),Very confident,,No,,,xx,xx,No,,,,,xx,,,,,,,,,,xx,,,,,,,,,,No,,,,,"We will use a logistic regression to analyze the binary outcome variable (choice of sure or risky option). The predictors include the factors frame, font, and their interaction. Our main hypothesis concerns the interaction effect.",logistic regression,No,,Somewhat confident,,,no transformations planned,We log transformed our wellbeing variable�,Yes,🔴 I have serious concerns about the deviation(s),Mixed,,,Not reported.,Not reported.,No,,,,No,,,,,
+,,RC,A new study ,10.0001/105,1,,,,An example of a hypothesis.,Our first hypothesis was that. Additionally,No,,,,,"Online (e.g., m-turk, prolific)","Online (e.g., m-turk, prolific)",No,,,,,We will include participants aged 40 and over.,We  included participants aged 40 and over.,No,,,,,601,680,Yes,🟠 I have some significant concerns about the deviation(s),,,No,,,,,,,,,,xx,,,,,,,,,,xx,,,,,,,,,,No,,,,,"We will use a logistic regression to analyze the binary outcome variable (choice of sure or risky option). The predictors include the factors frame, font, and their interaction. Our main hypothesis concerns the interaction effect.",logistic regression,No,,,,,no transformations planned,Not reported.,No,,,,,Not reported.,Not reported.,,,,,No,,,,,

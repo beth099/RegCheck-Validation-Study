@@ -1407,6 +1407,11 @@ write_csv(simulation_results_long_round3, "results/round3_results_long.csv")
 simulation_results_long_round3 <- read_csv("results/round3_results_long.csv")
 ```
 
+## Load in rds results
+```{r}
+simulation_results_long_round3 <- readRDS("~/Desktop/RegCheck-Validation-Study/Simulation_planning/results/round3_results_long.rds")
+```
+
 ## Summarise
 
 ```{r}
@@ -1529,6 +1534,7 @@ plot_noninferiority_criterion_round3 <- noninferiority_criterion_overall_effect_
     ),
     noninferiority_criterion = as.factor(noninferiority_criterion)
   ) |>
+  filter(outcome_type != "Joint") |>
   ggplot(
     aes(
       x = scenario_label,
