@@ -1,4 +1,16 @@
 .Rproj.user
+*.Rproj
 .Rhistory
 .RData
 .Ruserdata
+*.DS_Store
+*.RDataTmp
+
+# Documents that contain APA full text articles
+Sample_selection/PsycArticles
+Sample_selection/processed_articles
+Sample_selection/*.csv
+Sample_selection/classifier 
+# contains output from llm classifier
+
+# Analysis plan documents to ignore
