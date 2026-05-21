@@ -208,7 +208,7 @@ ni_criterion <- data_pairs_cosine %>%
 # Contrast: rc_human vs human_human
 contrast_rq1 <- emmeans(m_rq1, ~ comparison_type) %>%
   contrast("pairwise") %>%
-  confint()
+  confint(side = ">")
 
 contrast_rq1
 
@@ -224,6 +224,8 @@ rq1a <- data_pairs_cosine %>%
   summarise(
     mean_cosine = mean(cosine),
     sd_cosine  = sd(cosine),
+    iqr_lower = quantile(cosine, .25),
+    iqr_upper = quantile(cosine, .75),
     .by = c(dimension, comparison_type)
   ) %>%
   arrange(dimension, comparison_type)
@@ -251,12 +253,13 @@ hh_agree <- data_pairs_agree %>%
 
 # Small epsilon to avoid qlogis(0) = -Inf and qlogis(1) = +Inf
 eps <- 0.01
-ni_criterion_rq2 <- sd(qlogis(pmin(pmax(hh_agree, eps), 1 - eps))) * 0.2
+ni_criterion_rq2 <- sd(hh_agree) * 0.2
 
-# Contrast on the logit scale (no type = "response")
+# Contrast on the probability scale (no type = "response")
 contrast_rq2 <- emmeans(m_rq2, ~ comparison_type) %>%
+  regrid("response") %>% # switch to probability scale
   contrast("pairwise") %>%
-  confint()
+  confint(side = ">")
 
 contrast_rq2
 
