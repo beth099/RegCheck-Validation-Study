@@ -206,13 +206,14 @@ ni_criterion <- data_pairs_cosine %>%
   { . * 0.4 }
 
 # Contrast: rc_human vs human_human
+# For a one-sided 95% lower bound, use the lower bound of a two-sided 90% CI.
 contrast_rq1 <- emmeans(m_rq1, ~ comparison_type) %>%
-  contrast("pairwise") %>%
-  confint()
+  contrast(list(rc_minus_human = c(-1, 1))) %>%
+  confint(level = 0.90)
 
 contrast_rq1
 
-# Non-inferiority check: lower CI must be above -ni_criterion
+# Non-inferiority check: lower one-sided 95% CI must be above -ni_criterion
 # (i.e. RegCheck is not meaningfully worse than human-human)
 contrast_rq1$lower.CL > -ni_criterion
 ```
@@ -244,7 +245,7 @@ m_rq2 <- glmer(
 summary(m_rq2)
 
 # Non-inferiority test
-  # criterion: 0.2 x SD of human-human cosine similarity
+  # criterion: 0.2 x SD of human-human deviation agreement on the logit scale
 hh_agree <- data_pairs_agree %>%
   filter(comparison_type == "human_human", !is.na(deviation_agree)) %>%
   pull(deviation_agree)
@@ -254,13 +255,14 @@ eps <- 0.01
 ni_criterion_rq2 <- sd(qlogis(pmin(pmax(hh_agree, eps), 1 - eps))) * 0.2
 
 # Contrast on the logit scale (no type = "response")
+# For a one-sided 95% lower bound, use the lower bound of a two-sided 90% CI.
 contrast_rq2 <- emmeans(m_rq2, ~ comparison_type) %>%
-  contrast("pairwise") %>%
-  confint()
+  contrast(list(rc_minus_human = c(-1, 1))) %>%
+  confint(level = 0.90)
 
 contrast_rq2
 
-# Non-inferiority check
+# Non-inferiority check: lower one-sided 95% CI must be above -ni_criterion_rq2
 contrast_rq2$asymp.LCL > -ni_criterion_rq2
 ```
 
