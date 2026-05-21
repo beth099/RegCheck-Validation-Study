@@ -207,14 +207,14 @@ ni_criterion <- data_pairs_cosine %>%
 
 # Contrast: rc_human vs human_human
 contrast_rq1 <- emmeans(m_rq1, ~ comparison_type) %>%
-  contrast("pairwise") %>%
+  contrast(list("rc_human - human_human" = c(-1, 1))) %>% # manually set the contrast to rc_human - human_human
   confint(side = ">")
 
 contrast_rq1
 
 # Non-inferiority check: lower CI must be above -ni_criterion
 # (i.e. RegCheck is not meaningfully worse than human-human)
-contrast_rq1$lower.CL > -ni_criterion
+ifelse(contrast_rq1$lower.CL > -ni_criterion, "non-inferior", "inferior")
 ```
 
 # RQ1a -- cosine similarity by dimension (descriptive)
@@ -258,13 +258,13 @@ ni_criterion_rq2 <- sd(hh_agree) * 0.2
 # Contrast on the probability scale (no type = "response")
 contrast_rq2 <- emmeans(m_rq2, ~ comparison_type) %>%
   regrid("response") %>% # switch to probability scale
-  contrast("pairwise") %>%
+  contrast(list("rc_human - human_human" = c(-1, 1))) %>% # manually set the contrast to rc_human - human_human
   confint(side = ">")
 
 contrast_rq2
 
 # Non-inferiority check
-contrast_rq2$asymp.LCL > -ni_criterion_rq2
+ifelse(contrast_rq2$asymp.LCL > -ni_criterion_rq2, "non-inferior", "inferior")
 ```
 
 # RQ2a: Deviation agreement by dimension
