@@ -278,8 +278,7 @@ analyse_regcheck_study_data <- function(
 
   # define alpha and quantiles
   alpha <- 1 - confidence_level
-  lower_quantile <- alpha / 2
-  upper_quantile <- 1 - alpha / 2
+  lower_quantile <- alpha # one-sided CI
 
   human_human_data <- simulated_data |>
     filter(comparison_type == 0)
@@ -314,7 +313,7 @@ analyse_regcheck_study_data <- function(
 
   agreement_difference_confidence_interval <- quantile(
     agreement_difference_draws,
-    probs = c(lower_quantile, upper_quantile)
+    probs = c(lower_quantile)
   )
 
   agreement_noninferior <-
@@ -326,12 +325,10 @@ analyse_regcheck_study_data <- function(
   cosine_difference_estimate <- cosine_fixed_effects["comparison_type", "Estimate"]
   cosine_difference_standard_error <- cosine_fixed_effects["comparison_type", "Std. Error"]
 
-  z_critical_value <- qnorm(1 - alpha / 2)
+  z_critical_value <- qnorm(1 - alpha)
 
   cosine_difference_confidence_interval <- c(
     cosine_difference_estimate -
-      z_critical_value * cosine_difference_standard_error,
-    cosine_difference_estimate +
       z_critical_value * cosine_difference_standard_error
   )
 
@@ -343,12 +340,10 @@ analyse_regcheck_study_data <- function(
     agreement_noninferiority_margin = agreement_noninferiority_margin,
     agreement_difference_estimate = agreement_difference_estimate,
     agreement_confidence_interval_lower = agreement_difference_confidence_interval[1],
-    agreement_confidence_interval_upper = agreement_difference_confidence_interval[2],
     agreement_noninferior = agreement_noninferior,
     cosine_noninferiority_margin = cosine_noninferiority_margin,
     cosine_difference_estimate = cosine_difference_estimate,
     cosine_confidence_interval_lower = cosine_difference_confidence_interval[1],
-    cosine_confidence_interval_upper = cosine_difference_confidence_interval[2],
     cosine_noninferior = cosine_noninferior
   )
 }
@@ -454,12 +449,10 @@ run_many_regcheck_simulations <- function(
             agreement_noninferiority_margin = NA_real_,
             agreement_difference_estimate = NA_real_,
             agreement_confidence_interval_lower = NA_real_,
-            agreement_confidence_interval_upper = NA_real_,
             agreement_noninferior = NA,
             cosine_noninferiority_margin = NA_real_,
             cosine_difference_estimate = NA_real_,
             cosine_confidence_interval_lower = NA_real_,
-            cosine_confidence_interval_upper = NA_real_,
             cosine_noninferior = NA
           )
         )
@@ -821,8 +814,7 @@ analyse_regcheck_study_data_round2 <- function(
 
   # define alpha and quantiles
   alpha <- 1 - confidence_level
-  lower_quantile <- alpha / 2
-  upper_quantile <- 1 - alpha / 2
+  lower_quantile <- alpha # one-sided CI
 
   human_human_data <- simulated_data |>
     filter(comparison_type == 0)
@@ -857,7 +849,7 @@ analyse_regcheck_study_data_round2 <- function(
 
   agreement_difference_confidence_interval <- quantile(
     agreement_difference_draws,
-    probs = c(lower_quantile, upper_quantile)
+    probs = c(lower_quantile)
   )
 
   agreement_noninferior <-
@@ -869,12 +861,10 @@ analyse_regcheck_study_data_round2 <- function(
   cosine_difference_estimate <- cosine_fixed_effects["comparison_type", "Estimate"]
   cosine_difference_standard_error <- cosine_fixed_effects["comparison_type", "Std. Error"]
 
-  z_critical_value <- qnorm(1 - alpha / 2)
+  z_critical_value <- qnorm(1 - alpha) # one-sided CI
 
   cosine_difference_confidence_interval <- c(
     cosine_difference_estimate -
-      z_critical_value * cosine_difference_standard_error,
-    cosine_difference_estimate +
       z_critical_value * cosine_difference_standard_error
   )
 
@@ -886,12 +876,10 @@ analyse_regcheck_study_data_round2 <- function(
     agreement_noninferiority_margin = agreement_noninferiority_margin,
     agreement_difference_estimate = agreement_difference_estimate,
     agreement_confidence_interval_lower = agreement_difference_confidence_interval[1],
-    agreement_confidence_interval_upper = agreement_difference_confidence_interval[2],
     agreement_noninferior = agreement_noninferior,
     cosine_noninferiority_margin = cosine_noninferiority_margin,
     cosine_difference_estimate = cosine_difference_estimate,
     cosine_confidence_interval_lower = cosine_difference_confidence_interval[1],
-    cosine_confidence_interval_upper = cosine_difference_confidence_interval[2],
     cosine_noninferior = cosine_noninferior
   )
 }
@@ -1000,12 +988,10 @@ run_many_regcheck_simulations_round2 <- function(
             agreement_noninferiority_margin = NA_real_,
             agreement_difference_estimate = NA_real_,
             agreement_confidence_interval_lower = NA_real_,
-            agreement_confidence_interval_upper = NA_real_,
             agreement_noninferior = NA,
             cosine_noninferiority_margin = NA_real_,
             cosine_difference_estimate = NA_real_,
             cosine_confidence_interval_lower = NA_real_,
-            cosine_confidence_interval_upper = NA_real_,
             cosine_noninferior = NA
           )
         )
@@ -1363,7 +1349,7 @@ parameter_grid <- crossing(
 ) |>
   mutate(
     number_of_simulations = 1000,
-    seed = 123
+    seed = 28042026
   )
 
 
