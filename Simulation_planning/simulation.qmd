@@ -437,15 +437,16 @@ run_many_regcheck_simulations <- function(
           seed = current_seed
         ),
         error = function(error_message) {
-          NULL
+          error_message
         }
       )
 
-      if (is.null(one_simulation)) {
+      if (inherits(one_simulation, "error")) {
         return(
           tibble(
             simulation_index = simulation_index,
             model_converged = FALSE,
+            simulation_error_message = conditionMessage(one_simulation),
             agreement_noninferiority_margin = NA_real_,
             agreement_difference_estimate = NA_real_,
             agreement_confidence_interval_lower = NA_real_,
@@ -462,6 +463,7 @@ run_many_regcheck_simulations <- function(
         mutate(
           simulation_index = simulation_index,
           model_converged = TRUE,
+          simulation_error_message = NA_character_,
           .before = 1
         )
     }
@@ -484,6 +486,46 @@ classify_margin_position <- function(true_deficit, average_margin, boundary_buff
     true_deficit > upper_boundary ~ "outside_margin",
     TRUE ~ "near_margin"
   )
+}
+
+check_simulation_failures <- function(simulation_results_long, simulation_label) {
+
+  failed_results <- simulation_results_long |>
+    filter(!model_converged)
+
+  if (nrow(failed_results) == 0) {
+    return(invisible(simulation_results_long))
+  }
+
+  error_summary <- failed_results |>
+    mutate(
+      simulation_error_message = replace_na(
+        simulation_error_message,
+        "No error message captured."
+      )
+    ) |>
+    count(simulation_error_message, sort = TRUE) |>
+    slice_head(n = 5) |>
+    mutate(error_summary = paste0(n, " x ", simulation_error_message)) |>
+    pull(error_summary) |>
+    paste(collapse = "; ")
+
+  failure_message <- paste0(
+    simulation_label,
+    " had ",
+    nrow(failed_results),
+    " failed simulation(s) out of ",
+    nrow(simulation_results_long),
+    ". Most common error(s): ",
+    error_summary
+  )
+
+  if (nrow(failed_results) == nrow(simulation_results_long)) {
+    stop(failure_message, call. = FALSE)
+  }
+
+  warning(failure_message, call. = FALSE)
+  invisible(simulation_results_long)
 }
 
 
@@ -601,6 +643,8 @@ simulation_results <- parameter_grid |>
 
 simulation_results_long <- simulation_results |>
   unnest(simulation_output)
+
+check_simulation_failures(simulation_results_long, "Round 1")
 
 dir.create("results", recursive = TRUE, showWarnings = FALSE)
 write_csv(simulation_results_long, "results/simulation_results.csv")
@@ -976,15 +1020,16 @@ run_many_regcheck_simulations_round2 <- function(
           seed = current_seed
         ),
         error = function(error_message) {
-          NULL
+          error_message
         }
       )
 
-      if (is.null(one_simulation)) {
+      if (inherits(one_simulation, "error")) {
         return(
           tibble(
             simulation_index = simulation_index,
             model_converged = FALSE,
+            simulation_error_message = conditionMessage(one_simulation),
             agreement_noninferiority_margin = NA_real_,
             agreement_difference_estimate = NA_real_,
             agreement_confidence_interval_lower = NA_real_,
@@ -1001,6 +1046,7 @@ run_many_regcheck_simulations_round2 <- function(
         mutate(
           simulation_index = simulation_index,
           model_converged = TRUE,
+          simulation_error_message = NA_character_,
           .before = 1
         )
     }
@@ -1124,7 +1170,12 @@ simulation_results_round2 <- parameter_grid |>
 simulation_results_long_round2 <- simulation_results_round2 |>
   unnest(simulation_output)
 
-write_csv(simulation_results_round2, "results/round2_results.csv")
+check_simulation_failures(simulation_results_long_round2, "Round 2")
+
+dir.create("results", recursive = TRUE, showWarnings = FALSE)
+saveRDS(simulation_results_round2, "results/round2_results.rds")
+saveRDS(simulation_results_long_round2, "results/round2_results_long.rds")
+write_csv(dplyr::select(simulation_results_round2, -simulation_output), "results/round2_results.csv")
 write_csv(simulation_results_long_round2, "results/round2_results_long.csv")
 
 
@@ -1386,16 +1437,22 @@ simulation_results_round3 <- parameter_grid |>
 simulation_results_long_round3 <- simulation_results_round3 |>
   unnest(simulation_output)
 
-write_csv(simulation_results_round3, "results/round3_results.csv")
+check_simulation_failures(simulation_results_long_round3, "Round 3")
+
+dir.create("results", recursive = TRUE, showWarnings = FALSE)
+saveRDS(simulation_results_round3, "results/round3_results.rds")
+saveRDS(simulation_results_long_round3, "results/round3_results_long.rds")
+write_csv(dplyr::select(simulation_results_round3, -simulation_output), "results/round3_results.csv")
 write_csv(simulation_results_long_round3, "results/round3_results_long.csv")
 
 
-simulation_results_long_round3 <- read_csv("results/round3_results_long.csv")
+simulation_results_long_round3 <- readRDS("results/round3_results_long.rds")
 ```
 
 ## Load in rds results
+
 ```{r}
-simulation_results_long_round3 <- readRDS("~/Desktop/RegCheck-Validation-Study/Simulation_planning/results/round3_results_long.rds")
+simulation_results_long_round3 <- readRDS("results/round3_results_long.rds")
 ```
 
 ## Summarise

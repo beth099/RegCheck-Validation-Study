@@ -208,14 +208,14 @@ ni_criterion <- data_pairs_cosine %>%
 # Contrast: rc_human vs human_human
 # For a one-sided 95% lower bound, use the lower bound of a two-sided 90% CI.
 contrast_rq1 <- emmeans(m_rq1, ~ comparison_type) %>%
-  contrast(list(rc_minus_human = c(-1, 1))) %>%
+  contrast(list("rc_human - human_human" = c(-1, 1))) %>%
   confint(level = 0.90)
 
 contrast_rq1
 
 # Non-inferiority check: lower one-sided 95% CI must be above -ni_criterion
 # (i.e. RegCheck is not meaningfully worse than human-human)
-contrast_rq1$lower.CL > -ni_criterion
+ifelse(contrast_rq1$lower.CL > -ni_criterion, "non-inferior", "inferior")
 ```
 
 # RQ1a -- cosine similarity by dimension (descriptive)
@@ -225,6 +225,8 @@ rq1a <- data_pairs_cosine %>%
   summarise(
     mean_cosine = mean(cosine),
     sd_cosine  = sd(cosine),
+    iqr_lower = quantile(cosine, .25),
+    iqr_upper = quantile(cosine, .75),
     .by = c(dimension, comparison_type)
   ) %>%
   arrange(dimension, comparison_type)
@@ -245,25 +247,24 @@ m_rq2 <- glmer(
 summary(m_rq2)
 
 # Non-inferiority test
-  # criterion: 0.2 x SD of human-human deviation agreement on the logit scale
+# criterion: 0.2 x SD of human-human deviation agreement on the probability scale
 hh_agree <- data_pairs_agree %>%
   filter(comparison_type == "human_human", !is.na(deviation_agree)) %>%
   pull(deviation_agree)
 
-# Small epsilon to avoid qlogis(0) = -Inf and qlogis(1) = +Inf
-eps <- 0.01
-ni_criterion_rq2 <- sd(qlogis(pmin(pmax(hh_agree, eps), 1 - eps))) * 0.2
+ni_criterion_rq2 <- sd(hh_agree) * 0.2
 
-# Contrast on the logit scale (no type = "response")
+# Contrast on the probability scale
 # For a one-sided 95% lower bound, use the lower bound of a two-sided 90% CI.
 contrast_rq2 <- emmeans(m_rq2, ~ comparison_type) %>%
-  contrast(list(rc_minus_human = c(-1, 1))) %>%
+  regrid("response") %>%
+  contrast(list("rc_human - human_human" = c(-1, 1))) %>%
   confint(level = 0.90)
 
 contrast_rq2
 
 # Non-inferiority check: lower one-sided 95% CI must be above -ni_criterion_rq2
-contrast_rq2$asymp.LCL > -ni_criterion_rq2
+ifelse(contrast_rq2$asymp.LCL > -ni_criterion_rq2, "non-inferior", "inferior")
 ```
 
 # RQ2a: Deviation agreement by dimension
