@@ -215,7 +215,7 @@ contrast_rq1
 
 # Non-inferiority check: lower one-sided 95% CI must be above -ni_criterion
 # (i.e. RegCheck is not meaningfully worse than human-human)
-ifelse(contrast_rq1$lower.CL > -ni_criterion, "non-inferior", "inferior")
+ifelse(contrast_rq1$lower.CL > -ni_criterion, "non-inferior", "inferior"
 ```
 
 # RQ1a -- cosine similarity by dimension (descriptive)
