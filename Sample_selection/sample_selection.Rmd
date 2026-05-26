@@ -97,4 +97,58 @@ sample <- sample %>%
   select(-reasoning)
 ```
 
+```{r}
+# Cleaning
+sample <- sample %>% 
+  mutate(doi_link = paste0("doi.org/", DOI))
+
+sample <- sample %>% 
+  select(article_number, DOI, doi_link, study_number, all_registration_urls, journal_title, coder_1, coder_2)
+
+write_csv(sample, "coders_sheets/MASTER_sample")
+
+# Create a sheet for each person
+# set seed for when we randomise article order 
+set.seed(28042026)
+
+sample_BC <- sample %>% 
+  filter(coder_1 == "BC" | coder_2 == "BC") %>% 
+  select(-c(coder_1, coder_2))
+
+sample_BC <- sample_BC %>% slice_sample(n = nrow(sample_BC))
+
+write_csv(sample_BC, "coders_sheets/sample_BC.csv")
+
+sample_JC <- sample %>% 
+  filter(coder_1 == "JC" | coder_2 == "JC") %>% 
+  select(-c(coder_1, coder_2))
+
+sample_JC <- sample_JC %>% slice_sample(n = nrow(sample_JC))
+
+write_csv(sample_JC, "coders_sheets/sample_JC.csv")
+
+sample_SiB <- sample %>% 
+  filter(coder_1 == "SiB" | coder_2 == "SiB") %>% 
+  select(-c(coder_1, coder_2))
+
+sample_SiB <- sample_SiB %>% slice_sample(n = nrow(sample_SiB))
+
+write_csv(sample_SiB, "coders_sheets/sample_SiB.csv")
+
+sample_SaB <- sample %>% 
+  filter(coder_1 == "SaB" | coder_2 == "SaB") %>% 
+  select(-c(coder_1, coder_2))
+
+sample_SaB <- sample_SaB %>% slice_sample(n = nrow(sample_SaB))
+
+write_csv(sample_SaB, "coders_sheets/sample_SaB.csv")
+
+sample_EK <- sample %>% 
+  filter(coder_1 == "EK" | coder_2 == "EK") %>% 
+  select(-c(coder_1, coder_2))
+
+sample_EK <- sample_EK %>% slice_sample(n = nrow(sample_EK))
+
+write_csv(sample_EK, "coders_sheets/sample_EK.csv")
+```
 

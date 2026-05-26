@@ -1446,7 +1446,6 @@ write_csv(dplyr::select(simulation_results_round3, -simulation_output), "results
 write_csv(simulation_results_long_round3, "results/round3_results_long.csv")
 
 
-simulation_results_long_round3 <- readRDS("results/round3_results_long.rds")
 ```
 
 ## Load in rds results
