@@ -152,3 +152,50 @@ sample_EK <- sample_EK %>% slice_sample(n = nrow(sample_EK))
 write_csv(sample_EK, "coders_sheets/sample_EK.csv")
 ```
 
+# Additions and changes
+```{r}
+# for 10.1037/xge0001295 LLM classifier did not extract studies. Randomly select a study from the list:
+
+art_25_studies <- tibble(study = c("Experiment 1A", "Experiment 1B", "Experiment 2A", "Experiment 2B"))
+
+set.seed(28042026) # For reproducibility
+
+art_25_studies %>% 
+  slice_sample(n = 1)
+
+art_16_studies <- tibble(study = c("Study 1", "Experiment 2", "Experiment 3", "Preliminary Study"))
+
+set.seed(28042026) # For reproducibility
+
+art_16_studies %>% 
+  slice_sample(n = 1)
+```
+
+```{r}
+# Replace excluded articles
+remaining_articles <- anti_join(prereg_template, sample, by = "DOI") 
+
+set.seed(28042026)
+
+jep_hpp_replace <- remaining_articles %>% 
+  filter(journal_title == "Journal of Experimental Psychology: Human Perception and Performance") %>% 
+  group_by(DOI) %>%
+  slice_sample(n = 1) %>%  
+  ungroup() %>%
+  slice_sample(n = 1) %>%  
+  select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
+
+write.csv(jep_hpp_replace, "jep_hpp_replace.csv")
+
+jpsp_replace <- remaining_articles %>% 
+  filter(journal_title == "Journal of Personality and Social Psychology") %>% 
+  group_by(DOI) %>%
+  slice_sample(n = 1) %>%  
+  ungroup() %>%
+  slice_sample(n = 2) %>%  
+  select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
+
+write.csv(jpsp_replace, "jpsp_replace.csv")
+```
+
+
