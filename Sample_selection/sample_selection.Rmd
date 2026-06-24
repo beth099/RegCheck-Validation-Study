@@ -182,7 +182,7 @@ jep_hpp_replace <- remaining_articles %>%
   group_by(DOI) %>%
   slice_sample(n = 1) %>%  
   ungroup() %>%
-  slice_sample(n = 1) %>%  
+  slice_sample(n = 2) %>%  
   select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
 
 write.csv(jep_hpp_replace, "jep_hpp_replace.csv")
@@ -196,6 +196,28 @@ jpsp_replace <- remaining_articles %>%
   select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
 
 write.csv(jpsp_replace, "jpsp_replace.csv")
+
+jep_lmc_replace <- remaining_articles %>% 
+  filter(journal_title == "Journal of Experimental Psychology: Learning, Memory, and Cognition") %>% 
+  group_by(DOI) %>%
+  slice_sample(n = 1) %>%  
+  ungroup() %>%
+  slice_sample(n = 1) %>%  
+  select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
+
+write.csv(jep_lmc_replace, "jep_lmc_replace.csv")
+
+emotion_replace <- remaining_articles %>% 
+  filter(journal_title == "Emotion") %>% 
+  group_by(DOI) %>%
+  slice_sample(n = 1) %>%  
+  ungroup() %>%
+  slice_sample(n = 4) %>%  
+  select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
+
+write.csv(emotion_replace, "emotion_replace.csv")
+
+
 ```
 
 

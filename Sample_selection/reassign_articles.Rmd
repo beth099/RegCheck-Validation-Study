@@ -1,0 +1,185 @@
+# Reassign uncoded slots to add coders AM and LS
+
+```{r}
+# Goal: add two coders (AM, LS) to the existing 5, keeping all completed coding
+# fixed, rebalancing only the *uncoded* slots so all 7 coders end up as even as
+# possible (~28 articles each), while approximately balancing co-coder pairings.
+
+library(tidyverse)
+library(readxl)
+
+# --- 1. Read current state -------------------------------------------------
+# Master holds the pairing (coder_1 / coder_2) per article.
+master <- read_xlsx("coding_in_progress/MASTER_to_code.xlsx")
+
+# Each coder's own sheet records completion in the `completed` column
+# ("Coded" / "Not coded" / "Excluded"). Read them back in to find done work.
+coder_files <- c(BC = "coding_in_progress/BC_to_code.xlsx",
+                 JC = "coding_in_progress/JC_to_code.xlsx",
+                 EK = "coding_in_progress/EK_to_code.xlsx",
+                 SaB = "coding_in_progress/SaB_to_code.xlsx",
+                 SiB = "coding_in_progress/SiB_to_code.xlsx")
+
+completed_long <- imap_dfr(coder_files, ~ read_xlsx(.x ) %>%
+                             filter(!is.na(article_number)) %>%   # drop padded blank rows
+                             transmute(article_number,
+                                       coder = .y,
+                                       completed)) %>%
+  mutate(is_coded = completed == "Coded")
+```
+
+```{r}
+# --- 2. Drop excluded articles --------------------------------------------
+# Drop exluded articles
+excluded <- completed_long %>%
+  filter(completed == "Excluded") %>%
+  distinct(article_number) %>%
+  pull(article_number)
+
+master <- master %>% filter(!article_number %in% excluded)
+```
+
+```{r}
+# --- 3. Flag which slots are locked (already coded) ------------------------
+done_lookup <- completed_long %>% 
+  filter(is_coded) %>% 
+  distinct(article_number, coder)
+
+is_done <- function(art, who) {
+  any(done_lookup$article_number == art & done_lookup$coder == who)
+}
+
+master <- master %>%
+  rowwise() %>%
+  mutate(done_c1 = is_done(article_number, coder_1),
+         done_c2 = is_done(article_number, coder_2)) %>%
+  ungroup()
+
+# Locked n per coder (immovable completed work)
+locked <- c(master$coder_1[master$done_c1], master$coder_2[master$done_c2])
+coders7 <- c("BC", "JC", "EK", "SaB", "SiB", "AM", "LS")
+load_locked <- table(factor(locked, levels = coders7)) %>% as.integer()
+names(load_locked) <- coders7
+
+# Target = even split of all slots across 7 coders
+total_slots <- 2 * nrow(master)
+total_slots <- 2 * nrow(master)
+base   <- total_slots %/% 7          # 28
+extra  <- total_slots %%  7          # 4  -> this many coders get +1
+
+# Coders who get one extra article 
+get_extra <- c("BC", "JC", "SaB", "SiB")
+stopifnot(length(get_extra) == extra)   # guard: must match the remainder
+
+target <- setNames(rep(base, 7), coders7)
+target[get_extra] <- target[get_extra] + 1
+
+need <- target - load_locked
+need[need < 0] <- 0
+```
+
+```{r}
+# --- 4. Reassignment of uncoded slots -------------------------------
+# Fill each uncoded slot with the coder who (a) still needs articles, (b) isn't
+# already on that article, and (c) least worsens pairing balance. Constrained
+# articles (those with one slot already locked) are filled first.
+
+set.seed(28042026)   # same seed as the original assignment
+
+pk <- function(a, b) paste(sort(c(a, b)), collapse = "_")
+pair_count <- setNames(rep(0L, choose(7, 2)),
+                       combn(coders7, 2, FUN = function(x) pk(x[1], x[2])))
+
+# long table of movable (uncoded) slots
+movable <- bind_rows(
+  master %>% filter(!done_c1) %>% transmute(article_number, slot = "coder_1"),
+  master %>% filter(!done_c2) %>% transmute(article_number, slot = "coder_2")
+)
+
+# coders already present on each article (locked ones), updated as we assign
+on_article <- master %>%
+  transmute(article_number,
+            pre = pmap(list(coder_1, done_c1, coder_2, done_c2),
+                       function(c1, d1, c2, d2) c(if (d1) c1, if (d2) c2))) %>%
+  deframe()
+
+# fill articles with fewer movable slots first, else random order (seeded)
+movable <- movable %>%
+  add_count(article_number, name = "n_mov") %>%
+  mutate(r = runif(n())) %>%
+  arrange(n_mov, r)
+
+need_v <- need
+movable$assigned <- NA_character_
+
+for (j in seq_len(nrow(movable))) {
+  art <- as.character(movable$article_number[j])
+  on  <- on_article[[art]]
+  cand <- coders7[need_v[coders7] > 0 & !(coders7 %in% on)]
+  if (length(cand) == 0) cand <- coders7[!(coders7 %in% on)]  # safety net
+
+  score <- sapply(cand, function(c) {
+    pp <- if (length(on)) sum(sapply(on, function(o) pair_count[pk(c, o)])) else 0
+    pp * 1000 - need_v[[c]] * 10 + runif(1)   # min pairing, then max need
+  })
+  pick <- cand[which.min(score)]
+
+  movable$assigned[j] <- pick
+  need_v[[pick]] <- need_v[[pick]] - 1
+  if (length(on)) for (o in on) pair_count[pk(pick, o)] <- pair_count[pk(pick, o)] + 1
+  on_article[[art]] <- c(on, pick)
+}
+```
+
+```{r}
+# --- 5. Write the new coders back into master ------------------------------
+new_c1 <- movable %>% filter(slot == "coder_1") %>% select(article_number, assigned)
+new_c2 <- movable %>% filter(slot == "coder_2") %>% select(article_number, assigned)
+
+master_n <- master %>%
+  left_join(new_c1, by = "article_number") %>%
+  mutate(coder_1 = if_else(!done_c1 & !is.na(assigned), assigned, coder_1)) %>%
+  select(-assigned) %>%
+  left_join(new_c2, by = "article_number") %>%
+  mutate(coder_2 = if_else(!done_c2 & !is.na(assigned), assigned, coder_2)) %>%
+  select(-assigned)
+
+# --- 6. Checks -------------------------------------------------------------
+# Load per coder (should be ~28 or 29 each)
+table(c(master_n$coder_1, master_n$coder_2))
+
+# No article assigned the same coder twice
+any(master_n$coder_1 == master_n$coder_2)
+
+# Pairing spread (min/max co-occurrences across the 21 possible pairs)
+range(pair_count)
+```
+
+```{r}
+# --- 7. Regenerate the per-coder sheets ------------------------------------
+master_out <- master_n %>%
+  select(article_number, DOI, doi_link, study_number,
+         all_registration_urls, journal_title, coder_1, coder_2)
+
+write_csv(master_out, "coding_in_progress/seven_coders_reassigned/MASTER_sample.csv")   # or write_xlsx(), see below
+
+set.seed(28042026)   # for the within-sheet shuffle, as before
+
+write_coder_sheet <- function(initials) {
+  # this coder's prior completion status (Coded / Excluded), if any
+  prior <- completed_long %>%
+    filter(coder == initials) %>%
+    select(article_number, completed)
+
+  sheet <- master_out %>%
+    filter(coder_1 == initials | coder_2 == initials) %>%
+    select(-c(coder_1, coder_2)) %>%
+    left_join(prior, by = "article_number") %>%
+    mutate(completed = replace_na(completed, "Not coded"))
+
+  sheet <- sheet %>% slice_sample(n = nrow(sheet))
+  write_csv(sheet, paste0("coding_in_progress/seven_coders_reassigned/sample_", initials, ".csv"))
+}
+
+walk(c("BC", "JC", "EK", "SaB", "SiB", "AM", "LS"), write_coder_sheet)
+```
