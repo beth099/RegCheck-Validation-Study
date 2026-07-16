@@ -2,7 +2,7 @@ article_number,DOI,doi_link,study_number,all_registration_urls,journal_title,cod
 1,10.1037/emo0001252,doi.org/10.1037/emo0001252,Study 1,https://osf.io/c2xzd,Emotion,EK,SiB
 2,10.1037/emo0001434,doi.org/10.1037/emo0001434,NA,https://osf.io/fk6yu,Emotion,JC,BC
 3,10.1037/emo0001132,doi.org/10.1037/emo0001132,NA,https://osf.io/csvbe,Emotion,SiB,BC
-4,10.1037/emo0001330,doi.org/10.1037/emo0001330,Study 1,https://osf.io/n36cu,Emotion,SiB,BC
+4,10.1037/emo0001330,doi.org/10.1037/emo0001330,Study 1,https://osf.io/n36cu,Emotion,JC,EK
 5,10.1037/emo0001301,doi.org/10.1037/emo0001301,Study 2,https://osf.io/ygqfd,Emotion,EK,SiB
 6,10.1037/emo0001268,doi.org/10.1037/emo0001268,NA,https://osf.io/rzdv5,Emotion,SaB,BC
 7,10.1037/emo0001453,doi.org/10.1037/emo0001453,Study 2,https://osf.io/t9r6a,Emotion,SiB,SaB
@@ -10,16 +10,20 @@ article_number,DOI,doi_link,study_number,all_registration_urls,journal_title,cod
 9,10.1037/emo0001161,doi.org/10.1037/emo0001161,Study 2,https://osf.io/3q68t,Emotion,EK,SiB
 10,10.1037/emo0001368,doi.org/10.1037/emo0001368,Study 3,https://osf.io/bv3k4,Emotion,SiB,EK
 11,10.1037/emo0000982,doi.org/10.1037/emo0000982,NA,https://osf.io/tb4qv,Emotion,SiB,BC
-12,10.1037/emo0001455,doi.org/10.1037/emo0001455,Study 3,https://osf.io/kqbw5/overview,Emotion,BC,SaB
+12,10.1037/emo0001455,doi.org/10.1037/emo0001455,Study 3,https://osf.io/KQBW5,Emotion,BC,SaB
+13,10.1037/emo0000730,doi.org/10.1037/emo0000730,NA,https://osf.io/s93ju,Emotion,JC,SaB
 14,10.1037/emo0001513,doi.org/10.1037/emo0001513,Study 6,https://osf.io/efptk,Emotion,EK,SaB
+15,10.1037/emo0001226,doi.org/10.1037/emo0001226,Dataset 1,https://osf.io/rwbgj,Emotion,SiB,BC
+16,10.1037/emo0001410,doi.org/10.1037/emo0001410,NA,https://osf.io/3khx9,Emotion,SaB,JC
 17,10.1037/emo0001394,doi.org/10.1037/emo0001394,Study 1,https://osf.io/G7BVJ,Emotion,SaB,SiB
 18,10.1037/emo0001448,doi.org/10.1037/emo0001448,NA,https://osf.io/t6jcv,Emotion,SaB,JC
+19,10.1037/emo0001311,doi.org/10.1037/emo0001311,NA,https://osf.io/vym9g,Emotion,JC,EK
 20,10.1037/emo0001429,doi.org/10.1037/emo0001429,Study 2,https://osf.io/ndkzv,Emotion,SaB,SiB
 21,10.1037/xge0001619,doi.org/10.1037/xge0001619,Study 1,https://osf.io/48x6f,Journal of Experimental Psychology: General,JC,SiB
-22,10.1037/xge0001206,doi.org/10.1037/xge0001206,Study 7,https://osf.io/gycj3;https://osf.io/85k7q,Journal of Experimental Psychology: General,SaB,SiB
+22,10.1037/xge0001206,doi.org/10.1037/xge0001206,Study 5,https://osf.io/gycj3;https://osf.io/85k7q,Journal of Experimental Psychology: General,SaB,SiB
 23,10.1037/xge0001409,doi.org/10.1037/xge0001409,Experiment 1,https://osf.io/wrtgu,Journal of Experimental Psychology: General,SiB,BC
 24,10.1037/xge0001459,doi.org/10.1037/xge0001459,Experiment 1,https://osf.io/q86cj,Journal of Experimental Psychology: General,SiB,JC
-25,10.1037/xge0001295,doi.org/10.1037/xge0001295,Experiment 2B,https://osf.io/hezkm,Journal of Experimental Psychology: General,SaB,JC
+25,10.1037/xge0001295,doi.org/10.1037/xge0001295,NA,https://osf.io/hezkm;https://osf.io/ag35c;https://osf.io/b7ad4;https://osf.io/3umk4,Journal of Experimental Psychology: General,SaB,JC
 26,10.1037/xge0001570,doi.org/10.1037/xge0001570,Experiment 1,https://osf.io/2dmtw,Journal of Experimental Psychology: General,SiB,SaB
 27,10.1037/xge0001120,doi.org/10.1037/xge0001120,Study 4,https://osf.io/ku6fq,Journal of Experimental Psychology: General,EK,BC
 28,10.1037/xge0001256,doi.org/10.1037/xge0001256,Experiment 4,https://osf.io/hkc4u;https://osf.io/spu29;https://osf.io/59c3z;https://osf.io/rqmw5,Journal of Experimental Psychology: General,BC,SiB
@@ -31,19 +35,21 @@ article_number,DOI,doi_link,study_number,all_registration_urls,journal_title,cod
 34,10.1037/xge0001627,doi.org/10.1037/xge0001627,Experiment 3,https://osf.io/7bjre,Journal of Experimental Psychology: General,EK,SaB
 35,10.1037/xge0001527,doi.org/10.1037/xge0001527,Study 2,https://osf.io/wqfkh,Journal of Experimental Psychology: General,SiB,SaB
 36,10.1037/xge0001488,doi.org/10.1037/xge0001488,Experiment 1,https://osf.io/4my93;https://osf.io/5dyhf;https://osf.io/q4h3r;https://osf.io/83npu;https://osf.io/4skzc,Journal of Experimental Psychology: General,BC,JC
-37,10.1037/xge0001031,doi.org/10.1037/xge0001031,Experiment 1,https://osf.io/v734e,Journal of Experimental Psychology: General,SaB,JC
+37,10.1037/xge0001031,doi.org/10.1037/xge0001031,NA,https://osf.io/v734e,Journal of Experimental Psychology: General,SaB,JC
 38,10.1037/xge0001462,doi.org/10.1037/xge0001462,Experiment 4,https://osf.io/fuyva,Journal of Experimental Psychology: General,BC,SaB
 39,10.1037/xge0001634,doi.org/10.1037/xge0001634,NA,https://osf.io/ur73j,Journal of Experimental Psychology: General,BC,SiB
 40,10.1037/xge0001455,doi.org/10.1037/xge0001455,NA,https://osf.io/4expt,Journal of Experimental Psychology: General,JC,SaB
 41,10.1037/xhp0001234,doi.org/10.1037/xhp0001234,Experiment 4,https://osf.io/4gtkn,Journal of Experimental Psychology: Human Perception and Performance,SaB,BC
 42,10.1037/xhp0001131,doi.org/10.1037/xhp0001131,Experiment 2,https://osf.io/qjm3t;https://osf.io/c9d8u,Journal of Experimental Psychology: Human Perception and Performance,JC,SiB
-43,10.1037/xhp0001191,doi.org/10.1037/xhp0001191,Experiment 2,https://osf.io/9dkgq/,Journal of Experimental Psychology: Human Perception and Performance,EK,BC
+43,10.1037/xhp0001191,doi.org/10.1037/xhp0001191,Experiment 2,https://osf.io/9DKGQ,Journal of Experimental Psychology: Human Perception and Performance,EK,BC
+44,10.1037/xhp0001062,doi.org/10.1037/xhp0001062,NA,https://osf.io/h6gts,Journal of Experimental Psychology: Human Perception and Performance,JC,SiB
 45,10.1037/xhp0001200,doi.org/10.1037/xhp0001200,Experiment 2,https://osf.io/9hvgd,Journal of Experimental Psychology: Human Perception and Performance,EK,BC
 46,10.1037/xhp0001187,doi.org/10.1037/xhp0001187,Experiment 2,https://osf.io/vdazs,Journal of Experimental Psychology: Human Perception and Performance,SaB,BC
 47,10.1037/xhp0001219,doi.org/10.1037/xhp0001219,Experiment 2,https://osf.io/a5ze7,Journal of Experimental Psychology: Human Perception and Performance,SiB,EK
 48,10.1037/xhp0001112,doi.org/10.1037/xhp0001112,Experiment 1,https://osf.io/stfn5,Journal of Experimental Psychology: Human Perception and Performance,JC,SaB
 49,10.1037/xhp0001183,doi.org/10.1037/xhp0001183,Experiment 1,https://osf.io/wrqcz,Journal of Experimental Psychology: Human Perception and Performance,JC,EK
 50,10.1037/xhp0001211,doi.org/10.1037/xhp0001211,Experiment 1,https://osf.io/vfnax,Journal of Experimental Psychology: Human Perception and Performance,SiB,EK
+51,10.1037/xhp0000963,doi.org/10.1037/xhp0000963,Experiment 2,https://osf.io/wx4kd,Journal of Experimental Psychology: Human Perception and Performance,BC,SiB
 52,10.1037/xhp0001190,doi.org/10.1037/xhp0001190,Experiment 2,https://osf.io/r9d2c,Journal of Experimental Psychology: Human Perception and Performance,SaB,SiB
 53,10.1037/xhp0001259,doi.org/10.1037/xhp0001259,Experiment 4,https://osf.io/7qtvn,Journal of Experimental Psychology: Human Perception and Performance,EK,BC
 54,10.1037/xhp0001130,doi.org/10.1037/xhp0001130,Experiment 1,https://osf.io/NAFE2,Journal of Experimental Psychology: Human Perception and Performance,SaB,EK
@@ -53,7 +59,7 @@ article_number,DOI,doi_link,study_number,all_registration_urls,journal_title,cod
 58,10.1037/xhp0001288,doi.org/10.1037/xhp0001288,Experiment 2,https://osf.io/Y35HD,Journal of Experimental Psychology: Human Perception and Performance,EK,SaB
 59,10.1037/xhp0000927,doi.org/10.1037/xhp0000927,NA,https://osf.io/hjm3z,Journal of Experimental Psychology: Human Perception and Performance,SaB,EK
 60,10.1037/xhp0000944,doi.org/10.1037/xhp0000944,Experiment 2 (Sample 1),https://osf.io/2djqf,Journal of Experimental Psychology: Human Perception and Performance,SaB,BC
-61,10.1037/xlm0000907,doi.org/10.1037/xlm0000907,Experiment 1,https://osf.io/zj3a6,"Journal of Experimental Psychology: Learning, Memory, and Cognition",SiB,JC
+61,10.1037/xlm0000907,doi.org/10.1037/xlm0000907,NA,https://osf.io/zj3a6,"Journal of Experimental Psychology: Learning, Memory, and Cognition",SiB,JC
 62,10.1037/xlm0001042,doi.org/10.1037/xlm0001042,Experiment 3,https://osf.io/hjnk5,"Journal of Experimental Psychology: Learning, Memory, and Cognition",EK,JC
 63,10.1037/xlm0001350,doi.org/10.1037/xlm0001350,Experiment 2,https://osf.io/jt9ph,"Journal of Experimental Psychology: Learning, Memory, and Cognition",JC,SaB
 64,10.1037/xlm0001363,doi.org/10.1037/xlm0001363,NA,https://osf.io/a3u54,"Journal of Experimental Psychology: Learning, Memory, and Cognition",JC,BC
@@ -70,11 +76,13 @@ article_number,DOI,doi_link,study_number,all_registration_urls,journal_title,cod
 75,10.1037/xlm0001134,doi.org/10.1037/xlm0001134,Experiment 1,https://osf.io/5up4f,"Journal of Experimental Psychology: Learning, Memory, and Cognition",EK,SiB
 76,10.1037/xlm0001032,doi.org/10.1037/xlm0001032,Experiment 2,https://osf.io/3h7kf,"Journal of Experimental Psychology: Learning, Memory, and Cognition",JC,BC
 77,10.1037/xlm0001141,doi.org/10.1037/xlm0001141,Experiment 1,https://osf.io/3s46f,"Journal of Experimental Psychology: Learning, Memory, and Cognition",EK,SaB
+78,10.1037/xlm0000841,doi.org/10.1037/xlm0000841,Study 2,https://osf.io/48qwx,"Journal of Experimental Psychology: Learning, Memory, and Cognition",SiB,JC
 79,10.1037/xlm0001219,doi.org/10.1037/xlm0001219,Experiment 1,https://osf.io/329cs,"Journal of Experimental Psychology: Learning, Memory, and Cognition",BC,JC
 80,10.1037/xlm0001128,doi.org/10.1037/xlm0001128,Experiment 2,https://osf.io/zm7cy,"Journal of Experimental Psychology: Learning, Memory, and Cognition",EK,JC
 81,10.1037/pspi0000458,doi.org/10.1037/pspi0000458,Study 6,https://osf.io/ghkc8,Journal of Personality and Social Psychology,EK,JC
 82,10.1037/pspi0000364,doi.org/10.1037/pspi0000364,Study 3,https://osf.io/p3r8n,Journal of Personality and Social Psychology,SaB,EK
 83,10.1037/pspp0000375,doi.org/10.1037/pspp0000375,Study 1b,https://osf.io/wqyuf,Journal of Personality and Social Psychology,BC,JC
+84,10.1037/pspp0000526,doi.org/10.1037/pspp0000526,Study 1,https://osf.io/7rc2d,Journal of Personality and Social Psychology,JC,SiB
 85,10.1037/pspa0000412,doi.org/10.1037/pspa0000412,Study 2,https://osf.io/pquzm,Journal of Personality and Social Psychology,SaB,SiB
 86,10.1037/pspi0000327,doi.org/10.1037/pspi0000327,Study 5,https://osf.io/qtr94,Journal of Personality and Social Psychology,SiB,EK
 87,10.1037/pspa0000368,doi.org/10.1037/pspa0000368,Study 2,https://osf.io/fus72,Journal of Personality and Social Psychology,SiB,JC
@@ -83,19 +91,11 @@ article_number,DOI,doi_link,study_number,all_registration_urls,journal_title,cod
 90,10.1037/pspa0000386,doi.org/10.1037/pspa0000386,Experiment 4,https://osf.io/zbmun,Journal of Personality and Social Psychology,BC,SaB
 91,10.1037/pspa0000413,doi.org/10.1037/pspa0000413,Study 1,https://osf.io/ewjty,Journal of Personality and Social Psychology,JC,BC
 92,10.1037/pspa0000423,doi.org/10.1037/pspa0000423,Experiment 2,https://osf.io/tmkvd,Journal of Personality and Social Psychology,JC,BC
+93,10.1037/pspp0000386,doi.org/10.1037/pspp0000386,NA,https://osf.io/tcysh,Journal of Personality and Social Psychology,SiB,JC
+94,10.1037/pspp0000332,doi.org/10.1037/pspp0000332,Study 2,https://osf.io/wfb64;https://osf.io/zgwuf;https://osf.io/pmex8;https://osf.io/6wpa8,Journal of Personality and Social Psychology,BC,EK
 95,10.1037/pspa0000411,doi.org/10.1037/pspa0000411,Study 4,https://osf.io/nyudc,Journal of Personality and Social Psychology,BC,SaB
 96,10.1037/pspa0000416,doi.org/10.1037/pspa0000416,Study 5,https://osf.io/pdnyx,Journal of Personality and Social Psychology,SiB,SaB
 97,10.1037/pspp0000393,doi.org/10.1037/pspp0000393,Study 1,https://osf.io/bukpw,Journal of Personality and Social Psychology,JC,SaB
 98,10.1037/pspa0000404,doi.org/10.1037/pspa0000404,Study 6,https://osf.io/8bves,Journal of Personality and Social Psychology,BC,EK
 99,10.1037/pspi0000470,doi.org/10.1037/pspi0000470,Experiment 3,https://osf.io/zj7d9,Journal of Personality and Social Psychology,JC,EK
 100,10.1037/pspi0000476,doi.org/10.1037/pspi0000476,Study 9,https://osf.io/27k56,Journal of Personality and Social Psychology,BC,JC
-101,10.1037/pspa0000309,doi.org/10.1037/pspa0000309,Study 5,https://osf.io/e85xt,Journal of Personality and Social Psychology,SiB,JC
-102,10.1037/pspp0000511,doi.org/10.1037/pspp0000511,NA,https://osf.io/5dha3,Journal of Personality and Social Psychology,BC,EK
-103,10.1037/xhp0001264,doi.org/10.1037/xhp0001264,NA,https://osf.io/ysvu5,Journal of Experimental Psychology: Human Perception and Performance,JC,SiB
-104,10.1037/pspi0000325,doi.org/10.1037/pspi0000325,Study 3,https://osf.io/kajz6,Journal of Personality and Social Psychology,JC,SiB
-105,10.1037/xhp0001052,doi.org/10.1037/xhp0001052,Experiment 2,https://osf.io/5u6rc,Journal of Experimental Psychology: Human Perception and Performance,BC,SiB
-106,10.1037/xlm0000951,doi.org/10.1037/xlm0000951,Experiment 5,https://osf.io/tqc42,"Journal of Experimental Psychology: Learning, Memory, and Cognition",SiB,JC
-107,10.1037/emo0001418,doi.org/10.1037/emo0001418,NA,https://osf.io/c7h98,Emotion,JC,SaB
-108,10.1037/emo0001280,doi.org/10.1037/emo0001280,Study 2,https://osf.io/sryq6,Emotion,JC,EK
-109,10.1037/emo0001379,doi.org/10.1037/emo0001379,NA,https://osf.io/8qhjt,Emotion,SaB,JC
-110,10.1037/emo0001399,doi.org/10.1037/emo0001399,Study 2,https://osf.io/awvs6,Emotion,JC,EK

@@ -212,7 +212,7 @@ emotion_replace <- remaining_articles %>%
   group_by(DOI) %>%
   slice_sample(n = 1) %>%  
   ungroup() %>%
-  slice_sample(n = 4) %>%  
+  slice_sample(n = 5) %>%  
   select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
 
 write.csv(emotion_replace, "emotion_replace.csv")
