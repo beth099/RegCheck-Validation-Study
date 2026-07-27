@@ -187,13 +187,17 @@ jep_hpp_replace <- remaining_articles %>%
 
 write.csv(jep_hpp_replace, "jep_hpp_replace.csv")
 
-jpsp_replace <- remaining_articles %>% 
-  filter(journal_title == "Journal of Personality and Social Psychology") %>% 
-  group_by(DOI) %>%
-  slice_sample(n = 1) %>%  
-  ungroup() %>%
-  slice_sample(n = 3) %>%  
-  select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
+already_replaced <- remaining_articles |> 
+  filter(DOI %in% c("10.1037/pspa0000309", "10.1037/pspp0000511", "10.1037/pspi0000325")) # something with the randomisation went wrong with the JPSP replacements, these three articles were already replaced earlier 
+
+new_jpsp <- remaining_articles %>%
+  filter(journal_title == "Journal of Personality and Social Psychology",
+         !DOI %in% already_replaced) %>%
+  group_by(DOI) %>% slice_sample(n = 1) %>% ungroup() %>%
+  slice_sample(n = 1)
+
+jpsp_replace <- bind_rows(already_replaced, new_jpsp) |> 
+    select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
 
 write.csv(jpsp_replace, "jpsp_replace.csv")
 
@@ -202,7 +206,7 @@ jep_lmc_replace <- remaining_articles %>%
   group_by(DOI) %>%
   slice_sample(n = 1) %>%  
   ungroup() %>%
-  slice_sample(n = 1) %>%  
+  slice_sample(n = 2) %>%  
   select(c(DOI, reasoning, study_number, all_registration_urls, journal_title)) 
 
 write.csv(jep_lmc_replace, "jep_lmc_replace.csv")
@@ -219,5 +223,6 @@ write.csv(emotion_replace, "emotion_replace.csv")
 
 
 ```
+
 
 
