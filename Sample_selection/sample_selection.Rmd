@@ -202,7 +202,7 @@ jpsp_replace <- bind_rows(already_replaced_jpsp, new_jpsp) |>
 write.csv(jpsp_replace, "jpsp_replace.csv")
 
 already_replaced_jeplmc <- remaining_articles |> 
-  filter(DOI %in% c("10.1037/xlm0000841", "10.1037/xlm0001050", "10.1037/xlm0001339")) # something went wrong with the replacements, these three articles were already replaced earlier (and have already been coded)
+  filter(DOI %in% c("10.1037/xlm0000951", "10.1037/xlm0001339")) # something went wrong with the replacements, these three articles were already replaced earlier (and have already been coded)
 
 new_jeplmc <- remaining_articles %>%
   filter(journal_title == "Journal of Experimental Psychology: Learning, Memory, and Cognition",
