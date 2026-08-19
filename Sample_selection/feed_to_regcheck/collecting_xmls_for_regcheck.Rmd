@@ -1,0 +1,78 @@
+---
+title: "Collecting htmls for RegCheck"
+output: html_document
+date: "2026-08-18"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(readxl)
+library(purrr)
+
+master_list <- read.csv("MASTER_to_code.csv")
+```
+
+# Load list of DOIs that were coded
+
+```{r}
+master_list <- master_list |>
+  filter(exclude != "Excluded") |>
+  select(article_number, DOI) |>
+  distinct() |>
+  filter(!is.na(DOI))
+
+cat("DOIs to pull:", nrow(master_list), "\n")
+```
+
+# Load data_key to map DOI -> UID
+
+```{r}
+data_key_path <- "../PsycArticles/data_key.xlsx"
+
+data_key <- excel_sheets(data_key_path) |>
+  map_dfr(\(s) read_xlsx(data_key_path, sheet = s)) |>
+  select(UID, DOI)
+
+uid_keep <- master_list |>
+  left_join(data_key, by = "DOI") |>
+  filter(!is.na(UID))
+
+cat("Matching UIDs found:", nrow(uid_keep), "\n")
+```
+
+
+# Copy _fulltext.xml files to sample_fulltexts/ 
+```{r}
+out_dir <- "sample_fulltexts"
+dir.create(out_dir, showWarnings = FALSE)
+
+results <- map_dfr(seq_len(nrow(uid_keep)), function(i) {
+  uid            <- uid_keep$UID[i]
+  article_number <- uid_keep$article_number[i]
+
+  src <- file.path("../processed_articles", uid, paste0(uid, "_fulltext.xml"))
+
+  if (!file.exists(src)) {
+    return(tibble(uid = uid, article_number = article_number, status = "not_found"))
+  }
+
+  dest <- file.path(out_dir, paste0(article_number, "_fulltext.xml"))
+  file.copy(src, dest, overwrite = TRUE)
+  tibble(uid = uid, article_number = article_number, status = "copied")
+})
+```
+
+
+
+# Summary
+
+```{r}
+cat("\nDone.\n")
+cat("Copied:    ", sum(results$status == "copied"), "\n")
+cat("Not found: ", sum(results$status == "not_found"), "\n")
+
+if (any(results$status == "not_found")) {
+  cat("UIDs not found in processed_articles:\n")
+  cat(paste(" ", results$uid[results$status == "not_found"]), sep = "\n")
+}
+```

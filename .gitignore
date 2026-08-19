@@ -11,6 +11,7 @@ Sample_selection/PsycArticles
 Sample_selection/processed_articles
 Sample_selection/*.csv
 Sample_selection/classifier 
+*.xml
 # contains output from llm classifier
 
 # Analysis plan documents to ignore
