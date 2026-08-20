@@ -1,0 +1,82 @@
+---
+title: "check_for_prereg_updates"
+output: html_document
+date: "2026-08-19"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(httr2)
+```
+
+# Load data
+
+```{r}
+master_list <- read.csv("MASTER_to_code.csv") |>
+  filter(exclude != "Excluded") |>
+  select(article_number, DOI, all_registration_urls) |>
+  mutate(osf_id = str_extract(all_registration_urls, "osf\\.io/([a-zA-Z0-9]+)", group = 1))
+```
+
+# Query OSF API
+
+`/schema_responses/` returns one entry per version of the registration form. More than 1 means it was formally updated via OSF's Registration Update system.
+
+```{r}
+# osf_token <- "YOUR_TOKEN_HERE"  # uncomment for higher rate limits
+
+check_registration <- function(osf_id, article_number) {
+  if (is.na(osf_id)) {
+    return(tibble(article_number = article_number, osf_id = NA,
+                  n_schema_responses = NA, was_updated = NA, status = "no_id"))
+  }
+
+  resp <- request(paste0("https://api.osf.io/v2/registrations/", osf_id, "/schema_responses/")) |>
+    req_headers(Accept = "application/json") |>
+    # req_auth_bearer_token(osf_token) |>
+    req_retry(max_tries = 3, backoff = ~ 2) |>
+    req_error(is_error = \(r) FALSE) |>
+    req_perform()
+
+  if (resp_status(resp) != 200) {
+    return(tibble(article_number = article_number, osf_id = osf_id,
+                  n_schema_responses = NA, was_updated = NA,
+                  status = paste("http_error", resp_status(resp))))
+  }
+
+  n <- resp_body_json(resp)$links$meta$total
+
+  tibble(
+    article_number     = article_number,
+    osf_id             = osf_id,
+    n_schema_responses = n,
+    was_updated        = n > 1,
+    status             = "ok"
+  )
+}
+```
+
+# Run for all registrations
+
+```{r}
+results <- map_dfr(seq_len(nrow(master_list)), function(i) {
+  row <- master_list[i, ]
+  cat(sprintf("[%d/%d] article %s (osf_id: %s)\n",
+              i, nrow(master_list), row$article_number, row$osf_id))
+  result <- check_registration(row$osf_id, row$article_number)
+  Sys.sleep(0.5)
+  result
+})
+```
+
+# Summary
+
+```{r}
+cat("Total checked:", sum(results$status == "ok"), "\n")
+cat("Was updated:  ", sum(results$was_updated, na.rm = TRUE), "\n")
+cat("Errors:       ", sum(results$status != "ok"), "\n")
+
+results |> filter(was_updated) |> select(article_number, osf_id, n_schema_responses)
+
+write.csv(results, "registration_update_check.csv", row.names = FALSE)
+```
