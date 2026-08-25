@@ -16,3 +16,4 @@ Sample_selection/classifier
 # contains output from llm classifier
 
 # Analysis plan documents to ignore
+Analyses/agreement.R
