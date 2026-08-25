@@ -5,13 +5,35 @@ Our preregistration can be found: https://osf.io/9ykuw/overview
 ## Repository structure
 
 ```
-Sample_selection/      Screening, sampling, coder allocation, RegCheck inputs
-Analysis_plan/         Preregistered analysis code + simulated/pilot test data
-Simulation_planning/   Simulations for power analysis
+Analyses/               Analysis code for the collected data
+Data/                   Coming soon!
+Sample_selection/       Screening, sampling, coder allocation, RegCheck inputs
+Planning_files/         Preregistered analysis plan + simulations for power analysis
 ```
 
-## `Simulation_planning/` 
-This folder contains the code (and results) for our simulated power analysis. We rely only on the results from 'results/round3_results_long.rds'.
+## `Analyses/`
+This folder contains analysis scripts for the analyses we will report in the manuscript.
+
+## `Data/`
+Coming soon: this folder will contain the RegCheck validation data.
+
+## `Planning_files/`
+
+This folder contains our preregistered analysis plan and the code and results for our simulated power analysis. 
+
+```
+Planning_files/
+├── Analysis_plan/
+│   ├── analysis_plan.Rmd                           The preregistered analysis plan
+│   ├── rq3_simulated_data.Rmd                      Simulated data and analysis for RQ3
+│   ├── test_pilot_data.csv                         Pilot coding data used to develop the preregistered analysis
+│   ├── regcheck_validation_round2_check_test.csv   Round 2 pilot data
+│   └── data_rq3_simulated.csv                      Simulated RQ3 data
+│
+└── Simulation_planning/
+    ├── simulation.qmd                              Simulation code for the power analysis
+    └── results/                                    Simulation results (round3_results_long.rds are the results used)
+```
 
 ## `Sample_selection/`
 
@@ -28,17 +50,6 @@ Sample_selection/
 ├── coding_in_progress/                Working sheets + 7-coder reallocation
 └── feed_to_regcheck/                  Files given to RegCheck as input
 ```
-
-
-## `Analysis_plan/`
-
-| File | Contents |
-| --- | --- |
-| `analysis_plan.Rmd` | The preregistered analysis plan.
-| `rq3_simulated_data.Rmd` | Simulated data and analysis for RQ3 |
-| `test_pilot_data.csv` | Pilot coding data used to develop the preregistered analysis |
-| `regcheck_validation_round2_check_test.csv` | Round 2 pilot data |
-| `data_rq3_simulated.csv` | Simulated RQ3 data |
 
 ## License
 

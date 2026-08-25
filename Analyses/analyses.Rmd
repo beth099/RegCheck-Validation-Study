@@ -6,6 +6,8 @@ date: "2026-03-10"
 
 ```{r setup, include=FALSE}
 # Load packages
+library(qualtRics) # to read in qualtrics survey data
+
 library(readr)
 library(tidyverse)
 library(knitr)
@@ -19,27 +21,37 @@ library(lme4)
 library(emmeans)
 
 # Read in data
-data <- read_csv("test_pilot_data.csv", locale = locale(encoding = "latin1"))
+data <- read_survey("../Data/RegCheckValidationCoding_August 24.2026_0908.csv")
+recoding <- read_survey("../Data/RegCheckrecoding_incomplete.csv")
+
+# Need to load in round 2 of coding once we have it.
 
 options(scipen = 999) #turn off scientific notation
 options(digits = 2)
 ```
 
-# Initial cleaning of pilot data that we shouldn't need on the real data
+# Data cleaning
 ```{r}
-data <- data %>% 
-  filter(doi != "10.3758/s13423-017-1395-4") %>% # filter out a paper that only one person coded
-  mutate(
-    measurvars_prereg = pmap_chr(
-      select(., paste0("measurvars_prereg_", 4:13)),
-      ~ { vals <- c(...); paste(vals[!is.na(vals) & vals != ""], collapse = " | ") }
-    ),
-    measurvars_paper = pmap_chr(
-      select(., paste0("measurvars_paper_", 4:13)),
-      ~ { vals <- c(...); paste(vals[!is.na(vals) & vals != ""], collapse = " | ") }
-    ),
-    measurvars_concerns = measurvars_serious  # rename for consistency with other seriousness variables
-  )
+# exclusions
+
+#combine recoding
+
+# sanity check -- 100 unique articles, 2 coders each
+length(unique(data$article_num))
+
+data |> 
+  group_by(article_num) |> 
+  summarise(times_coded = n(),
+            n_coders = n_distinct(coder),
+            coders = paste(sort(coder), collapse = ", "),
+            .groups = "drop") |>   
+  filter(times_coded != 2 | n_coders != 2)
+
+data |> 
+  filter(coder == "EK") |> 
+  pull(article_num) |> 
+  unique() |> 
+  length()
 ```
 
 
