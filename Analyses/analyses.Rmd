@@ -6,7 +6,6 @@ date: "2026-03-10"
 
 ```{r setup, include=FALSE}
 # Load packages
-library(qualtRics) # to read in qualtrics survey data
 
 library(readr)
 library(tidyverse)
@@ -14,107 +13,21 @@ library(knitr)
 library(kableExtra)
 
 library(krippendorffsalpha)
+library(irrCAC) # for Gwet's AC1 (not preregistered)
 library(snow)
 library(httr2) # for calculating cosine similarity
 
 library(lme4)
 library(emmeans)
 
-# Read in data
-data <- read_survey("../Data/RegCheckValidationCoding_August252026_06.30.csv")
-recoding <- read_survey("../Data/RegCheckrecoding_incomplete.csv")
-exclusions <- read_csv("~/Desktop/RegCheck-Validation-Study/Data/exclusions.csv") #articles that may have been coded but should be excluded
+# Read in cleaned data
+data_cleaned <- read_csv("~/Desktop/RegCheck-Validation-Study/Data/prereg_deviations_data_cleaned.csv") #articles that may have been coded but should be excluded
 
 # Need to load in round 2 of coding once we have it.
 
 options(scipen = 999) #turn off scientific notation
 options(digits = 2)
 ```
-
-# Data cleaning
-```{r}
-# exclusions
-  # article_num 63, earlier article from SiB & AM (wrong experiment originally assigned)
-data_cleaned <- data |> 
-  filter(!(article_num == 63 & grepl("2", study_num)))
-  
-  # article_num 99, just SiB (wrong experiment originally assigned)
-data_cleaned <- data_cleaned |> 
-  filter(!(article_num == 99 & grepl("3", study_num)))
-
-  # other articles that were coded and subsequently excluded
-exclusions <- exclusions |> 
-  filter(exclude == "Excluded")
-
-data_cleaned <- data_cleaned |> 
-  filter(!article_num %in% exclusions$article_num)
-
-## ------------
-
-#combine recoding - where authors had updated preregistrations, several coders coded the latest version although the codebook instructed to code the original. 
-  # There were only 6 preregistrations with an update. 2 of these contained very minor updates. In all, only some dimensions for 4 papers needed to be recoded.
-recode_long <- recoding |>
-  select(ResponseId, coder_initial, matches("^\\d+_")) |>
-  rename(`90_samplesize_dev_t` = `90_samplesize_dev_te`) |>
- pivot_longer(
-    matches("^\\d+_"),
-    names_pattern = "^(\\d+)_(.*)$",
-    names_to = c("article_num", "item"),
-    values_to = "value"
-  ) |>
-  mutate(article_num = as.integer(article_num)) |>
-  pivot_wider(names_from = item, values_from = value)
-
-recode_long <- recode_long |>
-  filter(!if_all(-c(ResponseId, coder_initial, article_num), is.na)) # remove rows for articles each coder didn't code 
-
-item_cols <- setdiff(names(recode_long), c("ResponseId", "coder_initial", "article_num"))
-
-# clean up column names in recode to swap in to main dataset
-
-matches <- lapply(item_cols, \(x) grep(paste0("^", x), names(data_cleaned), value = TRUE))
-names(matches) <- item_cols
-
-stopifnot(lengths(matches) == 1)
-
-recode_replace <- recode_long |>
-  select(-ResponseId) |>
-  pivot_longer(-c(coder_initial, article_num), names_to = "item", values_to = "value") |>
-  mutate(dimension = str_replace(str_remove(item, "_.*$"), "^measurvars$", "measurevars")) |>
-  group_by(coder_initial, article_num, dimension) |>
-  filter(any(!is.na(value))) |>    # keep whole block if ANY cell is filled
-  ungroup()
-
-recode_replace <- recode_replace |>
-  mutate(col = vapply(item, \(x) grep(paste0("^", x), names(data_cleaned), value = TRUE), character(1)))
-
-idx <- match(
-  paste(recode_replace$coder_initial, recode_replace$article_num),
-  paste(data_cleaned$coder,  data_cleaned$article_num)
-)
-stopifnot(!anyNA(idx))
-
-for (i in seq_len(nrow(recode_replace))) {
-  data_cleaned[[recode_replace$col[i]]][idx[i]] <- recode_replace$value[i]
-}
-
-
-## ------------
-
-# sanity check -- 100 unique articles, 2 coders each
-length(unique(data_cleaned$article_num))
-
-data_cleaned |> 
-  group_by(article_num) |> 
-  summarise(times_coded = n(),
-            n_coders = n_distinct(coder),
-            coders = paste(sort(coder), collapse = ", "),
-            .groups = "drop") |>   
-  filter(times_coded != 2 | n_coders != 2)
-
-write.csv(data_cleaned, file = "../Data/prereg_deviations_data_cleaned.csv")
-```
-
 
 # Step 1: Pivot the data wider
 ```{r}
@@ -372,14 +285,44 @@ compute_alpha_by_dim <- function(coders_filter) {
     ungroup()
 }
 
-rq2a_alpha <- bind_rows(
-  compute_alpha_by_dim(human_coders) %>% mutate(comparison_type = "human_human"),
-  compute_alpha_by_dim(c(human_coders, rc_coder)) %>% mutate(comparison_type = "rc_human")
-)
+# Gwet's AC1 (not preregistered)
+compute_ac1_by_dim <- function(coders_filter, wts = "unweighted") {
+  data_long %>%
+    filter(coder %in% coders_filter, !is.na(deviation)) %>%
+    group_by(dimension) %>%
+    group_modify(function(d, key) {
+      wide <- d %>%
+        select(article_num, study_num, coder, deviation) %>%
+        pivot_wider(names_from = coder, values_from = deviation) %>%
+        select(-article_num, -study_num) %>%
+        as.data.frame()
+      fit <- tryCatch(
+        gwet.ac1.raw(wide, weights = wts),
+        error = function(e) NULL
+      )
+      if (is.null(fit)) {
+        tibble(ac1 = NA_real_, ac1_se = NA_real_, ac1_lower = NA_real_, ac1_upper = NA_real_)
+      } else {
+        tibble(
+          ac1       = fit$est$coeff.val,
+          ac1_se    = fit$est$coeff.se,
+          ac1_lower = fit$est$conf.int %>% str_extract("(?<=\\()[-0-9.]+") %>% as.numeric(),
+          ac1_upper = fit$est$conf.int %>% str_extract("[-0-9.]+(?=\\))") %>% as.numeric()
+        )
+      }
+    }) %>%
+    ungroup()
+}
 
-# Join summary table
+rq2a_alpha <- compute_alpha_by_dim(human_coders) %>% mutate(comparison_type = "human_human") %>%
+  bind_rows(compute_alpha_by_dim(c(human_coders, rc_coder)) %>% mutate(comparison_type = "rc_human"))
+
+rq2a_ac1 <- compute_ac1_by_dim(human_coders) %>% mutate(comparison_type = "human_human") %>%
+  bind_rows(compute_ac1_by_dim(c(human_coders, rc_coder)) %>% mutate(comparison_type = "rc_human"))
+
 rq2a <- rq2a_agree %>%
   left_join(rq2a_alpha, by = c("dimension", "comparison_type")) %>%
+  left_join(rq2a_ac1,   by = c("dimension", "comparison_type")) %>%
   arrange(dimension, comparison_type)
 rq2a
 ```

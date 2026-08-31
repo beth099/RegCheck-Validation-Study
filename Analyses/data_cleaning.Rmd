@@ -1,0 +1,105 @@
+---
+title: "data cleaning"
+output: html_document
+date: "2026-03-10"
+---
+
+```{r setup, include=FALSE}
+# Load packages
+library(qualtRics) # to read in qualtrics survey data
+
+library(readr)
+library(tidyverse)
+
+# Read in data
+data <- read_survey("../Data/RegCheckValidationCoding_August31_2026_0200.csv")
+recoding <- read_survey("../Data/RegCheckrecoding.csv")
+exclusions <- read_csv("../Data/exclusions.csv") #articles that may have been coded but should be excluded
+
+# Need to load in round 2 of coding once we have it.
+
+```
+
+# Data cleaning
+```{r}
+# exclusions
+  # article_num 63, earlier article from SiB & AM (wrong experiment originally assigned)
+data_cleaned <- data |> 
+  filter(!(article_num == 63 & grepl("2", study_num)))
+  
+  # article_num 99, just SiB (wrong experiment originally assigned)
+data_cleaned <- data_cleaned |> 
+  filter(!(article_num == 99 & grepl("3", study_num)))
+
+  # other articles that were coded and subsequently excluded
+exclusions <- exclusions |> 
+  filter(exclude == "Excluded")
+
+data_cleaned <- data_cleaned |> 
+  filter(!article_num %in% exclusions$article_num)
+
+## ------------
+
+#combine recoding - where authors had updated preregistrations, several coders coded the latest version although the codebook instructed to code the original. 
+  # There were only 6 preregistrations with an update. 2 of these contained very minor updates. In all, only some dimensions for 4 papers needed to be recoded.
+recode_long <- recoding |>
+  select(ResponseId, coder_initial, matches("^\\d+_")) |>
+  rename(`90_samplesize_dev_t` = `90_samplesize_dev_te`) |>
+ pivot_longer(
+    matches("^\\d+_"),
+    names_pattern = "^(\\d+)_(.*)$",
+    names_to = c("article_num", "item"),
+    values_to = "value"
+  ) |>
+  mutate(article_num = as.integer(article_num)) |>
+  pivot_wider(names_from = item, values_from = value)
+
+recode_long <- recode_long |>
+  filter(!if_all(-c(ResponseId, coder_initial, article_num), is.na)) # remove rows for articles each coder didn't code 
+
+item_cols <- setdiff(names(recode_long), c("ResponseId", "coder_initial", "article_num"))
+
+# clean up column names in recode to swap in to main dataset
+
+matches <- lapply(item_cols, \(x) grep(paste0("^", x), names(data_cleaned), value = TRUE))
+names(matches) <- item_cols
+
+stopifnot(lengths(matches) == 1)
+
+recode_replace <- recode_long |>
+  select(-ResponseId) |>
+  pivot_longer(-c(coder_initial, article_num), names_to = "item", values_to = "value") |>
+  mutate(dimension = str_replace(str_remove(item, "_.*$"), "^measurvars$", "measurevars")) |>
+  group_by(coder_initial, article_num, dimension) |>
+  filter(any(!is.na(value))) |>    # keep whole block if ANY cell is filled
+  ungroup()
+
+recode_replace <- recode_replace |>
+  mutate(col = vapply(item, \(x) grep(paste0("^", x), names(data_cleaned), value = TRUE), character(1)))
+
+idx <- match(
+  paste(recode_replace$coder_initial, recode_replace$article_num),
+  paste(data_cleaned$coder,  data_cleaned$article_num)
+)
+stopifnot(!anyNA(idx))
+
+for (i in seq_len(nrow(recode_replace))) {
+  data_cleaned[[recode_replace$col[i]]][idx[i]] <- recode_replace$value[i]
+}
+
+
+## ------------
+
+# sanity check -- 100 unique articles, 2 coders each
+length(unique(data_cleaned$article_num))
+
+data_cleaned |> 
+  group_by(article_num) |> 
+  summarise(times_coded = n(),
+            n_coders = n_distinct(coder),
+            coders = paste(sort(coder), collapse = ", "),
+            .groups = "drop") |>   
+  filter(times_coded != 2 | n_coders != 2)
+
+write.csv(data_cleaned, file = "../Data/prereg_deviations_data_cleaned.csv", row.names = FALSE)
+```

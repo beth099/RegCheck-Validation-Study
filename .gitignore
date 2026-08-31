@@ -17,3 +17,6 @@ Sample_selection/classifier
 
 # Analysis plan documents to ignore
 Analyses/agreement.R
+
+# Other
+vda_reliability
