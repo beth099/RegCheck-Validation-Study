@@ -812,19 +812,19 @@ plot_number_of_papers
 
 # Round 2 simulation
 
--   stick with 2 raters per paper
+- stick with 2 raters per paper
 
--   stick with 5 total raters
+- stick with 5 total raters
 
--   remove the high/low variability -\> only keep inferior/noninferior
+- remove the high/low variability -\> only keep inferior/noninferior
 
--   sample size 100 or 150
+- sample size 100 or 150
 
--   latent correlation = 0.6
+- latent correlation = 0.6
 
--   Add variations on the criterion used to determine (non)inferiority
+- Add variations on the criterion used to determine (non)inferiority
 
-    -   initial vals: .5 \* SD thru .1 \* SD
+  - initial vals: .5 \* SD thru .1 \* SD
 
 ## Define new analysis function
 

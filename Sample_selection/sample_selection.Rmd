@@ -20,12 +20,12 @@ prereg_classified_JEPLMC <- read_csv("prereg_classified_JEPLMC.csv") %>%
 prereg_classified <- bind_rows(prereg_classified, prereg_classified_JEPLMC)
 
 data_key <- bind_rows(
-  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2020"),
-  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2021"),
-  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2022"),
-  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2023"),
-  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2024"),
-  read_excel("PsycArticles/data_key (1).xlsx", sheet = "2025")
+  read_excel("PsycArticles/data_key.xlsx", sheet = "2020"),
+  read_excel("PsycArticles/data_key.xlsx", sheet = "2021"),
+  read_excel("PsycArticles/data_key.xlsx", sheet = "2022"),
+  read_excel("PsycArticles/data_key.xlsx", sheet = "2023"),
+  read_excel("PsycArticles/data_key.xlsx", sheet = "2024"),
+  read_excel("PsycArticles/data_key.xlsx", sheet = "2025")
 )
 
 ```
@@ -38,16 +38,21 @@ prereg_classified <- left_join(prereg_classified,
                             rename(journal_title = `Journal Title`)
 
 # Count the number of articles that use the OSF preregistration template for each journal (we need at least 20 per journal)
-prereg_classified %>% 
+eligible_articles <- prereg_classified %>% 
   group_by(journal_title) %>% 
   filter(uses_osf_template == TRUE) %>% 
   summarise(n_articles = n_distinct(DOI)) %>% 
   ungroup()
 
+eligible_articles
+
 # Save those that use the prereg template in a separate dataframe
 prereg_template <- prereg_classified %>% 
   filter(uses_osf_template == TRUE)
 
+
+# Total number of eligible articles
+sum(eligible_articles$n_articles)
 ```
 
 
