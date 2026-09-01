@@ -31,7 +31,8 @@ Planning_files/
 │   └── data_rq3_simulated.csv                      Simulated RQ3 data
 │
 └── Simulation_planning/
-    ├── simulation.qmd                              Simulation code for the power analysis
+    ├── simulation_final_round.qmd                  Simulation code for the power analysis
+    ├── previous simulation iterations/             We adjusted our simulations over three rounds. This folder contains simulations run over all 3 rounds.
     └── results/                                    Simulation results (round3_results_long.rds are the results used)
 ```
 
