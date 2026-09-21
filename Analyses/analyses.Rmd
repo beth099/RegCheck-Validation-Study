@@ -286,7 +286,7 @@ compute_alpha_by_dim <- function(coders_filter) {
 }
 
 # Gwet's AC1 (not preregistered)
-compute_ac1_by_dim <- function(coders_filter, wts = "unweighted") {
+compute_ac1_by_dim <- function(coders_filter, wts = "linear") {
   data_long %>%
     filter(coder %in% coders_filter, !is.na(deviation)) %>%
     group_by(dimension) %>%

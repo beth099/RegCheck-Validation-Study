@@ -531,7 +531,6 @@ check_simulation_failures <- function(simulation_results_long, simulation_label)
 
 ```
 
-
 # This simulation reflects our third round of simulations. For rounds 1 and 2, please see the simulation qmd in the 'previous simulation iteriations' folder.
 
 Based on conversations and round 2 results: we can reduce the number of parameter combinations further (focus only on 100 papers), and now add a third effect size scenario: no effect (i.e., true equivalence).
@@ -597,7 +596,7 @@ parameter_grid <- crossing(
 
 ## Run simulation
 
-```r
+``` r
 
 simulation_results_round3 <- parameter_grid |>
   mutate(
@@ -633,7 +632,6 @@ saveRDS(simulation_results_round3, "results/round3_results.rds")
 saveRDS(simulation_results_long_round3, "results/round3_results_long.rds")
 write_csv(dplyr::select(simulation_results_round3, -simulation_output), "results/round3_results.csv")
 write_csv(simulation_results_long_round3, "results/round3_results_long.csv")
-
 
 ```
 

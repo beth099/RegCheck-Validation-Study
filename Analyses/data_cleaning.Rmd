@@ -12,7 +12,7 @@ library(readr)
 library(tidyverse)
 
 # Read in data
-data <- read_survey("../Data/RegCheckValidationCoding_August31_2026_0200.csv")
+data <- read_survey("../Data/RegCheck_Validation_Coding.csv")
 recoding <- read_survey("../Data/RegCheckrecoding.csv")
 exclusions <- read_csv("../Data/exclusions.csv") #articles that may have been coded but should be excluded
 
