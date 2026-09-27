@@ -64,6 +64,7 @@ item_cols <- setdiff(names(recode_long), c("ResponseId", "coder_initial", "artic
 matches <- lapply(item_cols, \(x) grep(paste0("^", x), names(data_cleaned), value = TRUE))
 names(matches) <- item_cols
 
+
 stopifnot(lengths(matches) == 1)
 
 recode_replace <- recode_long |>
@@ -100,6 +101,11 @@ data_cleaned |>
             coders = paste(sort(coder), collapse = ", "),
             .groups = "drop") |>   
   filter(times_coded != 2 | n_coders != 2)
+
+# For consistency, clean up two variable names
+data_cleaned <- data_cleaned |> 
+  rename(measurvars_dev_text = measurevars_dev_text,
+         measurvars_notreg = measurevars_notreg)
 
 write.csv(data_cleaned, file = "../Data/prereg_deviations_data_cleaned.csv", row.names = FALSE)
 ```

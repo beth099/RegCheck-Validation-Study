@@ -16,7 +16,7 @@ library(readxl)
 
 ```{r}
 # Load data key (we only need articles from 5 specific journals)
-path <- "PsycArticles/data_key (1).xlsx"
+path <- "PsycArticles/data_key.xlsx"
 
 data_key <- excel_sheets(path) |>
   purrr::map_dfr(~ read_xlsx(path, sheet = .x))
@@ -131,13 +131,17 @@ pattern <- paste(prereg_keywords, collapse = "|")
 
 fulltext_data <- fulltext_data |>
   mutate(
-    prereg_context = purrr::map(fulltext, ~ extract_context(.x, pattern))
+    prereg_context = purrr::map(fulltext, ~ extract_context(.x, pattern)),
+    prereg_found = as.integer(lengths(prereg_context) > 0)
   )
 
+```
+
+```{r}
 # extract OSF links (we only want articles that might be preregistered using OSF's template)
 
-fulltext_filtered <- fulltext_data |>
-  filter(stringr::str_detect(fulltext, stringr::regex("osf\\.io", ignore_case = TRUE))) |>
+fulltext_unfiltered <- fulltext_data |>
+  #filter(stringr::str_detect(fulltext, stringr::regex("osf\\.io", ignore_case = TRUE))) |>
    mutate(
     osf_links = stringr::str_extract_all(
       fulltext_data$fulltext[match(uid, fulltext_data$uid)], 
@@ -146,7 +150,7 @@ fulltext_filtered <- fulltext_data |>
     osf_links = purrr::map_chr(osf_links, ~ paste(.x, collapse = " ||| "))
   ) |>
   mutate(prereg_found = purrr::map_lgl(prereg_context, ~ length(.x) > 0)) |>
-  filter(prereg_found) |>
+  #filter(prereg_found) |>
   mutate(
     prereg_context_text = purrr::map(prereg_context, function(contexts) {
       purrr::map_chr(contexts, ~ .x$context) |> paste(collapse = " ||| ")
@@ -159,16 +163,22 @@ fulltext_filtered <- fulltext_data |>
   mutate(prereg_context_text = as.character(prereg_context_text),
          prereg_keyword_matched = as.character(prereg_keyword_matched))
 
-fulltext_filtered <- fulltext_filtered |>
+fulltext_unfiltered <- fulltext_unfiltered |>
   mutate(
-    n_matches = stringr::str_count(prereg_keyword_matched, "\\|\\|\\|") + 1
+    n_matches = stringr::str_count(prereg_keyword_matched, "\\|\\|\\|") + 1,
+    osf_link_found = osf_links != ""
   )
 
 # add doi
-fulltext_filtered <- fulltext_filtered |>
+fulltext_unfiltered <- fulltext_unfiltered |>
   left_join(data_key |> select(UID, DOI), by = c("uid" = "UID")) %>% 
   # add full text
   left_join(fulltext_data |> select(fulltext, uid), by = "uid")
+
+write.csv(fulltext_unfiltered, file = "fulltext_unfiltered.csv")
+
+fulltext_filtered <- fulltext_unfiltered |> 
+  filter(prereg_found & osf_link_found)
 
 write.csv(fulltext_filtered, file = "fulltext_filtered.csv")
 ```

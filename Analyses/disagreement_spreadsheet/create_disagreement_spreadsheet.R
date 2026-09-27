@@ -10,7 +10,8 @@ MASTER_list <- read_csv("~/Desktop/RegCheck-Validation-Study/Sample_selection/fe
   filter(is.na(exclude)) |> 
   rename(article_num = article_number)
   
-# Need to load in round 2 of coding once we have it.
+data_cleaned <- data_cleaned |> 
+  rename(measurvars_dev_text = measurevars_dev_text)
 
 options(scipen = 999) #turn off scientific notation
 options(digits = 2)
@@ -19,12 +20,12 @@ options(digits = 2)
 data_long <- data_cleaned %>%
   select(
     article_num, coder, study_num,
-    matches("^(hypothesis|datas|inex|samplesize|manvars|measurvars|stats|transf|missd)_(prereg|paper|notreg|deviation|concerns|conf|comments)$")
+    matches("^(hypothesis|datas|inex|samplesize|manvars|measurvars|stats|transf|missd)_(prereg|paper|notreg|deviation|concerns|conf|comments|dev_text)$")
   ) %>%
   pivot_longer(
     cols = -c(article_num, coder, study_num),
     names_to  = c("dimension", ".value"),
-    names_pattern = "^(.+?)_(prereg|paper|notreg|deviation|concerns|conf|comments)$"
+    names_pattern = "^(.+?)_(prereg|paper|notreg|deviation|concerns|conf|comments|dev_text)$"
   )
 
 
@@ -44,7 +45,8 @@ data_pairs <- map_dfr(coder_pairs, function(pair) {
            deviation_c1 = deviation, 
            concerns_c1 = concerns,
            conf_c1 = conf, 
-           comments_c1 = comments)
+           comments_c1 = comments,
+           dev_text_c1 = dev_text)
   
   right <- data_long %>% filter(coder == c2) %>%
     select(article_num, dimension,
@@ -53,7 +55,8 @@ data_pairs <- map_dfr(coder_pairs, function(pair) {
            deviation_c2 = deviation, 
            concerns_c2 = concerns,
            conf_c2 = conf, 
-           comments_c2 = comments)
+           comments_c2 = comments,
+           dev_text_c2 = dev_text)
   
   left %>%
     inner_join(right, by = c("article_num", "dimension")) %>%

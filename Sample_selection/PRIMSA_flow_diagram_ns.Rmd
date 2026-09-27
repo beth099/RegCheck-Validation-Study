@@ -1,0 +1,129 @@
+---
+title: "PRISMA_flow_diagram_ns"
+output: html_document
+date: "2026-09-25"
+---
+
+```{r setup, include=FALSE}
+# Load packages
+library(readxl)
+library(readr)
+library(tidyverse)
+```
+
+# Step 1: Population
+```{r}
+# List of all articles, including whether the term "pre*reg*" was found in the full text and whether an OSF link was found
+fulltext_unfiltered <- read_csv("fulltext_unfiltered.csv") 
+  
+fulltext_unfiltered |> nrow()
+# Total number of articles in the population: 3317
+```
+
+# Step 2: Initial (automated) screening
+Searched texts for instances of *"preregistered", "pre-registered",
+  "preregistration", "pre-registration"* and extracted OSF link for articles that had one.
+```{r}
+fulltext_unfiltered |> 
+  filter(prereg_found & osf_link_found) |> 
+  nrow()
+# Potential ellgible articles: 1138
+
+# Did not include any “pre*regist*” variant 
+fulltext_unfiltered |> 
+  filter(prereg_found == F) |> 
+  nrow()
+# n = 2087
+
+#Included “pre*regist*” but did not contain OSF links in paper 
+fulltext_unfiltered |> 
+  filter(prereg_found == T & osf_link_found == F) |> 
+  nrow()
+# n = 92
+```
+
+# Step 3: LLM classifier screening
+We built an LLM classifier with the gpt-5-nano model (see preregistration_classifier.ipynb) to identify which articles that contained one of keywords and an OSF link actually contained preregistered studies, and if so, which studies were preregistered and the OSF link provided. 
+```{r}
+prereg_classified <- read_csv("prereg_classified.csv", col_select = -fulltext)
+
+prereg_classified_JEPLMC <- read_csv("prereg_classified_JEPLMC.csv", col_select = -fulltext) # this journal was originally labelled incorrectly, so had to be processed by the LLM in a second batch
+
+# merge them together
+prereg_classified <- bind_rows(prereg_classified, prereg_classified_JEPLMC)
+
+prereg_classified |> distinct(uid) |> nrow()
+# Total (check this is consisntent with n elligble articles above): 1036 [consistent]
+
+prereg_classified |> 
+  group_by(uid) |> 
+  summarise(
+    any_na_real_prereg = any(is.na(real_prereg)),
+    any_true_real_prereg = any(real_prereg == TRUE, na.rm = TRUE),
+    any_linked = any(real_prereg == TRUE & !is.na(uses_osf_template), na.rm = TRUE)
+  ) |> 
+  mutate(category = case_when(
+    any_na_real_prereg   ~ "llm_could_not_parse",
+    !any_true_real_prereg ~ "not_preregistered",
+    any_linked            ~ "at_least_one_prereg",
+    TRUE                  ~ "llm_could_not_link_to_prereg"
+  )) |> 
+  count(category)
+
+# at_least_one_prereg = 948
+
+# --
+# not_preregistered =	98	
+# llm_could_not_link_to_prereg = 91			
+# llm_could_not_parse = 1			
+```
+# Step 4: Uses OSF's Preregistration Template
+We used OSF’s API to determine the template of that preregistration and the direct link to the preregistration (authors often link to the repository, rather than to the specific registration).
+```{r}
+prereg_classified |> 
+  filter(real_prereg & !is.na(uses_osf_template)) |> 
+  group_by(uid) |> 
+  summarise(any_uses_osf_template = any(uses_osf_template)) |> 
+  mutate(category = case_when(
+    any_uses_osf_template ~ "any_uses_osf_template",
+    TRUE ~ "none_use_osf_template"
+  )) |> 
+  count(category)
+
+# any_uses_osf_template	= 230			
+# none_use_osf_template	= 718	
+```
+
+# Step 5: Final Sample
+```{r}
+MASTER_list <- read_csv("feed_to_regcheck/MASTER_list.csv")
+
+# final coded
+MASTER_list |> 
+  filter(is.na(exclude)) |> 
+  nrow()
+
+# n articles = 100
+
+# n excluded
+MASTER_list |> 
+  filter(exclude == "Excluded") |> 
+  nrow()
+
+# n articles = 14
+
+# n not coded
+template_uids <- prereg_classified |> 
+  filter(real_prereg & uses_osf_template) |> 
+  group_by(DOI) |> 
+  summarise(any_uses_osf_template = any(uses_osf_template)) |> 
+  filter(any_uses_osf_template) |> 
+  distinct(DOI)
+
+# n not randomly selected
+template_uids |> 
+  anti_join(MASTER_list, by = "DOI") |> 
+  nrow()
+# 116 articles not randomly selected
+```
+
