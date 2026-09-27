@@ -1,0 +1,238 @@
+<html><head><meta charset='utf-8'><title>Actual cause judgments in irreversible and reversible causal structures 03</title></head><body style='max-width:800px;margin:auto;font-family:sans-serif'><h2>Actual cause judgments in irreversible and reversible causal structures 03</h2><p>OSF ID: twy6c | Registered: 2023-10-27T08:24:20.386371 | Showing: original version (2 version(s) on OSF)</p><h4>Study Information</h4>
+<h4>Hypotheses</h4>
+<p>The question is whether "causal reversibility" (see Ross &amp;amp; Woodward, 2022; "Irreversible (one-hit) and reversible (sustaining) causation") affects reasoners' actual/ singular causation judgments in scenarios where two causes (can) influence an effect. 
+
+The present study uses the switch scenario tested in Henne et al.'s (2023) Supplementary Experiment. One part of the experiment will be a replication, as it will use the same two test queries asked by Henne et al. The second part of the study will test the scenario with a novel set of four test questions. Two questions will be about "causal triggering" (causes that make an absent effect appear). For each of the two potential causes such a question will be asked. The other two questions will be questions about "causal maintaining". Again, for each potential cause such a question will be asked. 
+
+The predictions are as follows: 
+In the replication part: 
+The same pattern found by Henne et al. is expected. 
+Subjects will say that only the first cause event is an actual cause of the effect in both the irreversible and the reversible structure condition. Mean ratings for the first cause entity will be higher than for the second, irrespective of reversibility.
+
+In the novel part: 
+An interaction between entity (the potential cause and whether it is phrased as a trigger or a maintainer) and causal reversibility is expected. If the structure is irreversible, subjects will say that the first event is a cause, but not the second. Importantly, the second potential cause will also not be regarded as a maintainer. If the structure is reversible, the first cause event will still be regarded as a trigger. This time, however, the second cause event will also be regarded as an actual cause (as exerting a causal influence on the effect, to be more precisely), namely as a maintainer (but not as a trigger). As has been described by Ross and Woodward, in cases of reversible causation the effect tends to be a long-lasting state rather than a one-shot event. In this case, causes seem to keep or maintain an effect. This observation may have implications for how one has to ask about the second cause event in such cases. The second cause in such cases does not trigger the effect event. Rather, it keeps it from disappearing. Thus, when asking subjects about the role of that second cause, a phrasing that fits with the maintaining/ sustaining nature of that second cause seems to be in order. 
+
+Statistical Hypotheses: 
+For the replication part: 
+A mixed ANOVA (using R's afex package) will be conducted. 
+
+Code: aov_car(rating ~ structure*entity + Error(subj_code/entity), tdata_long_original, anova_table = list(es = "pes"))
+
+"entity" refers to the two different cause event ratings ("first caused" vs. "second caused"). "structure" codes whether the causal structure is reversible or irreversible. 
+
+The crucial predicted effect is a main effect for entity. More specifically, the following pattern of the means is predicted: in both structure conditions, the first entity will receive higher ratings than the second. 
+
+This directed effect will also be followed up by a two directed (one-sided) contrasts comparing the means in each structure condition. 
+
+In irreversible:
+M (first entity)  &amp;gt; M (second entity) 
+In reversible: 
+M (first entity) &amp;gt; M (second entity)
+
+For the novel part of the experiment: 
+
+A mixed ANOVA (using R's afex package) will be conducted. 
+
+Code: aov_car(rating ~ structure*entity + Error(subj_code/entity), tdata_long_novel, anova_table = list(es = "pes"))
+
+"entity" refers to the two different cause event ratings ("first caused" vs. "second caused" vs. "first maintained" vs. "second maintained"). "structure" codes whether the causal structure is reversible or irreversible. 
+
+The crucial predicted effect is an interaction effect between structure and entity. More specifically, the following pattern of the means is predicted, which will be tested with directed (one-sided) contrasts: 
+
+In irreversible
+- M for "first entity triggered" &amp;gt; M for "second entity triggered" 
+- M for "second maintained" should be low
+
+In reversible: 
+- M for "first triggered" still &amp;gt; M for "second triggered" 
+- M for "second maintained" should go up
+
+Comparing the two structure conditions, it is expected that: 
+M for "second maintained" in "reversible" &amp;gt; M for "second maintained" in "irreversible" 
+
+This difference reveals a change in the actual causation status of the second cause event. 
+
+The first event may also be regarded as a maintainer in "reversible", because it (the switch) remains on in the scenario description. 
+</p>
+<h4>Design Plan</h4>
+<h4>Study type</h4>
+<p>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</p>
+<h4>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</h4>
+<h4>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</h4>
+<h4>Meta-Analysis - A systematic review of published studies.</h4>
+<h4>Other</h4>
+<h4>Blinding</h4>
+<p>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</p>
+<h4>No blinding is involved in this study.</h4>
+<h4>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</h4>
+<h4>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</h4>
+<h4>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</h4>
+<h4>Is there any additional blinding in this study?</h4>
+<p></p>
+<h4>Study design</h4>
+<p>Mixed design manipulating as between subject factor "reversibility" (2 levels: reversible vs. irreversible). Entity (potential cause and how it is described) will be manipulated within subject (in random order): "first is a trigger" vs. "second is a trigger" vs. "first is a maintainer" vs. "second is a maintainer". 
+
+The replication part (using the two original actual causation queries) could be regarded as an additional between-subject factor. However, these two parts of the study will be analyzed separately. This part of the study thus has a mixed design with the between-subject factor "reversibility" (irreversible vs. reversible), and the within-subject factor "entity" (the two cause events: first vs. second), presented in random order.</p>
+
+<p></p>
+<h4>Randomization</h4>
+<p>Subjects will be alternately assigned to the different conditions. Data collection for the replication part will be terminated sooner, as less subjects are required here. These conditions will be "deactivated" once the sample size has been reached. During the rest of the experiment, subjects will be alternately assigned to the remaining conditions of the novel part of the study. If different numbers of subjects fail the inclusion checks (e.g., memory checks), these conditions will be filled selectively so that equally man subjects will be in each condition in the end. </p>
+<h4>Sampling Plan</h4>
+<h4>Existing Data</h4>
+<p>Registration prior to creation of data</p>
+<h4>Registration prior to creation of data</h4>
+<h4>Registration prior to any human observation of the data</h4>
+<h4>Registration prior to accessing the data</h4>
+<h4>Registration prior to analysis of the data</h4>
+<h4>Registration following analysis of the data</h4>
+<h4>Explanation of existing data</h4>
+<p></p>
+<h4>Data collection procedures</h4>
+<p>Subjects will be recruited via prolific.com. They will be paid 0.45 pounds (about 10.45 pounds per hour). Subjects must be at least 18 year old. There native language must be English. Their approval rate on Prolific must be at least 0.9. They must at least have completed "secondary education" (i.e., more than "no formal qualifications"). Subjects who took part in pilot studies and other experiments in this series will be excluded. 
+
+There are also comprehension and memory checks that may lead to the exclusion from any data analyses. 
+
+1) The first screener contains two questions: 
+"This study works properly only on Desktop PCs and Laptops, and not on Smartphones or Tablets. Before you proceed, please confirm that you take part via Desktop PC or Laptop."
+
+"For the scientific utility of the results, it is very important that you provide complete and careful responses. How seriously will you take your participation in the study?"
+
+Subjects need to confirm both (or otherwise their data won't be analyzed). 
+
+2) A final memory check. Subjects will be asked: In the scenario about the switches and the light you just read, once the purple light goes on, can it be turned off by turning off the switches? (YES vs. NO). Data of subjects who answer this incorrectly will not be analyzed. 
+
+3) There will also be a text field where subjects can report technical errors (if those occurred). Only subjects will be excluded who clearly say that error prevented them taking part properly (e.g., if they couldn't see the instructions or test questions, they will be excluded). Sometimes, subjects report that they had to refresh their browser, which restarts the study. Such subjects will also be excluded.
+
+4) subject data sets with missing data will be excluded entirely (as missing data must be due to some technical issues in the case of this experiment). 
+</p>
+
+<p></p>
+<h4>Sample size</h4>
+<p>For the replication part: 
+N = 50 (n = 25) subjects (valid subjects whose data don't meet any of the above mentioned exclusion criteria). 
+
+For the novel part: 
+N = 100 (n = 25) subjects (valid subjects whose data don't meet any of the above mentioned exclusion criteria). </p>
+<h4>Sample size rationale</h4>
+<p>For the replication part: 
+Sample Size planning based on main effect of mixed ANOVA: 
+
+analysis was conducted with this website: https://statistikguru.de/rechner/stichprobengroesse-mixed-anova.html
+
+effect = 0.5
+groups = 2 (reversible vs. irreversible)
+measures = 2 (first event caused vs. second event caused)
+alpha = 0.05
+Power = 0.9
+
+This results in N = 14
+
+However, the plan is to have more subjects. n = 25 per group, N = 50. This is the sample size for the novel test query conditions.
+
+For the novel part: 
+Sample Size planning based on interaction effect of mixed ANOVA: 
+
+analysis was conducted with this website: https://statistikguru.de/rechner/stichprobengroesse-mixed-anova.html
+
+
+effect = 0.15
+groups = 2
+measures = 4
+alpha = 0.05
+Power = 0.9
+
+This results in N = 82 (n = 41 per reversibility condition)
+
+However, the plan is to have more subjects. n = 50 per group, N = 100. </p>
+<h4>Stopping rule</h4>
+<p>Data collection will be terminated once the above mentioned sample sizes are realized. Then the data will be screened for violations of the exclusions checks. Subjects who violate them, will be excluded. The missing number of subjects will then be filled up, so that the sample size criteria are met.</p>
+<h4>Variables</h4>
+<h4>Manipulated variables</h4>
+<p>Replication condition and novel condition: 
+"Causal Structure" (reversible vs. irreversible); between subjects
+
+Replication condition: 
+"Enitity" (the cause test queries for each of the two potential causes): "first caused" vs. "second caused"; within-subject (random order)
+
+Novel condition: 
+"Entity" (the cause test queries and their formulation): "first triggered" vs. "second triggered" vs. "first maintained" vs. "second maintained"; within-subject (random order)</p>
+
+<p></p>
+<h4>Measured variables</h4>
+<p>Subjects will use a 9-point rating scale to answer the test queries: 
+"Strongly disagree","" ,"" ,"" ,"" ,"", "", "","Strongly agree"
+
+In the replication condition, they'll be asked to rate the following two questions: 
+"The purple light was on at 4:00PM because the red switch turned on."
+"The purple light was on at 4:00PM because the blue switch turned on." 
+
+In the novel conditions: 
+"The red switch turning on at 1:00PM caused the purple light to turn on."
+"The blue switch turning on at 2:00PM caused the purple light to turn on."
+"At 4:00PM, the red switch being on is keeping the purple light burning."
+"At 4:00Pm, the blue switch being on is keeping the purple light burning."
+
+</p>
+
+<p></p>
+<h4>Indices</h4>
+<p></p>
+
+<p></p>
+<h4>Analysis Plan</h4>
+<h4>Statistical models</h4>
+<p>Statistical Hypotheses: 
+For the replication part: 
+A mixed ANOVA (using R's afex package) will be conducted. 
+
+Code: aov_car(rating ~ structure*entity + Error(subj_code/entity), tdata_long_original, anova_table = list(es = "pes"))
+
+"entity" refers to the two different cause event ratings ("first caused" vs. "second caused"). "structure" codes whether the causal structure is reversible or irreversible. 
+
+The crucial predicted effect is a main effect for entity. More specifically, the following pattern of the means is predicted: in both structure conditions, the first entity will receive higher ratings than the second. 
+
+This directed effect will also be followed up by a two directed (one-sided) contrasts comparing the means in each structure condition. 
+
+In irreversible:
+M (first entity)  &amp;gt; M (second entity) 
+In reversible: 
+M (first entity) &amp;gt; M (second entity)
+
+For the novel part of the experiment: 
+
+A mixed ANOVA (using R's afex package) will be conducted. 
+
+Code: aov_car(rating ~ structure*entity + Error(subj_code/entity), tdata_long_novel, anova_table = list(es = "pes"))
+
+"entity" refers to the two different cause event ratings ("first caused" vs. "second caused" vs. "first maintained" vs. "second maintained"). "structure" codes whether the causal structure is reversible or irreversible. 
+
+The crucial predicted effect is an interaction effect between structure and entity. More specifically, the following pattern of the means is predicted, which will be tested with directed (one-sided) contrasts: 
+
+In irreversible
+- M for "first entity triggered" &amp;gt; M for "second entity triggered" 
+
+
+In reversible: 
+- M for "first triggered" still &amp;gt; M for "second triggered" 
+
+
+Comparing the two structure conditions, it is expected that: 
+M for "second maintained" in "reversible" &amp;gt; M for "second maintained" in "irreversible" 
+
+
+</p>
+
+<p></p>
+<h4>Transformations</h4>
+<p></p>
+<h4>Inference criteria</h4>
+<p>p-values &amp;lt; .05 will lead to the rection of null-hypothesis. Directed contrasts will be interpreted based on onse-sided p-values. No error corrections will be applied to these planned contrasts.</p>
+<h4>Data exclusion</h4>
+<p>No other exclusions than those stated prior. </p>
+<h4>Missing data</h4>
+<p>subjects who didn't provide complete data will be excluded entirely from all analayses. </p>
+<h4>Exploratory analysis</h4>
+<p></p>
+<h4>Other</h4>
+<h4>Other</h4>
+<p></p></body></html>

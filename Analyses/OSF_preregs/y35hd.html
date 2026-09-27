@@ -1,0 +1,80 @@
+<html><head><meta charset='utf-8'><title>Modulating Cognitive Flexibility by Offering Performance-Noncontingent Rewards</title></head><body style='max-width:800px;margin:auto;font-family:sans-serif'><h2>Modulating Cognitive Flexibility by Offering Performance-Noncontingent Rewards</h2><p>OSF ID: y35hd | Registered: 2022-01-28T17:37:37.959317</p><h4>Study Information</h4>
+<h4>Hypotheses</h4>
+<p>We hypothesize that switch costs (the difference in response time on task switch trials vs. task repeat trials, a common index of cognitive flexibility) will be decreased in the performance noncontingent reward phase as compared to the performance contingent reward phase.</p>
+<h4>Design Plan</h4>
+<h4>Study type</h4>
+<p>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</p>
+<h4>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</h4>
+<h4>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</h4>
+<h4>Meta-Analysis - A systematic review of published studies.</h4>
+<h4>Other</h4>
+<h4>Blinding</h4>
+<p>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</p>
+<h4>No blinding is involved in this study.</h4>
+<h4>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</h4>
+<h4>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</h4>
+<h4>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</h4>
+<h4>Is there any additional blinding in this study?</h4>
+<p>Participants will be aware of the differences between the two phases (it is important that participants not mistakenly believe there is a hidden contingency pattern in the noncontingent phase) but will be unaware of the expected consequences of these phases. Researchers will be unaware of which phase a participant is currently experiencing. </p>
+<h4>Study design</h4>
+<p>This is a 2 (reward: trial follows reward, trial does not follow reward) X 2 (transition type: switch, repeat) X 2 (phase: contingent, noncontingent) within-subjects factorial design. </p>
+
+<p></p>
+<h4>Randomization</h4>
+<p>All rewards in the noncontingent phase except the first will be determined pseudorandomly, constrained to prevent 3 consecutive rewards. The first reward in this phase will be presented on the first trial where a participant makes an incorrect response. Rewards in the contingent phase will be presented on the 10% of trials with the fastest response times and correct responses (5% for switches and 5% for repeats). Phase order will be randomly counterbalanced across all participants. Transition type will be randomly assigned for each trial, constrained such that switches and repeats occur equally often. </p>
+<h4>Sampling Plan</h4>
+<h4>Existing Data</h4>
+<p>Registration prior to creation of data</p>
+<h4>Registration prior to creation of data</h4>
+<h4>Registration prior to any human observation of the data</h4>
+<h4>Registration prior to accessing the data</h4>
+<h4>Registration prior to analysis of the data</h4>
+<h4>Registration following analysis of the data</h4>
+<h4>Explanation of existing data</h4>
+<p></p>
+<h4>Data collection procedures</h4>
+<p>Participants will be recruited from Purdue’s research subjects pool and compensated with research credits towards a class requirement. Participants must be at least 18 years old. Moreover, to be included in analysis, accuracy must be within 2.5 SD of the group mean accuracy.</p>
+
+<p></p>
+<h4>Sample size</h4>
+<p>The sample for this experiment will consist of 150 participants. </p>
+<h4>Sample size rationale</h4>
+<p>This sample size will provide 95% power, according to a bootstrapping power analysis which assumed effect sizes, means, and standard deviations similar to that reported by Chiu et al. (2020) in a study which used a comparable design but different method to induce flexibility (tying switch probability information to specific stimuli).</p>
+<h4>Stopping rule</h4>
+<p></p>
+<h4>Variables</h4>
+<h4>Manipulated variables</h4>
+<p>We will manipulate the rules by which rewards are provided to participants, resulting in the previously mentioned contingent and noncontingent phases. The other independent variables, transition type and reward, will also be manipulated as described above.  </p>
+
+<p></p>
+<h4>Measured variables</h4>
+<p>Measured variables will be response time (RT) and error rate (ER). In addition, we will measure 3 dimensions of affect using the Self-Assessment Manikin (Bradley &amp;amp; Lang, 1994): valance, arousal, and dominance. This assessment will be given 3 times; one baseline prior to beginning the switching task, and one at the end of each contingency phase.  
+
+At the end of the experiment, participants will self-report their awareness and knowledge of the contingent vs. noncontingent phases, and whether they believed they had any control over reward presentation in the noncontingent phase. 
+</p>
+
+<p></p>
+<h4>Indices</h4>
+<p>RT on repeat trials will be subtracted from RT on switch trials to provide switch costs, an index of cognitive flexibility. A similar calculation will be performed on ER to provide ER switch costs. We will investigate whether the different reward contingency rules have opposing effects on switch costs. </p>
+
+<p></p>
+<h4>Analysis Plan</h4>
+<h4>Statistical models</h4>
+<p>All analyses preregistered here are confirmatory. Response time data will be subjected to a 2 (reward: trial follows reward, trial does not follow reward) x 2 (transition type: switch, repeat) x 2 (phase: contingent, noncontingent) repeated measures analysis of variance (ANOVA) using the rstatix package (Kassambara, 2020) in R (R Core Team, 2019). Relevant 3-way interactions will be followed by post-hoc ANOVAS. We will conduct an identical analysis using error rate data. Should any participants not report noticing differences between the two phases, or if any do not believe the noncontingent phase is truly noncontingent, we will determine whether these participants’ results differ significantly from others by adding self-reported awareness as a between-subjects factor to the above ANOVAs. </p>
+
+<p></p>
+<h4>Transformations</h4>
+<p></p>
+<h4>Inference criteria</h4>
+<p>A p-value less than .05 will be considered statistically significant. Bonferroni corrections will be used to correct p-values with multiple comparisons.  </p>
+<h4>Data exclusion</h4>
+<p>Aside from the previously mentioned participant-level exclusion criteria, trial-level exclusions will also be applied. Specifically, trials with response times below 200 ms, response times more than 3 SD from a participant’s mean RT, and those with no response will be excluded from both RT and ER analysis. Trials with incorrect responses and those immediately following errors will be excluded from the RT analysis but not ER analysis. </p>
+<h4>Missing data</h4>
+<p></p>
+<h4>Exploratory analysis</h4>
+<p>We will also conduct a causal mediation analysis using the mediation R package (Tingley et al., 2014) to determine whether the relationship between rewards (particularly noncontingent ones) and switch costs is mediated by changes in affect. We do not have a strong hypothesis regarding this relationship, but past research has indicated that the influence of reward on flexibility is driven by the impact of reward on affect (Chiew &amp;amp; Braver, 2014; Fröber &amp;amp; Dreisbach, 2014, 2016).
+
+We will also measure action vs state orientation using the Action Control Scale (ACS-24, Kuhl &amp;amp; Beckmann, 1994) and investigate whether action or state orientation predicts contingent or noncontingent reward sensitivity. </p>
+<h4>Other</h4>
+<h4>Other</h4>
+<p></p></body></html>

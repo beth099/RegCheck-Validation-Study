@@ -1,0 +1,296 @@
+<html><head><meta charset='utf-8'><title>Faces and face-like objects: Individual differences</title></head><body style='max-width:800px;margin:auto;font-family:sans-serif'><h2>Faces and face-like objects: Individual differences</h2><p>OSF ID: q5ne8 | Registered: 2022-05-04T16:51:35.640593 | Showing: original version (1 version(s) on OSF)</p><h4>Study Information</h4>
+<h4>Hypotheses</h4>
+<p>1. Face foraging is positively associated with foraging for fake objects from the face quadrant of object space (directional).
+
+2. Face foraging is positively associated with foraging for real objects from the face quadrant of object space (directional).
+
+3. People with greater face recognition abilities will weigh face space distance between target and distractor to a greater extent when foraging for faces (directional). 
+
+4. People with greater face recognition abilities will weigh face space distance between target and distractor to a greater extent when foraging for fake objects (directional). 
+
+5. People with greater face recognition abilities will weigh face space distance between target and distractor to a lesser or greater extent when foraging for real objects that are not faces (non-directional). </p>
+<h4>Design Plan</h4>
+<h4>Study type</h4>
+<p>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</p>
+<h4>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</h4>
+<h4>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</h4>
+<h4>Meta-Analysis - A systematic review of published studies.</h4>
+<h4>Other</h4>
+<h4>Blinding</h4>
+<p>No blinding is involved in this study.</p>
+<h4>No blinding is involved in this study.</h4>
+<h4>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</h4>
+<h4>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</h4>
+<h4>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</h4>
+<h4>Is there any additional blinding in this study?</h4>
+<p>The study has a within-subjects design, with all participants participating in all conditions of the experiment. The experiment is fully computerized so personnel who interact directly with the participants should not be able to affect behavior in each condition.</p>
+<h4>Study design</h4>
+<p>In this experiment, all participants go through all conditions but we focus on individual differences. All participants will complete the 20-item Prosopagnosia Index (PI20) questionnaire, the Cambridge Face Memory Test (CFMT) as well as a foraging task including the following 17 conditions:
+
+i)	Fake objects from the body quadrant of object space
+ii)	Fake objects from the face quadrant of object space
+iii)	Fake objects from the stubby quadrant of object space
+iv)	Fake objects from the NML quadrant of object space
+v)	Hands from the body quadrant of object space
+vi)	Hands from the face quadrant of object space
+vii)	Birds from the body quadrant of object space
+viii)	Birds from the face quadrant of object space
+ix)	Faces from the face quadrant of object space matched to fake objects
+x)	Faces from the face quadrant of object space matched to each other
+xi)	Buckets from the stubby quadrant of object space
+xii)	Mattresses from the stubby quadrant of object space
+xiii)	Bowties from the face quadrant of object space
+xiv)	Seashells from the face quadrant of object space
+xv)	Hangers from the NML quadrant of object space
+xvi)	Exercise equipment from the NML quadrant of object space
+xvii) Feature foraging control condition
+
+IMAGE SETS
+
+The study is based on six image sets:
+
+Animacy-Size (image courtesy Konkle Lab: http://konklab.fas.harvard.edu/ Konke &amp;amp; Caramazza, 2013): 240 images of animals (60 big and 60 small real-world size) and inanimate objects (60 big and 60 small real-world size)
+
+Conceptual-Distinctiveness (image courtesy UCSD Vision and Memory Lab: https://bradylab.ucsd.edu/stimuli.html Konkle et al., 2010): 4360 images of objects belonging to various categories, most of them inanimate.
+
+Fake objects (image courtesy Tsaolab: Bao et al., 2020): 80 images of fake objects.
+
+Tarrlab faces (image courtesy Michael J. Tarr, Carnegie Mellon University, http://www.tarrlab.org/. Funding provided by NSF award 0339122, Righi et al., 2012): 3362 images of Caucasian faces.
+
+11k Hands (image courtesy Mahmoud Afifi: https://sites.google.com/view/11khands  Afifi, 2019): 11,076 images of hands.
+
+Caltech-UCSD Birds-200-2011 (image courtesy Caltech Vision / UCSD Vision: http://www.vision.caltech.edu/visipedia/CUB-200-2011.html Wah et al., 2011): 11,788 images of birds.
+
+IMAGE MANIPULATION
+
+All objects were stripped of their background (if they had one) so that only a single object was shown on a blank background. To standardize size and borders, images were processed in IrfanView (https://www.irfanview.com). All images were cropped and then resized so that the longer side of each object (vertical or horizontal) was the same size as the longer side of all other objects (bounding box longer side 680 pixels). We then added a square, white background to all images, before we resized them again to 224 x 224 pixels. All images are therefore square, equally sized, with an equally wide, white border around them. Images were changed to grayscale and run through the SHINE Toolbox (http://www.mapageweb.umontreal.ca/gosselif/SHINE/ Willenbockel et al., 2010) to equate mean brightness and contrast.
+
+NEURAL NETWORK ACTIVATION
+
+All images were run through layer 15 of the convolutional neural network VGG-16 (Simonyan &amp;amp; Zisserman, 2014) trained on the ecoset image set (Mehrer et al., 2021) using batch normalization (code implemented through the Python toolbox THINGSvision; Muttenthaler, L., &amp;amp; Hebart, 2021; https://github.com/ViCCo-Group/THINGSvision). The layer activation corresponding to each image was a vector of length 4096, with each vector item corresponding to the activation of a particular node. 
+
+DEFINING AN OBJECT SPACE
+
+The Animacy-Size image set of big and small animate and inanimate objects was used as a reference set. The corresponding 240 vectors were run though Principal Component Analysis (PCA). The first two principal components were extracted; they explained a total of 20.1% of variance in the original 4096 variables. These two dimensions should capture the main dimensions on which the reference objects differ visually (see also Bao et al., 2020). All images were then projected to this new 2D object space, where each image was represented as a coordinate (PC1, PC2). 
+
+FINDING AND MATCHING STIMULI
+
+Images of the fake objects were projected onto the Animacy-Size object space. The fake object image set consists of 80 images, which cluster into four quadrants of object space. For the purpose of this study, 11 images from each quadrant were selected to minimize overlap in object space location between images from different quadrants. 
+
+Images from four different image sets were then projected onto the Animacy-Size object space and an attempt was made to select experimental stimuli that matched the location of the fake objects in object space. As expected, most real faces (image set: Tarrlab faces) projected to the face quadrant and were therefore only matched with fake objects from the face quadrant. Hands and birds clustered in the animate part of object space (i.e., body and face quadrants), and were matched with fake objects from the body and face quadrants; no good matches were found for the NML and stubby quadrants. Six categories of real inanimate objects from the Conceptual-Distinctiveness image set were matched with the fake objects: Bowties and seashells were matched with fake objects from the face quadrant, mattresses and buckets were matched with fake objects from the stubby quadrant, and hangers and exercise equipment were matched with fake objects from the NML quadrant. No inanimate matches could be found for fake objects from the body quadrant.
+
+Exclusion criteria for images were as follows:
+
+Faces: Sunglasses or obvious wigs. If two images of the same person were matched with different fake objects, the image with a euclidean distance in object space further from its assigned fake object was excluded and a new match found.
+
+Hands: Jewelry or salient sleeves. If two images that matched with fake objects were clearly of the same hand, the image with a euclidean distance further from its assigned fake object was excluded and a new match found.
+
+Birds: More than one bird in each image.
+
+Inanimate objects: Visible writing on the objects, animate objects (cats, turtles, etc.) or ambiguously animate objects (rubber ducks, toy horses, stuffed animals, etc.). Multiple items in each image.
+
+MAKING TARGET-DISTRACTOR PAIRS
+
+There are 11 trials of each of the 17 conditions, making a total of 187 trials. Control trials consist of black targets and white distractors or white targets and black distactors. For other conditions, each object image appears two times in the experiment, once as a target and once as a distractor. Each target-distractor pair only appears once, so that if for example image A is a target and B a distractor in one trial, then B will be a target and not-A a distractor in another trial.
+
+The fake objects were randomly paired together within each quadrant as targets and distractors. Mean target-distractor distance was not significantly different between the four quadrants. For each of the other conditions (except faces from the face quadrant of object space matched to each other, and feature foraging control), the target-distractor pairs were matched with the fake object pairs. For instance, if hand A is matched with fake object A and hand B is matched with fake object B, then hand A and hand B will be selected as a target-distractor pair, because fake objects A and B were paired together. 
+
+Across the experiment, there will be 11 unique target-distractor pairs per condition. The target and the distractor are separated in object space by a known distance varying from small (similar-looking target and distractor) to large (dissimilar-looking target and distractor). This distance should vary in a similar way for each experimental condition.
+
+Faces from the face quadrant of object space matched to each other are an exception; they were not chosen to match any other objects but were hand-picked by the researchers to be of 11 male individuals looking slightly to the left with a similar expression, similar hairstyle, and no beard or glasses. These 11 faces formed a tight cluster in object space, consistent with their visual similarity. We include these faces even though they are not matched to the other objects so as to include particularly challenging face foraging trials where cues unrelated to facial identity (e.g., viewpoint) are minimized.
+
+DEFINING A FACE SPACE
+
+The Tarrlab faces image set was used as a reference set. Faces with sunglasses or obvious wigs were removed, leaving 2759 images. The corresponding vectors were run though Principal Component Analysis (PCA). All PCs that explained at least 1% of variance in the reference set were extracted. These 18 principal components explained a total of 78.6% of variance in the original 4096 variables. These dimensions should capture the main dimensions on which the reference faces differ visually. All images were then projected to this new multidimensional face space, where each image was represented as a coordinate (PC1, PC2, PC3, PC4, …, PC18). This allows us to calculate the euclidean distance between any two images in face space.
+
+TASK SETUP
+
+Participants go through five tasks in the following order:
+-Speed click test
+-Background questions 
+-PI20
+-CFMT
+-Foraging
+
+The speed click test was included to discourage people from using a laptop with a touchpad instead of a mouse. In the speed click test, people are asked to click on several consecutive targets as fast as they can. People who do this slowly are reminded to use a mouse, and have to repeat the speed click test before being allowed to continue to the next task.
+
+Participants complete background questions on their age bracket, gender, and educational level.
+
+Participants then complete the 20-item prosopagnosia index (PI20), a self-report on problems with faces (Shah et al., 2015; Icelandic translation by Heida Maria Sigurdardottir). 
+
+The third task is the Cambridge Face Memory Test (Duchaine &amp;amp; Nakayama, 2006) which tests people’s memory for faces. 
+
+Finally, people complete a foraging task. Each trial consists of a sample stimulus shown at screen center for 1 second followed by 9 targets that are identical to the sample and 9 distractors that show another object not identical to the sample. Targets and distractors within a trial always belong to the same condition (e.g., are hands from the body quadrant of object space). In all but control trials, stimulus orientation and color of foraging items is varied to discourage the use of low-level visual strategies. Participants forage for targets as fast as they can by clicking each of them with the mouse. Targets disappear as they are clicked; distractors jiggle and stay on-screen. The trial ends when all targets have been clicked or when 10 seconds have passed from the onset of the foraging items, whichever comes first. A trial is followed by feedback, where 0 to 9 stars are shown, depending on the number of targets clicked.
+
+When all tasks have been completed, participants are given feedback on their general performance in the experiment (overall score on PI20, overall percentage correct on CFMT, percentage of foraging trials in which all targets were clicked). </p>
+
+<p>6272af21c6224012cf1bffdf; fake_objects_in_object_space.png; https://osf.io/project/q5ne8/files/osfstorage/6272af21c6224012cf1bffdf; https://osf.io/download/6272af21c6224012cf1bffdf; e235385676ea6d808644a1d0f68022859b0ef7da9811d37213d53624a4a0691f</p>
+<h4>Randomization</h4>
+<p>Participants go through tasks in the following order: Speed click test, background questions, PI20, CFMT, foraging. Trial order in foraging is randomized for each participant. </p>
+<h4>Sampling Plan</h4>
+<h4>Existing Data</h4>
+<p>Registration prior to any human observation of the data</p>
+<h4>Registration prior to creation of data</h4>
+<h4>Registration prior to any human observation of the data</h4>
+<h4>Registration prior to accessing the data</h4>
+<h4>Registration prior to analysis of the data</h4>
+<h4>Registration following analysis of the data</h4>
+<h4>Explanation of existing data</h4>
+<p>Data collection is underway online but data will not be analyzed until after preregistration. </p>
+<h4>Data collection procedures</h4>
+<p>Participants are unpaid volunteers. They are recruited by word of mouth, email listservs, social media, and other media. All participants need to be 18 years or older, report normal or corrected-to-normal vision, and use a desktop computer or laptop with a mouse (i.e., not a touchpad). The study is run online through Pavlovia (https://pavlovia.org/) using PsychoPy. For timeline, see stopping rule.</p>
+
+<p></p>
+<h4>Sample size</h4>
+<p>We aim for 500 participants with a minimum of 300 participants. Sample size as defined here is based on the number of people who complete all tasks. </p>
+<h4>Sample size rationale</h4>
+<p>A sample size of 300-500 should give us adequate power for various analyses. For example, with 80% power, we should be able to detect true effect sizes of r = 0.160 (two-tailed) with a sample of 300, and a true effect size of r = 0.125 (two-tailed) with a sample of 500 (according to G*Power). These sample sizes are also deemed appropriate for a confirmatory factor analysis of PI20, as we describe in a separate preregistration. </p>
+<h4>Stopping rule</h4>
+<p>We will administer the task to all eligible volunteers before September 1st 2022. If we have not reached a sample size of at least 500 people by then, we will continue data collection until October 1st 2022. If we, at that time, have not reached a minimum sample size of 300, we will continue collecting data until November 1st 2022 and then stop. </p>
+<h4>Variables</h4>
+<h4>Manipulated variables</h4>
+<p>Three within-subject factors are manipulated:
+
+a) Image type: Images can be of faces, other animate objects (hands, birds), inanimate objects (buckets, mattresses, seashells, bowties, hangers, exercise equipment), fake objects, and control stimuli.
+
+b) Image location in object space. Images can be located in any of the four quadrants of object space: the stubby, NML, face, or body quadrants (similar to Bao et al., 2020)
+
+c) Target-distractor distance in object space</p>
+
+<p></p>
+<h4>Measured variables</h4>
+<p>Demographics (age bracket, gender, educational level) and two additional between-subject factors will be measured:
+
+a) Self-reported face recognition abilities, measured with the PI20 questionnaire
+
+b) Objective face recognition abilities, measured with the CFMT
+
+The primary measured variable of interest in foraging is:
+
+- Targets tapped per second: number of targets tapped divided by the total trial time in seconds, e.g. if a person taps all 9 targets and taps the last one after 8 seconds from trial beginning, then targets per second is 9 targets / 8 seconds = 1.125 targets per second) </p>
+
+<p></p>
+<h4>Indices</h4>
+<p>Foraging performance: For each of the 17 conditions, we will calculate a participant’s median targets per second.
+
+Real-face face-space-fit: Robust correlation for each participant between target-distractor face space distance and detrended targets per second for face foraging trials.
+
+Fake-object face-space-fit: Robust correlation for each participant between target-distractor face space distance and detrended targets per second for fake object foraging trials.
+
+Real-object face-space-fit: Robust correlation for each participant between target-distractor face space distance and detrended targets per second for real non-face object foraging trials.
+
+Face recognition ability: If scores on PI20 and CFMT are negatively correlated with r &amp;lt; -0.50, then PI20 and CFMT will be z-scored, the z-score of PI20 will be negated (so e.g. 1.5 will become -1.5 and vice versa) and the mean of these of will be taken to indicate a person’s face recognition ability. Otherwise, scores of CFMT will be taken to indicate a person’s face recognition ability.  
+
+ANALYSES RELATING TO FACE SPACE
+
+Face space distance between target-distractor pairs is defined as the euclidean distance between the two image coordinates in the multidimensional face space. We will analyze the relationship between face space distance and foraging performance.
+
+A participant can change their foraging speed over the experiment, which can reflect e.g. getting experienced with the task (foraging speeds up) or people getting tired (foraging slows down) over time. For each participant, we regress out linear (trial number) and quadratic (trial number squared) trends of no interest using linear regression. The model’s residuals become the detrended targets per second. 
+
+For each participant and separately for a) faces, b) fake objects, and c) real objects that are not faces, we will calculate the robust correlation (R package robcor with robcor function defaults: method = "ssd", partial = FALSE, post = "psdcor", scaler = "s_FastQn", regress = "lmrob") between target-distractor face space distance and the detrended targets per second. This will give us 3 correlation coefficients per participant, each one based on data points equal to the number of trials (e.g. 22 face trials), which we will refer to as real-face face-space-fit, fake-object face-space-fit, and real-object face-space-fit. Robust correlation is used instead of Pearson’s correlation to minimize the effect of potential outliers. 
+
+Example difference between Pearson’s correlation and robust correlation:
+x = c(1,2,3,4,99,6,7,8,9,10)
+y = c(10,20,30,40,50,60,70,80,90,100)
+pearsons_corr  = cor(x,y) # Pearson’s correlation is 0.04
+robust_corr = robcor(x,y) # Robust correlation is 0.95</p>
+
+<p></p>
+<h4>Analysis Plan</h4>
+<h4>Statistical models</h4>
+<p>1. We will assess hypothesis 1 by doing a hierarchical regression with fake-matched face foraging performance as the dependent variable. Demographics (age, gender and educational level) will be entered in step 1. In step 2 we will add control foraging performance. In step 3, we will add three factors: foraging performance for fake objects in the NML, stubby, and body quadrants of object space. In step 4, we will add foraging performance for fake objects in the face quadrant. 
+
+2. We will assess hypothesis 2 by doing a hierarchical regression with fake-matched face foraging performance as the dependent variable. Demographics (age, gender and educational level) will be entered in step 1. In step 2 we will add control foraging performance. In step 3, we will add six factors: foraging performance for birds and hands from the body quadrant, hangers and exercise equipment from the NML quadrant, and buckets and mattresses from the stubby quadrant. In step 4, we will add four factors: foraging performance for birds, hands, bowties and seashells from the face quadrant. 
+
+3. We will assess hypothesis 3 by correlating face recognition ability and real-face face-space-fit. 
+
+4. We will assess hypothesis 4 by correlating face recognition ability and fake-object face-space-fit. 
+
+5. We will assess hypothesis 5 by correlating face recognition ability and real-object face-space-fit. </p>
+
+<p></p>
+<h4>Transformations</h4>
+<p>Age will be coded as 1 (18-24 years), 2 (25-34 years), 3 (35-44 years), 4 (45-54 years) and 5 (55 years and older).
+
+Gender will be dummy coded as is_male (1 = male; 0 = female/non-binary/other/choose not to answer). This coding is chosen as dummy coding as e.g. is_male (1 = yes; 0 = no) and is_female (1 = yes; 0 = no) is likely to pose a multicollinearity problem due to few participants choosing non-binary/other/choose not to answer. 
+
+Educational level will be coded as 1 (completed primary school), 2 (completed secondary school/gymnasium or compatible degrees), 3 (completed an undergraduate degree such as BA, BS, BEd), and 4 (completed a graduate degree such as MA, MS, PhD).</p>
+<h4>Inference criteria</h4>
+<p>For hypothesis 1, a significant R-square change (p &amp;lt; 0.05, one-sided) in step 4 of the hierarchical regression will be taken to confirm the hypothesis. This will be interpreted as support for the general idea that people who struggle with recognizing faces also have unusual difficulties with visual processing of unfamiliar objects that share visual qualities with faces. Furthermore, this will be interpreted as support for the existence of an object space in human high-level vision.  
+
+For hypothesis 2, a significant R-square change (p &amp;lt; 0.05, one-sided) in step 4 of the hierarchical regression will be taken to confirm the hypothesis. This will be interpreted as support for the general idea that people who struggle with recognizing faces also have unusual difficulties with visual processing of familiar objects that share visual qualities with faces. Furthermore, this will be interpreted as support for the existence of an object space in human high-level vision. 
+
+For hypothesis 3, a positive correlation (p &amp;lt; 0.05, one-sided) will be taken to confirm it. This will be interpreted as good face recognizers being sensitive to dimensions that are diagnostic for distinguishing between faces.
+
+For hypothesis 4, a positive correlation (p &amp;lt; 0.05, one-sided) will be taken to confirm the hypothesis. This will be interpreted as good face recognizers utilizing diagnostic face dimensions in order to distinguish between previously unencountered objects.
+
+For hypothesis 5, a significant correlation (p &amp;lt; 0.05, two-sided) will be taken to confirm the hypothesis. The reason for the non-directionality of this hypothesis is that our previous studies found that when people must discriminate between objects, visual qualities appear to be weighted highly for unknown objects lacking semantics, but in cases where an object’s appearance is in contrast with its identity, visual properties appear to be downweighted or even negatively weighed (see https://osf.io/asynu/). A positive correlation between face recognition ability and real-object face-space-fit will be interpreted as good face recognizers utilizing diagnostic face dimensions in order to distinguish between real non-face objects. A negative correlation will be interpreted as good face recognizers being good at not applying face-space-distance to objects where these dimensions might not be diagnostic as they are other real non-face objects.</p>
+<h4>Data exclusion</h4>
+<p>Participants with mean targets per second (across the 187 trials) +/- 3 standard deviations away from the sample mean will be excluded. </p>
+<h4>Missing data</h4>
+<p>If a participant does not finish all questions/trials in a task, their data from that task will not be included.</p>
+<h4>Exploratory analysis</h4>
+<p>In our exploratory RSA, we will exclude one condition, “Faces from the face quadrant of object space matched to each other”, as the included faces are not visually matched to the other objects and are therefore not as comparable to the other included non-control conditions as the “Faces from the face quadrant of object space matched to fake objects” condition. 
+
+We will include all other conditions, 176 trials in total, to make a 176 x 176 correlation matrix of foraging performance (two vectors of length N, where N=sample size, each item corresponding to a participant’s targets per second in a given trial). This will be our reference model. A cell will reflect the similarity of any two trials in terms of whether individual differences in performance on one trial can predict individual differences in the other. 
+
+We will fit six 176 x 176 conceptual models in the following order using hierarchical regression, where a significant improvement in fit with a positive slope for an added conceptual model (p &amp;lt; 0.05, one-sided) will be interpreted as support for the contribution of the conceptual model to the real data pattern:
+
+1. O-factor model: Cells will get a 1 if both are control trials, a 1 if neither is a control trial (e.g., bowtie vs. bird), and 0 otherwise (e.g., bucket vs. control).
+
+2. Object condition model: Cells will get a 1 if both are from the same non-control condition (e.g. both are faces matched to fake objects, both are hands from the face quadrant, both are buckets, both are fake objects from the NML quadrant), and 0 otherwise.
+
+3. Experience model: Cells will get a 1 if both are real objects (e.g., bowtie vs. bird, face vs. hand), and 0 otherwise (e.g., bucket vs. control, fake NML vs. mattress).
+
+4. Novelty model: Cells will get a 1 if both are fake objects, and 0 otherwise (e.g., bucket vs. mattress, face vs. bird).
+
+5. Real face model: Cells will get a 1 if both are face trials, and 0 otherwise (e.g., face vs. hand, bucket vs. control)
+
+6. Face quadrant model: Cells will get a 1 if both belong to the face quadrant (e.g., both are faces, face vs. bowtie, seashell vs. hand in face quadrant), and 0 otherwise (e.g., face vs. hanger, exercise equipment vs. bird in body quadrant).
+
+The diagonal and the mirror version of the opposite off-diagonal triangle of each reference or conceptual model will be removed and then converted into a vector of size ((176 x 176)-176)/2 = 15400. The reference model vector will be treated as a dependent variable and the six conceptual vectors as predictors in the hierarchical regression. 
+
+We will start by fitting the o-factor model, as our prior data suggests that individual differences should separate feature foraging from object foraging ability. We would interpret this as reliance on separable mechanisms.
+
+In the second stage, we will add the object condition model. We in general expect at least some greater correlation within object conditions than between object conditions, if only for the reason that two cells from the same condition can share the same stimuli (e.g., bucket A as target and bucket B as distractor in one trial, and bucket B as target and bucket C as a distractor in another trial).
+
+We will add the experience model next, as our prior data suggests that people who are good at foraging for real objects of one type tend to also be good at foraging for real objects of another type, while their foraging ability for real objects did not predict their foraging for fake objects to the same degree. We would interpret this as people differing in ability to become visual experts.
+
+We will add the novelty model at the fourth stage as our prior data suggests that people who are good at foraging for fake objects of one type tend to also be good at foraging for fake objects of another type, while their foraging ability for fake objects did not predict their foraging for real objects to the same degree; our prior evidence for the novelty model is however weaker than the experience model. 
+
+In the fifth stage, we will add the real face model. A significant improvement in fit will be interpreted in favor of a mechanism that supports face processing over and above faces just being same-category objects.
+
+In the sixth and final stage, we will add the face quadrant model. A significant improvement in fit will be interpreted in favor of object space as an organizing principle of visual object processing in humans, akin to that reported for monkeys (Bao et al., 2020), as people who are good at foraging for objects in the face quadrant will generally be more likely to be good at foraging for other objects in the same quadrant compared to objects in other quadrants.
+
+While our initial intention is to approach this using hierarchical regression, we will explore whether other methods, such as a variance decomposition analysis, are more appropriate.</p>
+<h4>Other</h4>
+<h4>Other</h4>
+<p>THANKS:
+
+Thanks to Tim C. Kietzmann and Randi Starrfelt for helpful discussions on this project.
+
+REFERENCES:
+
+Afifi, M. (2019). 11K Hands: Gender recognition and biometric identification using a large dataset of hand images." Multimedia Tools and Applications. doi:10.1007/s11042-019-7424-8
+
+Bao, P., She, L., McGill, M., &amp;amp; Tsao, D. Y. (2020). A map of object space in primate inferotemporal cortex. Nature, 583(7814), 103-108.
+
+Duchaine, B., &amp;amp; Nakayama, K. (2006). The Cambridge Face Memory Test: Results for neurologically intact individuals and an investigation of its validity using inverted face stimuli and prosopagnosic participants. Neuropsychologia, 44(4), 576-585.
+
+Konkle, T., Brady, T. F., Alvarez, G. A., &amp;amp; Oliva, A. (2010). Conceptual distinctiveness supports detailed visual long-term memory for real-world objects. Journal of experimental Psychology: general, 139(3), 558.
+
+Konkle, T., &amp;amp; Caramazza, A. (2013). Tripartite organization of the ventral stream by animacy and object size. Journal of Neuroscience, 33(25), 10235-10242.
+
+Mehrer, J., Spoerer, C. J., Jones, E. C., Kriegeskorte, N., &amp;amp; Kietzmann, T. C. (2021). An ecologically motivated image dataset for deep learning yields better models of human vision. Proceedings of the National Academy of Sciences, 118(8).
+
+Richler, J. J., Tomarken, A. J., Sunday, M. A., Vickery, T. J., Ryan, K. F., Floyd, R. J., ... &amp;amp; Gauthier, I. (2019). Individual differences in object recognition. Psychological review, 126(2), 226.
+
+Righi, G, Peissig, JJ, &amp;amp; Tarr, MJ (2012) Recognizing disguised faces. Visual Cognition, 20(2), 143-169. doi:10.1080/13506285.2012.654624
+
+Shah, P., Gaule, A., Sowden, S., Bird, G., &amp;amp; Cook, R. (2015). The 20-item prosopagnosia index (PI20): a self-report instrument for identifying developmental prosopagnosia. Royal Society open science, 2(6), 140343.
+
+Simonyan, K., &amp;amp; Zisserman, A. (2014). Very deep convolutional networks for large-scale image recognition. arXiv preprint arXiv:1409.1556.
+
+Wah C., Branson S., Welinder P., Perona P., Belongie S. (2011). The Caltech-UCSD Birds-200-2011 Dataset. Computation &amp;amp; Neural Systems Technical Report, CNS-TR-2011-001
+
+Willenbockel, V., Sadr, J., Fiset, D., Horne, G. O., Gosselin, F., &amp;amp; Tanaka, J. W. (2010). Controlling low-level image properties: the SHINE toolbox. Behavior research methods, 42(3), 671-684.</p></body></html>

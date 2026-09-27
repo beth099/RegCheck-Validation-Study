@@ -1,0 +1,91 @@
+<html><head><meta charset='utf-8'><title>Relationship Forecasting Study</title></head><body style='max-width:800px;margin:auto;font-family:sans-serif'><h2>Relationship Forecasting Study</h2><p>OSF ID: jbknq | Registered: 2021-10-26T18:25:47.259087</p><h4>Study Information</h4>
+<h4>Hypotheses</h4>
+<p>1. Relationship Quality (i.e., Satisfaction, Commitment, Gratitude, and Trust) (Time 1) will predict Forecasted Partner Behaviors (Time 2)
+2. Forecasted Partner Behaviors (Time 1) will predict Perceived Partner Behaviors (Time 2)
+</p>
+<h4>Design Plan</h4>
+<h4>Study type</h4>
+<p>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</p>
+<h4>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</h4>
+<h4>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</h4>
+<h4>Meta-Analysis - A systematic review of published studies.</h4>
+<h4>Other</h4>
+<h4>Blinding</h4>
+<p>No blinding is involved in this study.</p>
+<h4>No blinding is involved in this study.</h4>
+<h4>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</h4>
+<h4>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</h4>
+<h4>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</h4>
+<h4>Is there any additional blinding in this study?</h4>
+<p>No</p>
+<h4>Study design</h4>
+<p>In this study, participants in dating relationships will be recruited through various avenues (i.e., Online, living in London, Crowdsourcing Platforms). Participants will be emailed a survey once a week for four weeks. In this survey, participants will be asked to rate: a) How frequently their partner has engaged in a variety of relational behaviors (positive and negative) over the past week (perceived behaviors), b), how frequently they think their partner will engage in those same behaviors over the upcoming week (forecasted behaviors), and c) four indicators of their current relationship quality. We will use cross-lagged panel analyses to test how these variables of interest predict changes in each other from week to week.</p>
+
+<p></p>
+<h4>Randomization</h4>
+<p>No randomization will be employed.</p>
+<h4>Sampling Plan</h4>
+<h4>Existing Data</h4>
+<p>Registration prior to creation of data</p>
+<h4>Registration prior to creation of data</h4>
+<h4>Registration prior to any human observation of the data</h4>
+<h4>Registration prior to accessing the data</h4>
+<h4>Registration prior to analysis of the data</h4>
+<h4>Registration following analysis of the data</h4>
+<h4>Explanation of existing data</h4>
+<p></p>
+<h4>Data collection procedures</h4>
+<p>All participants will be recruited from the United States or Canada. Participants will learn about the study via crowdsourcing platforms (i.e., Mechanical Turk (MTurk) and Prolific) and ads posted online to websites including Facebook, Instagram, Twitter, Pinterest, Reddit, Kijiji, Craigslist, and similar sites, or posters placed around London, ON. Participants recruited from the various crowdsourcing platforms will be paid by their respective platform, while those recruited online or in London will be paid in Amazon gift cards. To be eligible for participation, participants must be romantically attached, 18 years of age or older, live in either the US or Canada, and be fluent in English. Additionally, participants on MTurk must have a 97% Human Intelligence Task (HIT) approval rating, while participants from Prolific must have a 97% approval rating and completed at least 5 previous surveys.</p>
+
+<p></p>
+<h4>Sample size</h4>
+<p>We aim to recruit approximately 500 participants. Although this is higher than needed for adequate power, we anticipate attrition, given the general nature and progression of longitudinal studies.</p>
+<h4>Sample size rationale</h4>
+<p></p>
+<h4>Stopping rule</h4>
+<p>We will stop recruiting new participants either on February 15, 2022 or when at least 300 eligible participants have completed the Week 1 survey, whichever comes later.</p>
+<h4>Variables</h4>
+<h4>Manipulated variables</h4>
+<p></p>
+
+<p></p>
+<h4>Measured variables</h4>
+<p>1. State Relationship Quality: We will measure four components pertaining to relationship quality (1) satisfaction, (2) commitment, (3) gratitude, and (4) trust. Participants will first respond to “How do you feel about your relationship right now?” on a 7-point Likert scale ranging from (1) not at all, to (7) extremely, for 6-items measuring relationship satisfaction and commitment.  Next, participants will indicate their agreement/disagreement on a 7-point Likert scale ranging from (1) strongly disagree, to (7) strongly agree for 6 statements measuring gratitude and trust for one’s romantic partner.
+
+2. Relationship Behaviours (Self): We will measure retrospective (i.e., previous week) and prospective (i.e., next week) measures of the participant’s relationship behaviours. Participants will respond to a list of 33 relationship behaviours and will report how frequently they have done each behaviour on a 7-point Likert scale ranging from (1) not at all, to (7) very much.
+
+3. Relationship Behaviours (Partner): We will measure retrospective (i.e., previous week) and prospective (i.e., next week) measures of participants partner’s relationship behaviours. Participants will respond to a list of 33 relationship behaviours and will report how frequently their partners have done each behaviour on a 7-point Likert scale ranging from (1) not at all, to (7) very much.
+</p>
+
+<p></p>
+<h4>Indices</h4>
+<p>The items for State Relationship Quality will be averaged by creating 3-item scales of satisfaction, commitment, gratitude, and trust.</p>
+
+<p></p>
+<h4>Analysis Plan</h4>
+<h4>Statistical models</h4>
+<p>We will use a dynamical systems approach to examine competing ideas about how relationship expectations, perceptions of partner’s behaviours, and relationship quality (i.e., satisfaction, commitment, gratitude, and trust) influence each other from week to week during a relationship. All analyses will be two-level multilevel models conducted using the lme4 package (Bates, 2015) to account for the data’s nested structure. The three key weekly variables used in the primary model will be: 
+1. Perceived Behaviours (positive and negative)
+2. Forecasted Behaviours (positive and negative)
+3. Relationship Quality (i.e., satisfaction, commitment, gratitude, and trust)
+
+Positive versus negative behaviors will be tested in separate models, each including a separate relationship quality indicator. For example, one model will examine positive perceived behaviors, positive forecasted behaviors, and satisfaction from week to week. In total, we will conduct eight cross-lagged panel models in which each construct of interest – perceived behaviours, expected behaviours, and relationship quality – is modelled simultaneously as a predictor and as an outcome variable. “Last week” versions of each variable will be used as predictors (Time 1) and “this week” versions will be used as outcome variables (Time 2). Data will be restructured so that each of the three outcome variables – perceived behaviours, expected behaviours, and relationship quality at Time 2 – are combined into a single dependent variable column. Overall, each participant will have up to 12 rows in the data set: one for each dependent measure on each of the 4 weeks (Week 1 will be excluded because it will be missing “last week” variables). Three new dummy columns will be created to indicate which rows correspond to which DVs. The model will have a total of 12 predictors: each of the three dummy columns, plus each of the three dummy columns multiplied by each of the three Time 1 predictors. This analysis strategy will allow us to model all time change effects simultaneously in one model. Consistent with the theoretical outline provided above, we predict the following:
+
+1. Relationship Quality (i.e., Satisfaction, Commitment, Gratitude, and Trust) (Time 1) will predict Forecasted Partner Behaviors (Time 2)
+2. Forecasted Partner Behaviors (Time 1) will predict Perceived Partner Behaviors (Time 2)
+</p>
+
+<p></p>
+<h4>Transformations</h4>
+<p>All predictors (i.e., all Time 1 variables in all models) will be grand-mean-centered so that 0 represents the average score across participants.</p>
+<h4>Inference criteria</h4>
+<p>We will use p &amp;lt; .05 criteria as the decision criterion. </p>
+<h4>Data exclusion</h4>
+<p></p>
+<h4>Missing data</h4>
+<p></p>
+<h4>Exploratory analysis</h4>
+<p></p>
+<h4>Other</h4>
+<h4>Other</h4>
+<p></p></body></html>

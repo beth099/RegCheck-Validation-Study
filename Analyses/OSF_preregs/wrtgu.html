@@ -1,0 +1,100 @@
+<html><head><meta charset='utf-8'><title>Semantic relatedness decisions about non-arbitrary words</title></head><body style='max-width:800px;margin:auto;font-family:sans-serif'><h2>Semantic relatedness decisions about non-arbitrary words</h2><p>OSF ID: wrtgu | Registered: 2022-03-26T03:29:19.423260 | Showing: original version (1 version(s) on OSF)</p><h4>Study Information</h4>
+<h4>Hypotheses</h4>
+<p>To investigate whether people tend to interpret rare words as more similar in meaning to similar-sounding words than distributional semantic models predict, we will conduct a semantic relatedness decision experiment. Participants will decide whether a cue word (e.g., "dodge") is related to a target word. The target word is either non-arbitrary (overlapping with an attractor word in both form and meaning, e.g., "evade," which overlaps with "avoid") or is an arbitrary control (e.g., "elude," which is similar in meaning to "evade"). We designed the non-arbitrary targets and the arbitrary controls to be equally similar in meaning to the cues, as measured by distributional information (LSA, CBOW, and HAL cosines).
+
+Hypothesis 1: If rare words are interpreted as more similar in meaning to similar-sounding words than distributional information would suggest, then participants will make more "yes" decisions about non-arbitrary targets than about arbitrary controls. That is, participants will be more likely to decide that "evade" is semantically related to "dodge" than that "elude" is.
+
+Hypothesis 2: If rare words are interpreted as more similar in meaning to similar-sounding words than distributional information would suggest, then participants will make faster "yes" decisions about non-arbitrary targets than about arbitrary controls.</p>
+<h4>Design Plan</h4>
+<h4>Study type</h4>
+<p>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</p>
+<h4>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</h4>
+<h4>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</h4>
+<h4>Meta-Analysis - A systematic review of published studies.</h4>
+<h4>Other</h4>
+<h4>Blinding</h4>
+<p>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</p>
+<h4>No blinding is involved in this study.</h4>
+<h4>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</h4>
+<h4>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</h4>
+<h4>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</h4>
+<h4>Is there any additional blinding in this study?</h4>
+<p></p>
+<h4>Study design</h4>
+<p>We manipulate the target word to be either arbitrary (e.g., “dodge – evade”) or non-arbitrary (e.g., “dodge – elude”). This is a one-factor, two-level design, manipulated with items and within subjects.
+
+Targets are matched on distributional similarity to cues (using the LSAfun package to compare cosines in semantic spaces built using CBOW, LSA, and HAL; Guenther et al., 2015). They are also matched on formal similarity to cues (Levenshtein distance) and are matched on a number of lexical variables (word frequency, age of acquisition, concreteness rating, orthographic neighbourhood density, bigram frequency, and length), as indicated by paired t-tests (all ps &amp;gt; .2).</p>
+
+<p>623e8898e6b58b0e95d6b74d; SemanticRelatedness_NonArbitaryWords_Stimuli.xlsx; https://osf.io/project/wrtgu/files/osfstorage/623e8898e6b58b0e95d6b74d; https://osf.io/download/623e8898e6b58b0e95d6b74d; d782cc6d7eea096bc6405ff946ded91977aa3125158c66230b094fb52b8edc8f</p>
+<h4>Randomization</h4>
+<p>72 items are divided into 4 lists (each list having 18 items per condition and 40 fillers). Participants are randomly assigned to a list via Gorilla.sc's randomizer function, and items are randomly presented using Gorilla.sc's spreadsheet logic.</p>
+<h4>Sampling Plan</h4>
+<h4>Existing Data</h4>
+<p>Registration prior to creation of data</p>
+<h4>Registration prior to creation of data</h4>
+<h4>Registration prior to any human observation of the data</h4>
+<h4>Registration prior to accessing the data</h4>
+<h4>Registration prior to analysis of the data</h4>
+<h4>Registration following analysis of the data</h4>
+<h4>Explanation of existing data</h4>
+<p></p>
+<h4>Data collection procedures</h4>
+<p>Participants are native speakers of British English aged 18-50 years old, recruited through Prolific.co. Participants will be paid 1GBP for a task estimated to take 7 minutes.
+
+We will exclude participants who respond correctly to less than 75% of the filler semantic relatedness decisions (30 "no" decisions and 10 "yes" decisions).</p>
+
+<p>623e8897e6b58b0e95d6b74b; Pilot_SemanticRelatedness_NonArbitraryWords.R; https://osf.io/project/wrtgu/files/osfstorage/623e8897e6b58b0e95d6b74b; https://osf.io/download/623e8897e6b58b0e95d6b74b; 340ab5d502bb565455215bc253970b9efafb9b2f8020aa285fcf20c38c331b99; 623e8897e6b58b0e95d6b749; Pilot_SemanticRelatedness.csv; https://osf.io/project/wrtgu/files/osfstorage/623e8897e6b58b0e95d6b749; https://osf.io/download/623e8897e6b58b0e95d6b749; 72f108309e8ec5c7d550bf9377c6fdea3ee050e30a23a8e63330c12c8bff8d6b</p>
+<h4>Sample size</h4>
+<p>We will recruit 144 participants, who will be randomly assigned to one of four lists.</p>
+<h4>Sample size rationale</h4>
+<p>In a pilot study, participants decided that non-arbitrary targets were semantically related to cues in about 70% of the trials and that arbitrary controls were semantically related to targets in about 50% of the trials. We will therefore recruit 144 participants, which gives us greater than .8 power at the .05 alpha level, assuming a similar effect size.</p>
+<h4>Stopping rule</h4>
+<p></p>
+<h4>Variables</h4>
+<h4>Manipulated variables</h4>
+<p>We manipulate whether target words are non-arbitrary (i.e., whether they overlap with another word in both form and meaning, such as "evade" with "avoid") or are arbitrary (such as "elude"). Given the vagaries of the point at which similarity in form or meaning becomes salient, this classification is discretionary. Some items were uncovered automatically (e.g., by computing which phonological neighbours have high LSA cosines) and others have been identified by the Oxford English Dictionary (e.g., "expunge" has reportedly shifted in meaning towards "sponge"). </p>
+
+<p></p>
+<h4>Measured variables</h4>
+<p>We will measure response time (RT) for semantic relatedness decisions about words, based on key presses recorded by Gorilla.sc, and we will measure the proportion of "yes" versus "no" decisions.</p>
+
+<p></p>
+<h4>Indices</h4>
+<p></p>
+
+<p></p>
+<h4>Analysis Plan</h4>
+<h4>Statistical models</h4>
+<p>We will conduct generalized linear mixed effects modelling (using the glmer function from the lmertest package in R) to compare the proportion of "yes" decisions in the non-arbitrary versus arbitrary target conditions. We will include item and subject as random intercepts and will use forward model comparison (at the .2 alpha level) to determine whether to add condition (target word type) as a random slope to either random intercept. (See the pilot script.)
+
+We will conduct linear mixed effects modelling (using the lmer function from the lmertest package in R) to compare "yes" decision RT in the non-arbitrary versus arbitrary target conditions. We will include item and subject as random intercepts and will use forward model comparison (at the .2 alpha level) to determine whether to add condition (target word type) as a random slope to either random intercept. (See the pilot script.)
+</p>
+
+<p></p>
+<h4>Transformations</h4>
+<p></p>
+<h4>Inference criteria</h4>
+<p>In both analyses (logistic regression for proportion of "yes" responses and linear regression for "yes" response RT), we will use the alpha level of .05. 
+
+For forward model comparison in determining the random effect structure for both models, we will use the alpha level of .2.</p>
+<h4>Data exclusion</h4>
+<p>As described above, we will exclude participants who correctly respond to less than 75% of filler trials. We will further exclude trials with decision RT slower than 2.5 SD above the mean for that item, and we will exclude trials with RT faster than 200ms. However, participants have only 2000ms to make each decision (with a 3000ms timeout penalty and 3000ms incorrect response penalty, to incentivize fast but accurate responses), so we expect very few decisions greater than 2.5 SD above the item mean.</p>
+<h4>Missing data</h4>
+<p>We do not anticipate any missing data.</p>
+<h4>Exploratory analysis</h4>
+<p>As with our analysis of "yes" response RT, we will conduct linear mixed effects modelling to compare "no" decision RT for non-arbitrary versus arbitrary targets. Whereas we predict that "yes" decisions will be faster for non-arbitrary targets, we expect that "no" decisions will be slower for non-arbitrary targets, consistent with our hypothesis that less familiar words are interpreted as similar in meaning to similar-sounding words.
+
+We will also investigate correlations with demographic information, especially education. Given our hypothesis that word form plays a larger role in the inferred meanings of less familiar words, we might find the effects of non-arbitrariness (proportion of “yes” decisions and speed of decisions) to be greater in participants with less formal education.
+
+We will also investigate which distributional semantic models (e.g., predictive versus count models) best capture the effects of non-arbitrariness.</p>
+<h4>Other</h4>
+<h4>Other</h4>
+<p>Firth, J.R. (1957). "A synopsis of linguistic theory 1930-1955". Studies in Linguistic Analysis: 1–32.
+
+Gasser, M. (2004). The origins of arbitrariness in language. Proceedings of the Annual Conference of the Cognitive Science Society, 26. 
+
+Günther, F., Dudschig, C., &amp;amp; Kaup, B. (2015). LSAfun – An R package for computations based on Latent Semantic Analysis. Behavior Research Methods, 47, 930-944.
+
+Haslett, D. &amp;amp; Cai, Z. (2021). New neighbours make bad fences: Form-based semantic shifts in word learning. Psychonomic Bulletin &amp;amp; Review. 
+
+Hockett, C. F. (1960). The origin of speech. Scientific American, 203(3), 88–97.</p></body></html>

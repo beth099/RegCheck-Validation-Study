@@ -1,0 +1,83 @@
+<html><head><meta charset='utf-8'><title>Critical Test of the Unequal Variance SDT Recognition Model</title></head><body style='max-width:800px;margin:auto;font-family:sans-serif'><h2>Critical Test of the Unequal Variance SDT Recognition Model</h2><p>OSF ID: j3wqb | Registered: 2022-01-20T15:20:55.995331</p><h4>Study Information</h4>
+<h4>Hypotheses</h4>
+<p>1. When d is held constant the variance parameter of the UEVSDT model predicts decreasing performance on a novelty detection three alternative forced choice (3AFC) task.
+2. When d is held constant the recollection parameter of the dual process signal detection (DPSDT) model predicts increasing performance on a novelty detection 3AFC task.</p>
+<h4>Design Plan</h4>
+<h4>Study type</h4>
+<p>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</p>
+<h4>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</h4>
+<h4>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</h4>
+<h4>Meta-Analysis - A systematic review of published studies.</h4>
+<h4>Other</h4>
+<h4>Blinding</h4>
+<p>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</p>
+<h4>No blinding is involved in this study.</h4>
+<h4>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</h4>
+<h4>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</h4>
+<h4>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</h4>
+<h4>Is there any additional blinding in this study?</h4>
+<p>The blinding question is essentially inapplicable because there is no experimental manipulation with respect to the tested hypotheses.  The data are analyzed via computer and predictions supported by computer simulation. Scoring and fitting is computerized and so blinding is not a concern.  All aspects of the fitting will be disclosed.</p>
+<h4>Study design</h4>
+<p>The design is a fully within subjects comparison of the predictions of the UEVSDT and DPSDT models. It will consist of two study/test cycles.  In cycle I subjects will study singly presented words (duration approximately 2 seconds) and be subsequently tested on single item recognition (old or new) accompanied by confidence judgments (low, medium, high) (self-paced responding). The study list will contain 60 words with 120 in the test list. The data will be fit via Matlab using an ROC fitting package provided by Yonelinas and colleagues to obtain d and variance parameters for the UEVSDT model and d and r parameters for the DPSDT model.
+
+In cycle II the subjects will complete the novelty 3AFC task. Each subject will study 60 words (in the same fashion as cycle I and then will complete 30 test trials of novelty 3AFC in which each trial contains a new word not shown in the experiment and two of the prior study words (randomly sampled from the study list). Their task is to select the new item and responding is self-paced.
+
+This procedure will be repeated, yielding at total of two old/new recognition cycles and two Novelty 3AFC cycles for an ON-N_3AFC-ON-N_3AFC interleaved sequence.
+
+It is the relationship between the fitted parameters from old/new recognition tests and the accuracy of performance in the Novelty 3AFC tests (percent correct) that is the focus of the hypotheses.
+</p>
+
+<p></p>
+<h4>Randomization</h4>
+<p>Stimuli are randomly assigned to trial position and study/lure status from a pool of words</p>
+<h4>Sampling Plan</h4>
+<h4>Existing Data</h4>
+<p>Registration prior to creation of data</p>
+<h4>Registration prior to creation of data</h4>
+<h4>Registration prior to any human observation of the data</h4>
+<h4>Registration prior to accessing the data</h4>
+<h4>Registration prior to analysis of the data</h4>
+<h4>Registration following analysis of the data</h4>
+<h4>Explanation of existing data</h4>
+<p></p>
+<h4>Data collection procedures</h4>
+<p>Subjects will be recruited from Prolific, Amazon Mechanical Turk, or the Departmental Subject Pool. Prolific is the anticipated source. The pay per subject will be determined at the initiation of the experiment.</p>
+
+<p></p>
+<h4>Sample size</h4>
+<p>Target sample size is 84, which would yield 80% power for a medium effect size population r of .30. Data collection will be stopped after the first several subjects to allow an analysis check of the coding of the data, ensuring the programming is accurately reporting subject performance. Since Ns of several subjects are not reportable, and the predetermined stopping N is 84 or greater, this imposes no threat of alpha inflation.</p>
+<h4>Sample size rationale</h4>
+<p>Target sample size is 84 yield 80% power for a medium effect size population r of .30.</p>
+<h4>Stopping rule</h4>
+<p>Collection will be stopped after the sample size exceeds 84</p>
+<h4>Variables</h4>
+<h4>Manipulated variables</h4>
+<p>This is technically an observational study in which two decision models make categorically divergent empirical relationships between the parameters of fitted single item recognition decision models and the performance of a Novelty 3AFC task..</p>
+
+<p></p>
+<h4>Measured variables</h4>
+<p>Response accuracy and confidence during recognition testing.</p>
+
+<p></p>
+<h4>Indices</h4>
+<p>Single item recognition confidence data will be fit via ML procedures to yield decision model parameters (two per subject) which will then be used in linear multiple regression.</p>
+
+<p></p>
+<h4>Analysis Plan</h4>
+<h4>Statistical models</h4>
+<p>Multiple regression. The two key parameters of each model will be entered as predictors of Novelty 3AFC percentage correct. If a positive association is found between the DPSDT r parameter and performance is found it will confirm the model. If a negative association is found between the UEVSDT sigma parameter and performance it will confirm the model.</p>
+
+<p></p>
+<h4>Transformations</h4>
+<p></p>
+<h4>Inference criteria</h4>
+<p>Frequentist p-values for regression coefficients.</p>
+<h4>Data exclusion</h4>
+<p>Subjects yielding parameters that are impossible (e.g., rs greater than 1) or greater than 3 standard deviations away from the sample values will be replaced.</p>
+<h4>Missing data</h4>
+<p>Only subjects completing the experiment will be including. Responding is required on every trial.</p>
+<h4>Exploratory analysis</h4>
+<p>The primary exploratory question will be whether there is a way to characterize the asymmetry of the ROC, somehow normalized for area, that can be used for predicting novelty 3AFC performance.  If so, this would eliminate the need for fitting the parametric decision models in order to test the relationship between ROC asymmetry and novelty 3AFC performance. Simulations will be conducted to show that this method behaves as expected when either UEVSDT or DPSDT models generate synthetic ROC data.</p>
+<h4>Other</h4>
+<h4>Other</h4>
+<p></p></body></html>

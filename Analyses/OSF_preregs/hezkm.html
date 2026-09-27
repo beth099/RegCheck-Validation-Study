@@ -1,0 +1,78 @@
+<html><head><meta charset='utf-8'><title>Understanding the visual constraints on lexical processing: New empirical and simulation results (Experiment 4)</title></head><body style='max-width:800px;margin:auto;font-family:sans-serif'><h2>Understanding the visual constraints on lexical processing: New empirical and simulation results (Experiment 4)</h2><p>OSF ID: hezkm | Registered: 2021-12-12T23:54:04.710870 | Showing: original version (1 version(s) on OSF)</p><h4>Study Information</h4>
+<h4>Hypotheses</h4>
+<p>Lexical processing performance, as measured by naming accuracy and latency, will decline for words presented at parafoveal viewing locations relative to performance at central fixation.</p>
+<h4>Design Plan</h4>
+<h4>Study type</h4>
+<p>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</p>
+<h4>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</h4>
+<h4>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</h4>
+<h4>Meta-Analysis - A systematic review of published studies.</h4>
+<h4>Other</h4>
+<h4>Blinding</h4>
+<p>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</p>
+<h4>No blinding is involved in this study.</h4>
+<h4>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</h4>
+<h4>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</h4>
+<h4>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</h4>
+<h4>Is there any additional blinding in this study?</h4>
+<p></p>
+<h4>Study design</h4>
+<p>The experiment is a within-subjects design manipulating viewing position in degrees of visual angle from central fixation at 6 levels (0°, 1° right, 2° right, 3° right, 4° right, 5° right).</p>
+
+<p></p>
+<h4>Randomization</h4>
+<p>Participants will be pseudo-randomly assigned to one of 5 counterbalanced lists. Each list will contain all of the experimental stimuli but at only one of the viewing positions such that across lists all items will appear in all viewing positions but each participant will only respond to each item once. The items will be blocked by viewing position (60 items in total at each position).  Block order and item order within blocks will be determined by one of four pseudo-randomized lists to facilitate online scoring of naming responses by the experimenter. Participants will be given the opportunity to take a break between each block.</p>
+<h4>Sampling Plan</h4>
+<h4>Existing Data</h4>
+<p>Registration following analysis of the data</p>
+<h4>Registration prior to creation of data</h4>
+<h4>Registration prior to any human observation of the data</h4>
+<h4>Registration prior to accessing the data</h4>
+<h4>Registration prior to analysis of the data</h4>
+<h4>Registration following analysis of the data</h4>
+<h4>Explanation of existing data</h4>
+<p>Preliminary analyses were performed on data collected from the first 16 participants. This registration is prior to any analyses of the complete dataset. This approach was adopted for two reasons: 
+(1)	It was not known whether participants would be able to do the task, i.e. name words beyond 3 degrees eccentricity under conditions requiring strict fixation control. We therefore initially tested a smaller sample and computed descriptive statistics before deciding whether to collect data from a complete sample. It was determined that average performance for words at 3-5 degrees eccentricity was good enough to make it worth collecting a complete dataset for this experiment.
+(2)	Due to restrictions on face-to-face testing arising from the Covid-19 pandemic, it was unclear when it would be possible to resume data collection for this project. We therefore conducted a preliminary analysis of the initial sample of n=16 for possible inclusion in an earlier draft of the manuscript. Subsequent relaxation of restrictions allowed for the completion of data collection. </p>
+<h4>Data collection procedures</h4>
+<p>Participants will be recruited from the undergraduate participant pools of Macquarie University and The University of Sydney. If necessary, members of the university community will be recruited to participate. Native English speakers or people who began speaking English by age 6 will be eligible to participate. Participation will require normal or corrected-to-normal vision, which will be assessed by a visual acuity test.</p>
+
+<p></p>
+<h4>Sample size</h4>
+<p>We will aim to recruit 40 participants who will each respond to a total of 360 critical word items across 5 viewing positions, resulting in a total of 14,400 data points prior to exclusions.</p>
+<h4>Sample size rationale</h4>
+<p>The proposed sample size was determined by power analyses conducted on the basis of effect sizes observed in a previous experiment in this project. The simR package was used with 100 Monte Carlo simulations. The proposed sample size of n=40 participants will yield power of &amp;gt;85% to detect a 30 ms effect of viewing position effect on naming latency.</p>
+<h4>Stopping rule</h4>
+<p>We will continue to collect data until we reach our target sample size of 40 participants. Participants with accuracy below the proposed exclusion criteria (80% accuracy for words at the 0° viewing position), or who do not complete the experiment, will be replaced.</p>
+<h4>Variables</h4>
+<h4>Manipulated variables</h4>
+<p>We will manipulate the location of the stimulus, such that it appears in one of 6 positions: 0, 1, 2, 3, 4, or 5 degrees to the right of the point of fixation.
+Stimulus variables will be statistically controlled as covariates: Word length will be 4, 5, or 6 letters in length; word frequency will vary by sampling words that span the range of frequency values at each length.</p>
+
+<p></p>
+<h4>Measured variables</h4>
+<p>Naming accuracy (error rate) and latency (response time in ms from when the word is displayed until the onset of articulation for correctly named words) will be measured on each trial.</p>
+
+<p></p>
+<h4>Indices</h4>
+<p></p>
+
+<p></p>
+<h4>Analysis Plan</h4>
+<h4>Statistical models</h4>
+<p>Generalized/Linear mixed-effects models with the lme4 package in R will be used to analyze the naming accuracy and response times, respectively. For the latter, only accurate responses will be analyzed. In our first set of analyses, the viewing location will be treated as a fixed factor in our model, with both participants and items entering the models as random effects. Analyses will begin with the model containing a maximum random effect structure, specifying intercepts and slopes for the viewing location across both participants and items (Barr, Levy, Scheepers, &amp;amp; Tily, 2013). If a complex model does not converge, then a backwards, stepwise model-selection procedure will be used until a simpler model converges. The effects of word length and frequency will be statistically controlled by including these variables in the models as fixed effects.</p>
+
+<p></p>
+<h4>Transformations</h4>
+<p>If the response time data are not normally distributed, based on inspection of a Q-Q plot, a log-transform procedure will be applied to the data to meet the necessary assumptions of our statistical models. We will also report analyses of raw reaction time to facilitate comparison with the original ANOVA analyses reported by Rayner and Morrison (1981), noting any outcomes that differ between the analyses of transformed and untransformed RT.</p>
+<h4>Inference criteria</h4>
+<p>Statistical significance will be inferred from t/z values that exceed |1.96|.</p>
+<h4>Data exclusion</h4>
+<p>Outlier RTs will be identified by inspection of a Q-Q plot and excluded prior to the analyses. Participants whose mean accuracy at the 0-degree viewing location is below 80% will be replaced. </p>
+<h4>Missing data</h4>
+<p>Participants who fail to complete the experimental task will be replaced.</p>
+<h4>Exploratory analysis</h4>
+<p>To examine the possible influence of word length and/or frequency on task performance, as well as their possible interactions with viewing location, additional analyses with viewing location, word length, word frequency, and their interactions as fixed factors in the model may be conducted.</p>
+<h4>Other</h4>
+<h4>Other</h4>
+<p></p></body></html>

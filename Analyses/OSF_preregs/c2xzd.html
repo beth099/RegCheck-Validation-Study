@@ -1,0 +1,346 @@
+<html><head><meta charset='utf-8'><title>Mental Training for Academic Success</title></head><body style='max-width:800px;margin:auto;font-family:sans-serif'><h2>Mental Training for Academic Success</h2><p>OSF ID: c2xzd | Registered: 2021-02-09T21:42:17.505691 | Showing: original version (1 version(s) on OSF)</p><h4>Study Information</h4>
+<h4>Hypotheses</h4>
+<p>H1. Active Groups → Decentering → Reappraisal → Well-Being 
+The data will support a model containing Decentering, Reappraisal, and Wellbeing. (see attached 'SEM and Power Analysis' document H1). We will test overall model fit for this hypothesis, although we expect all the paths listed to be significant- main contrast for group is all 3 active [MC, SM, CC] vs. control [AC].
+
+H2. Process Dissociation
+We will test overall model fit for this hypothesis, although we expect all the paths listed to be significant. Main contrast for group is between [MC] and [SM], and we expect opposing effects for the two groups on interoception and stress mindset (see attached 'SEM and Power Analysis' document H2). 
+
+H3.
+We expect both paths from group, i.e.,  group → interoception and group → stress mindset paths to be significant, indicating that CC contributes to well-being through a combination of improved interoception and improved stress mindset (see attached SEM document H3). Main contrast for group is between [CC] and [SM].
+
+H4.
+We expect both paths from group, i.e.,  group → mindfulness and group → stress mindset paths to be significant indicating that mindfulness amplifies the stress mindset intervention effects. Main contrast for group is between [CC] and [SM]. This model will be tested the same as H3, but replacing the interoception variable with a mindfulness measure (see attached 'SEM and Power Analysis' document H4).
+
+H5. Daily Arousal and Coping Relationship
+To examine the relationship between daily arousal and coping as a function of group, we will employ a multilevel model using the lme4 library in R. We will test whether some groups weaken the association between arousal and coping more than others, anticipating that coping will be lowest when arousal is high as a main effect (see attached 'SEM and Power Analysis' document H5). </p>
+<h4>Design Plan</h4>
+<h4>Study type</h4>
+<p>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</p>
+<h4>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.</h4>
+<h4>Observational Study - Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, “natural experiments,” and regression discontinuity designs.</h4>
+<h4>Meta-Analysis - A systematic review of published studies.</h4>
+<h4>Other</h4>
+<h4>Blinding</h4>
+<p>No blinding is involved in this study.</p>
+<h4>No blinding is involved in this study.</h4>
+<h4>For studies that involve human subjects, they will not know the treatment group to which they have been assigned.</h4>
+<h4>Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. (Commonly known as “double blind”)</h4>
+<h4>Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.</h4>
+<h4>Is there any additional blinding in this study?</h4>
+<p></p>
+<h4>Study design</h4>
+<p>This will be a mixed-model, multilevel clinical trial design, with four groups to determine 1) if mindfulness instructions uniquely increase mindful state; 2) if stress management instructions uniquely increase stress mindset scale; 3) if both mindfulness + stress mindset instruction increase reappraisal; 4) if a combined lesson plan increases reappraisal more than either condition alone; and 5) the relative contributions of state mindfulness and reappraisal on decentering + stress level.
+
+The intervention period will last for 3 weeks beginning with the first training session and will be completed entirely on an online survey platform (Qualtrics).
+
+The between-participant factor will be the experimental group (4 levels): Stress Management [SM] vs. Mindfulness w/Choice [MC] vs. Active Control [AC] vs. Combined Condition [CC].
+
+The within-participant factor will be time. There are 3 different ways to operationalize time:
+Across study, time has 2 levels, as Participants will be assessed more comprehensively using validated questionnaires at baseline and post-intervention.
+
+Across sessions, time has up to 21 levels for arousal and coping, as these measures are included in both the 6 training sessions and 15 optional daily check-ins
+
+Across sessions, time has up to 6 levels for other study variables (i.e., interoception, decentering, reappraisal, and stress mindset) measured during the 6 training sessions (participants will do 2 training sessions / week x 3 weeks)
+
+Within session, time has 2 levels, as participants complete some check-in measures both at the start and end of the training session.
+
+Please refer to the measures section for a detailed description of the measures that will be used at each level of analysis.</p>
+
+<p></p>
+<h4>Randomization</h4>
+<p>Participants will be randomly assigned to one of the four conditions after completing the baseline questionnaires and prior to the start of the intervention session. Randomization will be performed autonomously with the Qualtrics survey platform, selecting a random group value (1,2, 3, or 4) without replacement. This is equivalent to block randomization, where each participant will be randomly assigned to one of the four equally sized, predetermined blocks. The random number list used to create these three blocks will be Qualtrics’ internal randomization function.
+https://www.qualtrics.com/support/survey-platform/survey-module/survey-flow/standard-elements/randomizer/</p>
+<h4>Sampling Plan</h4>
+<h4>Existing Data</h4>
+<p>Registration prior to accessing the data</p>
+<h4>Registration prior to creation of data</h4>
+<h4>Registration prior to any human observation of the data</h4>
+<h4>Registration prior to accessing the data</h4>
+<h4>Registration prior to analysis of the data</h4>
+<h4>Registration following analysis of the data</h4>
+<h4>Explanation of existing data</h4>
+<p>Data collection has started but the experimenters haven't checked the data or done any data analysis before registering the study. </p>
+<h4>Data collection procedures</h4>
+<p>Participants will be undergraduate students from the PSY100 class at the University of Toronto Mississauga and be recruited from the UTM PSY100 participant pool (https://app.utm.utoronto.ca/experiments-signup/). The Psy100 sign-up portal will present students with an overview of the inclusion/exclusion criteria and a link to an online brief screener where participants can assess their eligibility and register for the study. We will not retain screening data, but it will be a web form that is automated to only let people who fit our inclusion/exclusion criteria progress to the study consent form and booking a workshop.
+
+Inclusion: Participants must self-describe as being healthy, i.e., students who self-describe as healthy and affirm no ongoing diagnosis of a cognitive, mood, or health disorder which would preclude filling out brief daily surveys over the study period. Additionally, students must believe themselves are able to participate in all aspects of the study. As such, students must be able to communicate and follow instructions in English and see with normal or corrected-to-normal vision.
+
+Exclusion: individuals with a current cognitive or mood disorder, including substance use disorders, or previous diagnosis of such a disorder within the past year. While this program may be helpful to participants with ongoing disorders, the present proposal focuses on a low-vulnerability population first as a low-risk proof-of-concept study.</p>
+
+<p>602301be23238300a19d7dcc; SEM and Power Analysis.docx; https://osf.io/project/c2xzd/files/osfstorage/602301be23238300a19d7dcc; https://osf.io/download/602301be23238300a19d7dcc; 9598e9b2d907cdf2fce93cdecee8636ace302e1f76052d8c75882fe61dd0f76c</p>
+<h4>Sample size</h4>
+<p>Participants will be students from the PSY100 class at the University of Toronto Mississauga. We will aim for N = 171 with useable data, assuming we have 20% attrition, that requires having 214 participants enrol in the study.</p>
+<h4>Sample size rationale</h4>
+<p>See attached 'SEM and Power Analysis' document.</p>
+<h4>Stopping rule</h4>
+<p>We will finish collecting data when we hit our target sample size of 171 participants with complete data.</p>
+<h4>Variables</h4>
+<h4>Manipulated variables</h4>
+<p>We will have 4 independent variables: 
+Three variables are repeated measures (within person), examining training effects at 3 different levels:
+Trait effects: Study Period (2 levels: Baseline vs. Post-intervention)
+Longitudinal effects: Across Sessions (6 training sessions + up to 15 check-ins for stress, coping and practice ratings)
+State effects: Within Session (2 levels: pre vs. post training lesson x up to 6 sessions)
+
+The final variable is the training Group to which participants were randomly assigned (4 levels): Stress Management [SM] vs. Mindfulness w/Choice [MC] vs. Active Control [AC] vs. Combined Condition [CC]
+
+Each condition will have 2 training sessions per week for 3 weeks. Each lesson will include both training and assessment (i.e., ratings on state, interoception, decentering, reappraisal, and stress mindset). Each session will be about 20 minutes long and each link will expire when the next link comes out. 
+
+In the Stress Management (SM) condition, participants will receive training on the power of an adaptive stress mindset. They will learn how to acknowledge, accept, and utilize stress and adopt a stress-is-enhancing mindset within 3 weeks of training.
+
+In the Mindfulness with Choice (MC) condition, participants will receive guided meditations and advice for mindfulness practice. At the beginning and end of each lesson, participants will be asked to practice open monitoring mindfulness for 3 min and write down their thoughts briefly.  Participants will be provided options so participants can actively choose their preferred mindfulness techniques to practice. In the literature, choice has been shown to improve participant engagement and outcomes.
+
+In the Combined Condition (CC), participants will receive alternated mindfulness and stress mindset training each week. The materials used for mindfulness will be the same as in for MC condition and the materials for stress mindset will be the same from SM condition. And similar to MC, at the beginning and end of each lesson, participants will be asked to practice open monitoring mindfulness for 3 min and write down their thoughts briefly. They will also be provided options so participants can actively choose their preferred mindfulness techniques to practice.
+
+In the Active Control (AC) condition, participants will spend 3 minutes writing about the cause of their stress for the day and then play tetris for 5min in each training lesson.</p>
+
+<p></p>
+<h4>Measured variables</h4>
+<p>1. Trait Variables [Measured only at Baseline and Post-Intervention]
+Participants will complete the baseline assessment online pre-study that includes a consent form, brief demographic survey, a training scheduling form, and then the core assessment package (CAP) which measures the main variables we want to track over time. Outcome variables will be divided along 4 categories: well being, coping, symptoms, and individual measures. We will use a wide range of self-reported outcome measures to ensure reliable capture of change. Self-report measures will assess the effects prior and after to the study period along these categories.
+
+Planned Factor 1: Well Being
+Positive Affect (PANAS; Watson &amp;amp; Tellegen, 1988)
+Life Satisfaction (SWLS; Diener, Emmons, Larsen, &amp;amp; Griffin, 1985)
+
+Planned Factor 2: Coping
+Reappraisal (ERQ; Gross and John, 2003) 
+Adaptive Coping (CERQ; Garnefski and Kraaij, 2007)
+
+Planned Factor 3: Symptoms
+Stress (PSS; Cohen and Williamson, 1983)
+Symptoms (PHQ4; Kroenke, Spitzer, Williams, &amp;amp; Löwe, 2009)
+Negative Affect (PANAS; Watson &amp;amp; Tellegen, 1988)
+Maladaptive Coping (CERQ; Garnefski and Kraaij, 2007)
+
+Individual Measures
+1) Stress Mindset (Stress Mindset Measure; Crum, Salovey, &amp;amp; Achor, 2013)			
+Mindfulness (FFMQ15; Baer, Smith, Lykins, Button, Krietemeyer, Sauer, Walsh, Duggan, &amp;amp; Williams, 2008) 			
+2) Decentering (MPoD-T; Rojas, Tennant, Jensen, &amp;amp; Garland, 2020)
+
+After the three-week intervention, participants will complete the CAP that they complete at baseline. Average GPA from the current term will also be collected at the end of the term. Consenting students will have their student numbers sent to the registrar’s office and their average GPA for the term will be released to the study team. Following study completion, all participants will be debriefed by email and awarded course credit for their participation. 
+
+2. State Variables [Measured Before and After Training Sessions x up to 6 sessions]
+In order to track state variables across sessions, each group will complete 2-minute brief ratings at the beginning and end of each training lesson (up to 6 lessons). 
+1) Arousal
+- Question: How much energy or tension do you feel in your body right now? 
+- Anchors: Low Arousal to High Arousal
+2) Coping
+- Question: How able are you to cope with what is happening in your life right now?
+- Anchors: Coping Well to Completely Overwhelmed
+3) Mood Board (Positive Affect + Negative Affect)
+Positive Affect and Negative was assessed using the mood board, which is a visual representation of positive and negative emotions on a spectrum, ranging from intense emotions to mild emotions (Walsh et al., 2019). Participants were asked to select at least 1 out of 32 items that represented their feelings at that moment. 
+
+Interoception, Decentering, Reappraisal, and Stress Mindset are each rated on a 5 point likert scale with options [strongly disagree, disagree, neither agree nor disagree, agree, strongly agree]. Each variable is composed of the simple average of ratings on 2 questions, with reverse scored items indicated below with an (R):
+4) Interoception:
+I am aware of sensations in my body right now
+I feel very detached from my body right now (R)
+5) Decentering:
+I can watch my thoughts and emotions come and go like clouds
+I am more than my thoughts and feelings
+6) Reappraisal: 
+I am able to make myself think about it in a way that helps me stay calm. 
+I am able to see that my current situation also has its positive sides. 
+7) Stress Mindset:
+The effects of stress are negative and should be avoided. (R)
+Experiencing stress facilitates my learning and growth. 
+
+3. Check-In Variables [Measured During the 15 non-training day check-ins]
+Arousal and coping are each measured with a single 10 point ‘slider’ item. Each group will complete up to 21 ratings, as these measures are included in both the 6 training lessons and 15 optional daily check-ins. 
+1) Arousal
+- Question: How much energy or tension do you feel in your body right now? 
+- Anchors: Low Arousal to High Arousal
+2) Coping
+- Question: How able are you to cope with what is happening in your life right now?
+- Anchors: Coping Well to Completely Overwhelmed</p>
+
+<p></p>
+<h4>Indices</h4>
+<p>Across the Study Period (measure twice: pre- and post-study):
+----Trait Level ----
+We plan to use several measures to triangulate on 3 constructs of interest using factor analysis to reduce the measures into a single score. For each of the 3 constructs, we will employ a factor analysis in R using the ‘psych’ and ‘GPArotation’ libraries, and constrain the factor analysis to produce a single factor. The analysis will be run using the ‘oblimin’ (non-orthogonal) rotation using maximum likelihood estimation to generate the factor scores. 
+We will consider a factor that loads all scales with a loading &amp;gt; |.4| be a reasonable data reduction, whereas scales loading below this threshold may need to be considered distinct from the factor.  We will inspect the factor loadings and discuss any failures of a given factor to capture a particular scale in the study report. In these cases, e.g., CERQ coping doesn’t load into the Symptoms factor for example, we may still analyze the excluded scale as a separate variable of interest, and report this change in a deviation from pre-registration disclosure section in the study report.
+We will also reverse score the items (multiply scores by -1) if the loading goes in the opposite direction to preserve interpretability of the construct,i.e., higher scores should indicate greater levels of Well Being, Coping, and Symptoms respectively. 
+
+Planned Factor 1: Well Being
+- Well Being across the Study Period will be defined as the first factor in a factor analysis of PANAS-PA and SWLS.
+- The PANAS-PA and SWLS are predicted to load positively onto the Well Being factor. 
+
+Planned Factor 2: Coping
+- Coping across the Study Period will be defined as the first factor in a factor analysis of ERQ and CERQ. 
+- The ERQ and CERQ are predicted to load positively onto the Coping factor. 
+Planned Factor 3: Symptoms 
+- Symptoms across the Study Period will be defined as the first factor in a factor analysis of PSS, PHQ-4, PANAS-NA, and CERQ scores. 
+- The PSS, PHQ-4, PANAS-NA, and CERQ are predicted to load negatively onto the Symptoms factor. 
+
+Individual Measures
+Stress Mindset (SMM), Mindful Awareness (FFMQ15), and Decentering (MPoD-T) will be calculated as described in their published validation papers and retained as separate variables
+
+To include these variables in our models (H1 - H4), we will compute the change scores [Post-Intervention - Baseline] for each participant for each of the variables listed above, yielding one change score per participant for each variable. These change scores will be converted to z scores across all participants to improve interpretability of effects.
+---- 
+Across Sessions/Within Session
+-----State Level-----
+Decentering
+Decentering Across Sessions will be defined as the average check-in decentering scores, i.e., for each training session we will average the pre- and post-session scores.
+Decentering Within Sessions will be defined as the decentering score change [post - pre session score], so that positive values indicate increased scores across the training session
+
+Arousal
+Arousal Across Sessions will be defined as the average check-in arousal scores, i.e., for each training session we will average the pre- and post-session scores.
+Arousal Within Sessions will be defined as the arousal score change [post - pre session score], so that positive values indicate increased scores across the training session
+
+Coping
+Coping Across Sessions will be defined as the average check-in coping scores, i.e., for each training session we will average the pre- and post-session scores.
+Coping Within Sessions will be defined as the coping score change [post - pre session score], so that positive values indicate increased scores across the training session
+
+State Well Being
+State well being will be defined as the average difference between number of positive and negative words endorsed 
+State Well Being Across Sessions will be the average of state well being scores at pre and post sessions
+State Well Being Within Sessions will be defined as the change in state well being scores [post-session - pre-session]
+
+Interoception
+Interoception Across Sessions will be defined as the average check-in interoception scores, i.e., for each training session we will average the pre- and post-session scores.
+Interoception Within Sessions will be defined as the interoception score change [post - pre session score], so that positive values indicate increased scores across the training session
+
+Reappraisal
+Reappraisal Across Sessions will be defined as the average check-in reappraisal scores, i.e., for each training session we will average the pre- and post-session scores.
+Reappraisal Within Sessions will be defined as the reappraisal score change [post - pre session score], so that positive values indicate increased scores across the training session
+
+Stress Mindset
+Stress Mindset Across Sessions will be defined as the average check-in stress mindset scores, i.e., for each training session we will average the pre- and post-session scores.
+Stress Mindset  Within Sessions will be defined as the stress mindset score change [post - pre session score], so that positive values indicate increased scores across the training session</p>
+
+<p></p>
+<h4>Analysis Plan</h4>
+<h4>Statistical models</h4>
+<p>All inferences (where p values are used rather than just model fit) will require p &amp;lt; .01 to correct for 5 a priori comparisons, including follow up analysis of path coefficients in SEM, and H5, which is a multilevel model.
+
+We will use Structural Equation Modeling (SEM) implemented in the Lavaan library in R for H1 to H4:
+Note: the models below will employ the state variable change scores [post-intervention - baseline] for simplicity’s sake, noting that the interoception variable will use the FFMQ as a proxy for mindful body awareness
+
+We will also explore latent change score modelling whereby we model the 6 training sessions and in that case will attempt to use the slope of change for the variable decentering, reappraisal, interoception and stress mindset, and state well-being, and if the model fits are adequate, we will include this in the main report.
+
+H1. Active Groups → Decentering → Reappraisal → Well-Being 
+#regressions
+Decentering ~ b1*Group
+Reappraisal ~ -b2*Group + b3*Decentering
+Wellbeing ~ b4*Group + b5*Reappraisal
+#define variances to be 1, as factor scores are standardized
+Decentering ~~ 1*Decentering
+Reappraisal ~~ 1*Reappraisal
+Wellbeing ~~ 1*Wellbeing
+
+The critical statistics are around model fit, such as RMSE &amp;lt; .10 as a criteria for adequate fit, and RMSE &amp;lt; .05 as evidence of good fit.
+
+If there is evidence of at least adequate fit, follow up analyses will examine:
+the overall relationship between decentering → reappraisal → well-being will also be of particular interest (b3 * b5)
+The influence of group path b1 * b3 * b5 will also be explored.
+
+H2: Process Dissociation
+We will test overall model fit for this hypothesis, although we expect all the paths listed to be significant. Main contrast for group is between [MC] and [SM], and we expect opposing effects for the two groups on interoception and stress mindset (see second follow up analysis below). 
+
+#regressions
+Interoception ~ b1*Group 
+StressMindset ~ b2*Group
+Decentering ~ b3*Interoception + b4*StressMindset
+Reappraisal ~ b5*Interoception + b6*StressMindset + b7*Decentering
+WellBeing ~ b8*Interoception + b9*StressMindset + b10*Reappraisal
+#define variances to be 1 as factor scores are standardized
+Decentering ~~ 1*Decentering
+Reappraisal ~~ 1*Reappraisal
+Wellbeing ~~ 1*Wellbeing
+
+The critical statistics are around model fit, such as RMSE &amp;lt; .10 as a criteria for adequate fit, and RMSE &amp;lt; .05 as evidence of good fit.
+
+Of particular interest if we have adequate fit is the mediator variables explaining changes in decentering, reappraisal and well being, we will look at the significance of interoception coefficients (b3 + b5 + b8) separately from the significance of StressMindset coefficients (b4 + b6 + b9)
+
+The second follow-up analysis will examine the influence of group (MC vs. SM) on Interoception (b1) and Stress (b2); we expect MC will lead to greater improvements in interoception (b1), whereas SM will lead to greater improvements in stress mindset (b2).
+
+H3: Mindfulness to Meaning theory
+We expect BOTH paths from group, i.e.,  group → interoception and group → stress mindset paths to be significant, indicating that CC contributes to well-being through a combination of improved interoception and improved stress mindset.
+Main contrast for group is between [CC] and [SM].
+
+#regressions
+Interoception ~ b1*Group
+StressMindset ~ b2*Group
+Decentering ~ b3*Interoception + b4*StressMindset
+Reappraisal ~ b5*Interoception + b6*StressMindset + b7*Decentering
+WellBeing ~ b8*Interoception + b9*StressMindset + b10*Reappraisal
+
+#define variances to be 1
+Decentering ~~ 1*Decentering
+Reappraisal ~~ 1*Reappraisal
+Wellbeing ~~ 1*Wellbeing
+
+The critical statistics are around model fit, such as RMSE &amp;lt; .10 as a criteria for adequate fit, and RMSE &amp;lt; .05 as evidence of good fit.
+
+Of particular interest if we have adequate fit is the mediator variables explaining changes in decentering, reappraisal and well being, we will look at the significance of interoception coefficients (b3 + b5 + b8) separately from the significance of StressMindset coefficients (b4 + b6 + b9)
+
+The second follow-up analysis will examine the influence of group (MC vs. SM) on Interoception (b1) and StressMindset (b2)
+
+H4 (baseline vs. post): 
+We expect BOTH paths from group, i.e.,  group → mindfulness and group → stress mindset paths to be significant indicating that mindfulness amplifies the stress mindset intervention effects.
+Main contrast for group is between [CC] and [SM]. This model will be tested the same as H3, but replacing the interoception variable with a mindfulness measure.
+
+#regressions
+Mindfulness ~ b1*Group
+StressMindset ~ b2*Group
+Decentering ~ b3*Mindfulness + b4*StressMindset
+Reappraisal ~ b5*Mindfulness + b6*StressMindset + b7*Decentering
+WellBeing ~ b8*Mindfulness + b9*StressMindset + b10*Reappraisal
+
+#define variances to be 1
+Decentering ~~ 1*Decentering
+Reappraisal ~~ 1*Reappraisal
+Wellbeing ~~ 1*Wellbeing
+
+The critical statistics are around model fit, such as RMSE &amp;lt; .10 as a criteria for adequate fit, and RMSE &amp;lt; .05 as evidence of good fit.
+
+Of particular interest if we have adequate fit is the mediator variables explaining changes in decentering, reappraisal and well being, we will look at the significance of interoception coefficients (b3 + b5 + b8) separately from the significance of StressMindset coefficients (b4 + b6 + b9)
+
+The second follow-up analysis will examine the influence of group (MC vs. SM) on Mindfulness (b1) and StressMindset (b2)
+
+
+H5: Daily Arousal and Coping Relationship
+To examine the relationship between daily arousal and coping as a function of group, we will employ a multilevel model using the lme4 library in R. We will test whether some groups weaken the association between arousal and coping more than others, anticipating that coping will be lowest when arousal is high as a main effect. The following model will be used to test for an overall group effect:
+
+Coping ~ Arousal * Group, random = Intercept | ParticipantID
+
+The critical term is the Arousal * Group interaction term, which must be p &amp;lt; .01 to satisfy correction for multiple comparisons
+
+We will also explore this question as a training effect (not powering for this exploratory analysis):
+
+Coping ~ Time * Group, random = Time | ParticipantID </p>
+
+<p></p>
+<h4>Transformations</h4>
+<p>We will first inspect the data for normality and other assumptions required for regression, and we will transform the data accordingly if normality assumptions are violated. We will follow the recommendations by de Jonge and van der Loo (2013). 
+ 
+The a priori (central) hypotheses all only employ group as a predictor, and so no transformations of the dependent variables are anticipated. 
+ 
+However, for exploratory hypotheses, we will be exploring the role of both across session and within session variables as moderators, e.g., does the within session reduction of stress predict an across session reduction of stress? So for these exploratory tests we will separate out level 1 and level 2 predictors (e.g., within session stress variance vs. across session stress variance. To do this, level 1 predictors (i.e., within session) will be participant-centered, i.e., participant means will be subtracted from each pre and post session score. Conversely, level 2 predictors will average across pre and post session scores to account for the participant mean while ignoring within session variance.
+ 
+Reference: de Jonge, E., &amp;amp; van der Loo, M. (2013). An introduction to data cleaning with R. Statistics Netherlands. Retrieved from https://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf
+</p>
+<h4>Inference criteria</h4>
+<p>We will use  the ‘lavaan’ package for SEM modeling in R for hypotheses 1-4. To test each of these models, we will use standard procedures for evaluating model fit. There are numerous fit statistics generated by the lavaan package, and we will focus on the Root Mean Square Error of Approximation (RMSEA) to evaluate overall model fit. We will interpret RMSEA &amp;lt; .10 as adequate fit, &amp;lt; .08 as good fit, and &amp;lt; .05 as excellent fit, and discuss the results accordingly. 
+ 
+RMSEA &amp;gt; .10 will be considered poor fit and not valid grounds for inference, although alternative models may then be explored after reporting the failure of the a priori hypothesized models.
+ 
+For hypothesis 5, a coefficient from the multilevel model implemented in the ‘lme4’ package will be the grounds for inference, with a p &amp;lt; .01 considered evidence for rejecting the null hypothesis, i.e., that group does not moderate the effect of arousal on coping.
+ 
+For exploratory analyses, we will discuss effect sizes and 95% confidence intervals for all analyses but will not make inferences based p values to protect the familywise error rates.</p>
+<h4>Data exclusion</h4>
+<p>Exclusion Prior to Analysis:
+Participants will be excluded from data analysis if they:
+1) incorrectly answer 2 or more of the 3 catch questions during the baseline measure;
+2) miss 2 or more of the 6 training sessions;
+3) communicate to us that they wish to discontinue participation. 
+No constraints on daily check-ins will be made as the check-ins are not part of the training intervention but instead provide supplemental data for exploratory analysis.</p>
+<h4>Missing data</h4>
+<p>Missing data will be left as missing, no imputation.</p>
+<h4>Exploratory analysis</h4>
+<p>We will explore latent change score modelling whereby we model the 6 training sessions and in that case will attempt to use the slope of change for the variable decentering, reappraisal, interoception and stress mindset, and state well-being, and if the model fits are adequate, we will include this in the main report.</p>
+<h4>Other</h4>
+<h4>Other</h4>
+<p></p></body></html>
