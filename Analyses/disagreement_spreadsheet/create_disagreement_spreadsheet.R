@@ -10,8 +10,6 @@ MASTER_list <- read_csv("~/Desktop/RegCheck-Validation-Study/Sample_selection/fe
   filter(is.na(exclude)) |> 
   rename(article_num = article_number)
   
-data_cleaned <- data_cleaned |> 
-  rename(measurvars_dev_text = measurevars_dev_text)
 
 options(scipen = 999) #turn off scientific notation
 options(digits = 2)
