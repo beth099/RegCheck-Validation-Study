@@ -21,7 +21,7 @@ library(lme4)
 library(emmeans)
 
 # Read in cleaned data
-data_cleaned <- read_csv("~/Desktop/RegCheck-Validation-Study/Data/prereg_deviations_data_cleaned.csv") #articles that may have been coded but should be excluded
+data_cleaned <- read_csv("../Data/Processed/Analysis_Data/full_cleaned_data.csv") #articles that may have been coded but should be excluded
 
 # Need to load in round 2 of coding once we have it.
 
@@ -29,85 +29,52 @@ options(scipen = 999) #turn off scientific notation
 options(digits = 2)
 ```
 
-# Step 1: Pivot the data wider
+# Create pairwise data with RC and humans
 ```{r}
-data_long <- data_cleaned %>%
-  select(
-    article_num, coder, study_num,
-    matches("^(hypothesis|datas|inex|samplesize|manvars|measurvars|stats|transf|missd)_(prereg|paper|notreg|deviation|concerns|conf|comments)$")
-  ) %>%
-  pivot_longer(
-    cols = -c(article_num, coder, study_num),
-    names_to  = c("dimension", ".value"),
-    names_pattern = "^(.+?)_(prereg|paper|notreg|deviation|concerns|conf|comments)$"
-  )
-```
-
-# Step 2: Recode deviation decision into numeric value
-```{r }
-# Turn deviation decision into numeric value
-data_long <- data_long %>%
-  mutate(deviation = case_when(
-    deviation == "No"  ~ 0L,
-    deviation == "Yes" ~ 2L,
-    str_detect(deviation, regex("vague|too vague|not reported", ignore_case = TRUE)) ~ 1L,
-    TRUE ~ NA_integer_
-  ))
-
-# Define coder variables — update these if coder initials change
-rc_coder     <- "RC"
-human_coders <- sort(setdiff(unique(data_long$coder), rc_coder))
-```
-
-# Step 3: Convert to pairwise comparisons
-```{r}
-# Get all unique coder pairs
-coders <- unique(data_long$coder)
-coder_pairs <- combn(sort(coders), 2, simplify = FALSE)  # sort alphabetically (so that we don't get both BC_JC and JC_BC later)
-
-# Build one pairwise row per article_num x dimension x pair
-data_pairs <- map_dfr(coder_pairs, function(pair) {
-  c1 <- pair[1]; c2 <- pair[2]
-  
-  left  <- data_long %>% filter(coder == c1) %>%
-    select(article_num, study_num, dimension, 
-           prereg_c1 = prereg, paper_c1 = paper,
-           deviation_c1 = deviation, concerns_c1 = concerns)
-  
-  right <- data_long %>% filter(coder == c2) %>%
-    select(article_num, dimension,
-           prereg_c2 = prereg, paper_c2 = paper,
-           deviation_c2 = deviation, concerns_c2 = concerns)
-  
-  left %>%
-    inner_join(right, by = c("article_num", "dimension")) %>%
-    mutate(
-      coder1 = c1,
-      coder2 = c2,
-      coder_pair       = paste(c1, c2, sep = "_"),
-      comparison_type  = if_else(str_detect(coder_pair, "RC"), "rc_human", "human_human"),
-      deviation_agree  = as.integer(deviation_c1 == deviation_c2)
+# Helper: build one comparison block with standardised column names
+make_comparison <- function(df, type, r1, r2,
+                            dev1, dev2, prereg1, prereg2, paper1, paper2) {
+  df |>
+    transmute(
+      article_num, study_num, dimension,
+      comparison_type = type,
+      rater1 = {{ r1 }}, rater2 = {{ r2 }},
+      deviation_r1 = {{ dev1 }},    deviation_r2 = {{ dev2 }},
+      prereg_r1    = {{ prereg1 }}, prereg_r2    = {{ prereg2 }},
+      paper_r1     = {{ paper1 }},  paper_r2     = {{ paper2 }},
+      final_deviation_decision, PRE_meeting_comments, POST_meeting_comments
     )
-})
+}
 
-# For computing cosine similarity, we have two relevant columns: i) text from the prereg and ii) text from the paper.
- # Let's compute cosine for each occasion, and treat this (the "source" of the quote) as a random effect.
-data_pairs_cosine <- data_pairs %>%
-  select(article_num, study_num, dimension, coder1, coder2, coder_pair, 
-         comparison_type, deviation_agree,
-         prereg_c1, prereg_c2, paper_c1, paper_c2) %>%
-  pivot_longer(
-    cols = c(prereg_c1, prereg_c2, paper_c1, paper_c2),
-    names_to = c("source", "coder_num"),
-    names_pattern = "^(prereg|paper)_(c1|c2)$"
-  ) %>%
-  pivot_wider(names_from = coder_num, values_from = value) %>%
-  rename(text_c1 = c1, text_c2 = c2)
+pairwise_data <- bind_rows(
+  # 1. human vs human
+  make_comparison(data_cleaned, "human_human",
+                  coder1, coder2,
+                  deviation_c1, deviation_c2,
+                  prereg_c1, prereg_c2,
+                  paper_c1, paper_c2),
+  # 2. RegCheck vs coder 1
+  make_comparison(data_cleaned, "rc_human",
+                  "RC", coder1,
+                  regcheck_deviation_judgment, deviation_c1,
+                  regcheck_registration_quotes, prereg_c1,
+                  regcheck_paper_quotes, paper_c1),
+  # 3. RegCheck vs coder 2
+  make_comparison(data_cleaned, "rc_human",
+                  "RC", coder2,
+                  regcheck_deviation_judgment, deviation_c2,
+                  regcheck_registration_quotes, prereg_c2,
+                  regcheck_paper_quotes, paper_c2)
+) |>
+  mutate(
+    coder_pair      = paste(pmin(rater1, rater2), pmax(rater1, rater2), sep = "_"),  
+    deviation_agree = as.integer(deviation_r1 == deviation_r2)) |>
+  arrange(article_num, dimension, comparison_type)
 
-data_pairs_agree <- data_pairs # We will use the non long form for the agree variable
 ```
 
-# Step 4: Compute cosine similarity
+
+# Compute cosine similarity
 ```{r}
 # --- HELPERS ---
 # Helper: get embeddings for a character vector (single API call)
@@ -225,7 +192,7 @@ rq1a
 # Build mlm
 m_rq2 <- glmer(
   deviation_agree ~ comparison_type + (1 | article_num) + (1 | dimension) + (1 | coder_pair) +  (1 | article_num:dimension),
-  data   = data_pairs_agree,
+  data   = pairwise_data,
   family = binomial(link = "logit")
 )
 
@@ -234,7 +201,7 @@ summary(m_rq2)
 
 # Non-inferiority test
 # criterion: 0.2 x SD of human-human deviation agreement on the probability scale
-hh_agree <- data_pairs_agree %>%
+hh_agree <- pairwise_data %>%
   filter(comparison_type == "human_human", !is.na(deviation_agree)) %>%
   pull(deviation_agree)
 
@@ -253,13 +220,28 @@ contrast_rq2
 ifelse(contrast_rq2$asymp.LCL > -ni_criterion_rq2, "non-inferior", "inferior")
 ```
 
+# Build long dataset and convert deviation judgment to numbers
+```{r}
+# One row per rater x article x dimension (for alpha / AC1)
+ratings_long <- bind_rows(
+  pairwise_data |> select(article_num, study_num, dimension, coder = rater1, deviation = deviation_r1),
+  pairwise_data |> select(article_num, study_num, dimension, coder = rater2, deviation = deviation_r2)
+) |>
+  distinct() |>   # each rating appears in several pairs
+  mutate(deviation_num = as.integer(factor(deviation, levels = c("No", "Yes", "Preregistration/ Manuscript were too vague to tell or information not reported."))))
+
+# Check: no rater should have >1 rating per article x dimension
+ratings_long |> count(article_num, dimension, coder) |> filter(n > 1)
+```
+
+
 # RQ2a: Deviation agreement by dimension
 ```{r}
 # Percent agreement
-rq2a_agree <- data_pairs_agree %>%
-  filter(!is.na(deviation_agree)) %>%
+rq2a_agree <- ratings_long %>%
+  filter(!is.na(deviation_num)) %>%
   summarise(
-    n_agree = sum(deviation_agree),
+    n_agree = sum(deviation_num),
     n_total = n(),
     .by = c(dimension, comparison_type)
   ) %>%
@@ -267,7 +249,7 @@ rq2a_agree <- data_pairs_agree %>%
 
 # Krippendorff's alpha
 compute_alpha_by_dim <- function(coders_filter) {
-  data_long %>%
+  ratings_long %>%
     filter(coder %in% coders_filter, !is.na(deviation)) %>%
     group_by(dimension) %>%
     group_modify(function(d, key) {
@@ -287,7 +269,7 @@ compute_alpha_by_dim <- function(coders_filter) {
 
 # Gwet's AC1 (not preregistered)
 compute_ac1_by_dim <- function(coders_filter, wts = "linear") {
-  data_long %>%
+  ratings_long %>%
     filter(coder %in% coders_filter, !is.na(deviation)) %>%
     group_by(dimension) %>%
     group_modify(function(d, key) {
@@ -331,7 +313,7 @@ rq2a
 ## Part 1. Deviations only RegCheck identifies
 ```{r}
 # Wide format: one row per article_num × dimension, one column per coder
-rq2b_wide <- data_long %>%
+rq2b_wide <- pairwise_data %>%
   select(article_num, dimension, coder, deviation, concerns) %>%
   pivot_wider(names_from = coder, values_from = c(deviation, concerns)) %>%
   rename(
