@@ -150,14 +150,12 @@ data_pairs <- map_dfr(coder_pairs, function(pair) {
       coder1 = c1,
       coder2 = c2,
       coder_pair       = paste(c1, c2, sep = "_"),
-      comparison_type  = if_else(str_detect(coder_pair, "RC"), "rc_human", "human_human"),
       deviation_agree  = as.integer(deviation_c1 == deviation_c2)
     )
 })
 
 data_pairs_cosine <- data_pairs %>%
-  select(article_num, study_num, dimension, coder1, coder2, coder_pair, 
-         comparison_type, deviation_agree,
+  select(article_num, study_num, dimension, coder1, coder2, coder_pair, deviation_agree,
          prereg_c1, prereg_c2, paper_c1, paper_c2) %>%
   pivot_longer(
     cols = c(prereg_c1, prereg_c2, paper_c1, paper_c2),
@@ -239,6 +237,17 @@ write.csv(regcheckdata_csv, file = "../Data/Processed/regcheck_data.csv", row.na
 regcheckdata_cleaned <- regcheckdata_csv |> 
   select(article_num = article, dimension, regcheck_paper_quotes = paper_content_quotes, regcheck_registration_quotes = registration_content_quotes, regcheck_deviation_judgment = deviation_judgement, regcheck_deviation_information = deviation_information)
 
+# Remove RegCheck chunk tags, e.g. "[PREREG_0004, relevance_score=0.397]" and the context it ads to quotes e.g., "[From Study 5....]"
+regcheckdata_cleaned <- regcheckdata_cleaned |>
+  mutate(across(c(regcheck_registration_quotes, regcheck_paper_quotes),
+                ~ .x |>
+                 str_remove_all("\\[[A-Z]+_\\d+,\\s*relevance_score=[0-9.]+\\]|\\[From [^\\]]*\\]") |>
+                  str_squish()))
+
+# Check: should return 0
+sum(str_detect(regcheckdata_cleaned$regcheck_registration_quotes,
+               "relevance_score"), na.rm = TRUE)
+
 # Relabel dimensions so that they're consistant across dataframes
 human_paired_resolved <- human_paired_resolved |>
   mutate(dimension = recode(dimension,
@@ -254,6 +263,40 @@ human_paired_resolved <- human_paired_resolved |>
   ))
 
 full_cleaned_data <- left_join(human_paired_resolved, regcheckdata_cleaned, by = c("article_num", "dimension"))
+
+# Synchronise all possible response options
+clean_deviation <- function(x) {
+  x <- str_trim(x)
+  case_when(
+        str_detect(x, regex("too vague|^missing$", ignore_case = TRUE)) ~
+      "Preregistration/ Manuscript were too vague to tell or information not reported.",
+    str_detect(x, regex("^yes", ignore_case = TRUE)) ~ "Yes",
+    str_detect(x, regex("^no",  ignore_case = TRUE)) ~ "No",
+    TRUE ~ x
+  )
+}
+
+full_cleaned_data <- full_cleaned_data |>
+  mutate(across(c(deviation_c1, deviation_c2,
+                  regcheck_deviation_judgment, final_deviation_decision),
+                clean_deviation))
+
+# Check: should show only the three labels (plus NA)
+full_cleaned_data |>
+  select(deviation_c1, deviation_c2, regcheck_deviation_judgment, final_deviation_decision) |>
+  pivot_longer(everything()) |>
+  count(value)
+
+# Replace line breaks/tabs with spaces in all text columns
+full_cleaned_data <- full_cleaned_data |>
+  mutate(across(where(is.character),
+                ~ .x |>
+                  str_replace_all("\\\\[nrt]", " ") |>  # literal "\n" typed as text
+                  str_squish()))                          # real newlines/tabs + extra spaces
+
+# Check: should both return 0
+sum(str_detect(unlist(select(full_cleaned_data, where(is.character))), "\n"), na.rm = TRUE)
+sum(str_detect(unlist(select(full_cleaned_data, where(is.character))), "\\\\n"), na.rm = TRUE)
 
 write.csv(full_cleaned_data, file = "../Data/Processed/Analysis_Data/full_cleaned_data.csv", row.names = FALSE)
 ```
