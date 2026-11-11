@@ -12,9 +12,9 @@ library(readr)
 library(tidyverse)
 
 # Read in data
-data <- read_survey("../Data/RegCheck_Validation_Coding.csv")
-recoding <- read_survey("../Data/RegCheckrecoding.csv")
-exclusions <- read_csv("../Data/exclusions.csv") #articles that may have been coded but should be excluded
+human_raw <- read_survey("../Data/Raw/RegCheck_Validation_Coding.csv")
+recoding <- read_survey("../Data/Raw/RegCheckrecoding.csv")
+exclusions <- read_csv("../Data/Raw/exclusions.csv") #articles that may have been coded but should be excluded
 
 # Need to load in round 2 of coding once we have it.
 
@@ -24,18 +24,18 @@ exclusions <- read_csv("../Data/exclusions.csv") #articles that may have been co
 ```{r}
 # exclusions
   # article_num 63, earlier article from SiB & AM (wrong experiment originally assigned)
-data_cleaned <- data |> 
+human_processed <- human_raw  |> 
   filter(!(article_num == 63 & grepl("2", study_num)))
   
   # article_num 99, just SiB (wrong experiment originally assigned)
-data_cleaned <- data_cleaned |> 
+human_processed <- human_processed |> 
   filter(!(article_num == 99 & grepl("3", study_num)))
 
   # other articles that were coded and subsequently excluded
 exclusions <- exclusions |> 
   filter(exclude == "Excluded")
 
-data_cleaned <- data_cleaned |> 
+human_processed <- human_processed |> 
   filter(!article_num %in% exclusions$article_num)
 
 ## ------------
@@ -61,7 +61,7 @@ item_cols <- setdiff(names(recode_long), c("ResponseId", "coder_initial", "artic
 
 # clean up column names in recode to swap in to main dataset
 
-matches <- lapply(item_cols, \(x) grep(paste0("^", x), names(data_cleaned), value = TRUE))
+matches <- lapply(item_cols, \(x) grep(paste0("^", x), names(human_processed), value = TRUE))
 names(matches) <- item_cols
 
 
@@ -76,25 +76,25 @@ recode_replace <- recode_long |>
   ungroup()
 
 recode_replace <- recode_replace |>
-  mutate(col = vapply(item, \(x) grep(paste0("^", x), names(data_cleaned), value = TRUE), character(1)))
+  mutate(col = vapply(item, \(x) grep(paste0("^", x), names(human_processed), value = TRUE), character(1)))
 
 idx <- match(
   paste(recode_replace$coder_initial, recode_replace$article_num),
-  paste(data_cleaned$coder,  data_cleaned$article_num)
+  paste(human_processed$coder,  human_processed$article_num)
 )
 stopifnot(!anyNA(idx))
 
 for (i in seq_len(nrow(recode_replace))) {
-  data_cleaned[[recode_replace$col[i]]][idx[i]] <- recode_replace$value[i]
+  human_processed[[recode_replace$col[i]]][idx[i]] <- recode_replace$value[i]
 }
 
 
 ## ------------
 
 # sanity check -- 100 unique articles, 2 coders each
-length(unique(data_cleaned$article_num))
+length(unique(human_processed$article_num))
 
-data_cleaned |> 
+human_processed |> 
   group_by(article_num) |> 
   summarise(times_coded = n(),
             n_coders = n_distinct(coder),
@@ -103,9 +103,187 @@ data_cleaned |>
   filter(times_coded != 2 | n_coders != 2)
 
 # For consistency, clean up two variable names
-data_cleaned <- data_cleaned |> 
+human_processed <- human_processed |> 
   rename(measurvars_dev_text = measurevars_dev_text,
          measurvars_notreg = measurevars_notreg)
 
-write.csv(data_cleaned, file = "../Data/prereg_deviations_data_cleaned.csv", row.names = FALSE)
+write.csv(human_processed, file = "../Data/Processed/human_processed.csv", row.names = FALSE)
 ```
+
+# Pivot the data wider
+```{r}
+data_long <- human_processed %>%
+  select(
+    article_num, coder, study_num,
+    matches("^(hypothesis|datas|inex|samplesize|manvars|measurvars|stats|transf|missd)_(prereg|paper|notreg|deviation|concerns|conf|comments)$")
+  ) %>%
+  pivot_longer(
+    cols = -c(article_num, coder, study_num),
+    names_to  = c("dimension", ".value"),
+    names_pattern = "^(.+?)_(prereg|paper|notreg|deviation|concerns|conf|comments)$"
+  )
+```
+
+# Convert to pairwise comparisons
+```{r}
+# Get all unique coder pairs
+coders <- unique(data_long$coder)
+coder_pairs <- combn(sort(coders), 2, simplify = FALSE)  # sort alphabetically (so that we don't get both BC_JC and JC_BC later)
+
+# Build one pairwise row per article_num x dimension x pair
+data_pairs <- map_dfr(coder_pairs, function(pair) {
+  c1 <- pair[1]; c2 <- pair[2]
+  
+  left  <- data_long %>% filter(coder == c1) %>%
+    select(article_num, study_num, dimension, 
+           prereg_c1 = prereg, paper_c1 = paper,
+           deviation_c1 = deviation, concerns_c1 = concerns)
+  
+  right <- data_long %>% filter(coder == c2) %>%
+    select(article_num, dimension,
+           prereg_c2 = prereg, paper_c2 = paper,
+           deviation_c2 = deviation, concerns_c2 = concerns)
+  
+  left %>%
+    inner_join(right, by = c("article_num", "dimension")) %>%
+    mutate(
+      coder1 = c1,
+      coder2 = c2,
+      coder_pair       = paste(c1, c2, sep = "_"),
+      comparison_type  = if_else(str_detect(coder_pair, "RC"), "rc_human", "human_human"),
+      deviation_agree  = as.integer(deviation_c1 == deviation_c2)
+    )
+})
+
+data_pairs_cosine <- data_pairs %>%
+  select(article_num, study_num, dimension, coder1, coder2, coder_pair, 
+         comparison_type, deviation_agree,
+         prereg_c1, prereg_c2, paper_c1, paper_c2) %>%
+  pivot_longer(
+    cols = c(prereg_c1, prereg_c2, paper_c1, paper_c2),
+    names_to = c("source", "coder_num"),
+    names_pattern = "^(prereg|paper)_(c1|c2)$"
+  ) %>%
+  pivot_wider(names_from = coder_num, values_from = value) %>%
+  rename(text_c1 = c1, text_c2 = c2)
+
+data_pairs_agree <- data_pairs # We will use the non long form for the agree variable
+```
+
+
+```{r}
+# Human data: resolved disagreements
+regcheck_disagreements_resolved <- read_csv("../Data/Raw/regcheck_disagreements_resolved.csv")
+
+regcheck_disagreements_resolved_cleaned <- regcheck_disagreements_resolved |> 
+  select(c(article_num, dimension, final_deviation_decision, PRE_meeting_comments, POST_meeting_comments))
+
+human_paired_resolved <- left_join(data_pairs_agree, regcheck_disagreements_resolved_cleaned,
+                               by = c("article_num", "dimension")) |>
+  mutate(
+    deviation_c1 = if_else(grepl("too vague to tell", deviation_c1, ignore.case = TRUE),
+                           "Preregistration and/or manuscript were too vague to tell or not reported",
+                           deviation_c1),
+    final_deviation_decision = if_else(deviation_agree %in% 1,
+                                       deviation_c1,
+                                       final_deviation_decision)
+  )
+
+write.csv(human_paired_resolved, "../Data/Processed/human_paired_resolved.csv", row.names = FALSE)
+```
+
+# RegCheck data cleaning
+```{r}
+library(jsonlite)
+library(purrr)
+
+
+json_dir <- "../regcheck_data/regcheck/full/single_judge"
+
+files <- list.files(json_dir, pattern = "^article_\\d+\\.json$", full.names = TRUE)
+
+# sort numerically (otherwise article_10 comes before article_2)
+files <- files[order(as.numeric(gsub("\\D", "", basename(files))))]
+names(files) <- sub("\\.json$", "", basename(files))
+
+read_one <- function(f) {
+  x <- fromJSON(f)
+  x <- map(x, ~ list(if (is.null(.x)) NA else .x))   # every field -> list-column
+  as_tibble(x)
+}
+
+rc <- map(files, read_one) |>
+  bind_rows(.id = "article") |>
+  mutate(across(
+    where(is.list),
+    ~ if (all(map_lgl(.x, function(v) is.atomic(v) && length(v) == 1))) unlist(.x) else .x
+  ))
+
+# unnest the relevant columns
+regcheckdata <- rc |>
+  unnest(items, keep_empty = TRUE)
+
+regcheckdata <- regcheckdata |>
+  mutate(article = as.numeric(sub("^article_", "", article)))
+
+regcheckdata_csv <- regcheckdata |>
+  mutate(across(where(is.list), ~ map_chr(.x, \(v) paste(unlist(v), collapse = "; "))))
+
+write.csv(regcheckdata_csv, file = "../Data/Processed/regcheck_data.csv", row.names = FALSE)
+
+```
+
+
+```{r}
+# Append RegCheck results to main (human) data
+regcheckdata_cleaned <- regcheckdata_csv |> 
+  select(article_num = article, dimension, regcheck_paper_quotes = paper_content_quotes, regcheck_registration_quotes = registration_content_quotes, regcheck_deviation_judgment = deviation_judgement, regcheck_deviation_information = deviation_information)
+
+# Relabel dimensions so that they're consistant across dataframes
+human_paired_resolved <- human_paired_resolved |>
+  mutate(dimension = recode(dimension,
+    "datas"      = "Data source",
+    "hypothesis" = "Hypotheses",
+    "inex"       = "Inclusion and exclusion criteria",
+    "manvars"    = "Manipulated variables",
+    "measurvars" = "Measured variables",
+    "missd"      = "Missing data",
+    "samplesize" = "Sample size",
+    "stats"      = "Statistical models",
+    "transf"     = "Transformations"
+  ))
+
+full_cleaned_data <- left_join(human_paired_resolved, regcheckdata_cleaned, by = c("article_num", "dimension"))
+
+write.csv(full_cleaned_data, file = "../Data/Processed/Analysis_Data/full_cleaned_data.csv", row.names = FALSE)
+```
+
+
+```{r}
+# Checks
+article_list_data <- sort(unique(full_cleaned_data$article_num))
+
+exclusions <- read_csv("../Data/Raw/exclusions.csv")
+
+article_list_excl <- exclusions |> 
+  filter(exclude == "Excluded") |> # For two articles, only earlier responses needed to be excluded
+  pull(article_num) |> 
+  unique() |> 
+  sort()
+
+# Any articles on the exclusion list that are still included in the full data?
+intersect(article_list_data, article_list_excl)
+
+# Any articles missing from the full list?
+article_list_all <- sort(c(article_list_data, article_list_excl))
+
+setdiff(seq(min(article_list_all), max(article_list_all)), article_list_all)
+
+#final N should be 100
+length(unique(article_list_data))
+
+```
+
+
+
+
