@@ -3,13 +3,20 @@ title: "data cleaning"
 output: html_document
 date: "2026-03-10"
 ---
-
+# Setup
 ```{r setup, include=FALSE}
 # Load packages
 library(qualtRics) # to read in qualtrics survey data
 
 library(readr)
 library(tidyverse)
+
+# For RegCheck & text cleaning
+library(jsonlite)
+library(purrr)
+library(textclean)
+library(stringr)
+library(hunspell)
 
 # Read in data
 human_raw <- read_survey("../Data/Raw/RegCheck_Validation_Coding.csv")
@@ -20,7 +27,7 @@ exclusions <- read_csv("../Data/Raw/exclusions.csv") #articles that may have bee
 
 ```
 
-# Data cleaning
+# Data cleaning - human data
 ```{r}
 # exclusions
   # article_num 63, earlier article from SiB & AM (wrong experiment originally assigned)
@@ -110,7 +117,7 @@ human_processed <- human_processed |>
 write.csv(human_processed, file = "../Data/Processed/human_processed.csv", row.names = FALSE)
 ```
 
-# Pivot the data wider
+## Pivot the data wider
 ```{r}
 data_long <- human_processed %>%
   select(
@@ -124,7 +131,7 @@ data_long <- human_processed %>%
   )
 ```
 
-# Convert to pairwise comparisons
+## Convert to pairwise comparisons
 ```{r}
 # Get all unique coder pairs
 coders <- unique(data_long$coder)
@@ -168,7 +175,7 @@ data_pairs_cosine <- data_pairs %>%
 data_pairs_agree <- data_pairs # We will use the non long form for the agree variable
 ```
 
-
+## Add in data from disagreement meetings and save the cleaned human data
 ```{r}
 # Human data: resolved disagreements
 regcheck_disagreements_resolved <- read_csv("../Data/Raw/regcheck_disagreements_resolved.csv")
@@ -190,12 +197,8 @@ human_paired_resolved <- left_join(data_pairs_agree, regcheck_disagreements_reso
 write.csv(human_paired_resolved, "../Data/Processed/human_paired_resolved.csv", row.names = FALSE)
 ```
 
-# RegCheck data cleaning
+# RegCheck inital data cleaning
 ```{r}
-library(jsonlite)
-library(purrr)
-
-
 json_dir <- "../regcheck_data/regcheck/full/single_judge"
 
 files <- list.files(json_dir, pattern = "^article_\\d+\\.json$", full.names = TRUE)
@@ -227,28 +230,33 @@ regcheckdata <- regcheckdata |>
 regcheckdata_csv <- regcheckdata |>
   mutate(across(where(is.list), ~ map_chr(.x, \(v) paste(unlist(v), collapse = "; "))))
 
-write.csv(regcheckdata_csv, file = "../Data/Processed/regcheck_data.csv", row.names = FALSE)
-
-```
-
-
-```{r}
-# Append RegCheck results to main (human) data
-regcheckdata_cleaned <- regcheckdata_csv |> 
-  select(article_num = article, dimension, regcheck_paper_quotes = paper_content_quotes, regcheck_registration_quotes = registration_content_quotes, regcheck_deviation_judgment = deviation_judgement, regcheck_deviation_information = deviation_information)
-
 # Remove RegCheck chunk tags, e.g. "[PREREG_0004, relevance_score=0.397]" and the context it ads to quotes e.g., "[From Study 5....]"
-regcheckdata_cleaned <- regcheckdata_cleaned |>
-  mutate(across(c(regcheck_registration_quotes, regcheck_paper_quotes),
+regcheckdata_csv <- regcheckdata_csv |>
+  mutate(across(c(registration_content_quotes, paper_content_quotes),
                 ~ .x |>
                  str_remove_all("\\[[A-Z]+_\\d+,\\s*relevance_score=[0-9.]+\\]|\\[From [^\\]]*\\]") |>
                   str_squish()))
 
 # Check: should return 0
-sum(str_detect(regcheckdata_cleaned$regcheck_registration_quotes,
+sum(str_detect(regcheckdata_csv$registration_content_quotes,
                "relevance_score"), na.rm = TRUE)
 
-# Relabel dimensions so that they're consistant across dataframes
+write.csv(regcheckdata_csv, file = "../Data/Processed/regcheck_data.csv", row.names = FALSE)
+
+```
+
+# Combine RegCheck + Human data
+```{r}
+# Append RegCheck results to main (human) data
+regcheckdata_cleaned <- regcheckdata_csv |> 
+  select(article_num = article, dimension, regcheck_paper_quotes = paper_content_quotes, regcheck_registration_quotes = registration_content_quotes, regcheck_deviation_judgment = deviation_judgement, regcheck_deviation_information = deviation_information)
+```
+
+## Clean full dataset 
+
+### Synchronise responses and variable names
+```{r }
+# Relabel dimensions so that they're consistent across dataframes
 human_paired_resolved <- human_paired_resolved |>
   mutate(dimension = recode(dimension,
     "datas"      = "Data source",
@@ -264,11 +272,12 @@ human_paired_resolved <- human_paired_resolved |>
 
 full_cleaned_data <- left_join(human_paired_resolved, regcheckdata_cleaned, by = c("article_num", "dimension"))
 
-# Synchronise all possible response options
+# Synchronise all deviation judgment response options
 clean_deviation <- function(x) {
   x <- str_trim(x)
   case_when(
-        str_detect(x, regex("too vague|^missing$", ignore_case = TRUE)) ~
+      str_detect(x, regex("not pre-?registered", ignore_case = TRUE)) ~ NA_character_, # to match individual codings where coders previously indicated that the dimension was not preregistered and then this variable was coded as NA
+      str_detect(x, regex("too vague|^missing$", ignore_case = TRUE)) ~
       "Preregistration/ Manuscript were too vague to tell or information not reported.",
     str_detect(x, regex("^yes", ignore_case = TRUE)) ~ "Yes",
     str_detect(x, regex("^no",  ignore_case = TRUE)) ~ "No",
@@ -286,22 +295,143 @@ full_cleaned_data |>
   select(deviation_c1, deviation_c2, regcheck_deviation_judgment, final_deviation_decision) |>
   pivot_longer(everything()) |>
   count(value)
+```
 
-# Replace line breaks/tabs with spaces in all text columns
+### Clean text variables
+```{r }
+# Clean the text
+text_cols <- c("prereg_c1", "prereg_c2", "paper_c1", "paper_c2",
+               "regcheck_registration_quotes", "regcheck_paper_quotes")
+
+fix_ligatures <- function(x) {
+  ligs <- c("fi", "fl", "ffi", "ff", "ffl")
+
+  # Check every unique word once
+  cores <- x[!is.na(x)] |> str_split(" ") |> unlist() |>
+    str_remove("[[:punct:]]+$") |> unique()
+  cores <- cores[str_detect(cores, "^[A-Za-z]+$")]
+  ok <- setNames(hunspell_check(cores), cores)
+  is_word <- function(w) unname(ok[w]) %in% TRUE
+
+  try_ligs <- function(pre, post) {
+    cands <- paste0(pre, ligs, post)
+    hit <- hunspell_check(cands)
+    if (any(hit)) cands[which(hit)[1]] else NA_character_
+  }
+
+  fix_one <- function(s) {
+    toks <- str_split_1(s, " ")
+    out <- character(length(toks))
+    n <- 0
+    i <- 1
+    while (i <= length(toks)) {
+      a <- toks[i]
+      if (i < length(toks)) {
+        b      <- toks[i + 1]
+        b_core <- str_remove(b, "[[:punct:]]+$")
+        b_end  <- coalesce(str_extract(b, "[[:punct:]]+$"), "")
+        if (str_detect(a, "^[A-Za-z]{2,}$") && str_detect(b_core, "^[a-z]+$")) {
+          both_words <- is_word(a) && is_word(b_core)
+          if (!both_words || nchar(b_core) <= 3) {
+            cand <- try_ligs(a, b_core)
+            if (!is.na(cand) && (!both_words || nchar(cand) >= 6)) {
+              n <- n + 1; out[n] <- paste0(cand, b_end); i <- i + 2; next
+            }
+          }
+        }
+      }
+      a_core <- str_remove(a, "[[:punct:]]+$")
+      a_end  <- coalesce(str_extract(a, "[[:punct:]]+$"), "")
+      if (str_detect(a_core, "^[a-z]{2,}$") && !is_word(a_core)) {
+        cand <- try_ligs("", a_core)
+        if (!is.na(cand)) a <- paste0(cand, a_end)
+      }
+      n <- n + 1; out[n] <- a; i <- i + 1
+    }
+    paste(out[seq_len(n)], collapse = " ")
+  }
+
+  # Only process texts that contain at least one non-dictionary word
+  bad_words <- names(ok)[!ok]
+  needs <- !is.na(x) & map_lgl(str_split(x, " "), \(t) any(str_remove(t, "[[:punct:]]+$") %in% bad_words))
+
+  x[needs] <- map_chr(x[needs], fix_one, .progress = TRUE)
+  str_replace_all(x, "\\bProli c\\b", "Prolific")
+}
+
+clean_text <- function(x) {
+  x <- x |>
+    str_replace_all("\\\\[nrt]", " ") |>                     # literal "\n" typed as text
+    replace_white() |>                                       # real newlines/tabs -> spaces
+    replace_html(symbol = TRUE) |>                           # &amp; -> &, strips tags
+    str_replace_all(c("¼" = "=", "þ" = "+", "À" = "-", "Â" = "×",
+                      "ð" = "(", "Þ" = ")", "½" = "[")) |>   # PDF maths-font artefacts
+    stringi::stri_trans_nfkc() |>                            # ligatures etc.
+    replace_curly_quote() |>                                 # curly -> straight quotes
+    str_replace_all("[\u2013\u2014\u2212]", "-") |>          # dashes
+    str_remove_all("\\[\\s*(\\.\\.\\.|\u2026)\\s*\\]") |>    # [...] markers
+    str_replace_all("(\\p{Ll})- (\\p{Ll})", "\\1\\2") |>     # PDF line-break hyphens
+    str_remove_all("[\\p{Cc}\\p{Cf}\u00AD]") |>              # hidden characters, soft hyphens
+    str_remove_all("\\[From [^\\]]*\\]") |>                  # RC study tags (also in human text)  <- NEW
+    str_squish()                                             # extra spaces
+
+  # "Not reported" entries -> NA
+  not_reported <- "^(not reported\\.?|-+|na|n/a)$"
+  if_else(str_detect(str_to_lower(x), not_reported), NA_character_, x)
+}
+
 full_cleaned_data <- full_cleaned_data |>
-  mutate(across(where(is.character),
-                ~ .x |>
-                  str_replace_all("\\\\[nrt]", " ") |>  # literal "\n" typed as text
-                  str_squish()))                          # real newlines/tabs + extra spaces
+     mutate(across(any_of(text_cols), clean_text),
+            across(c(paper_c1, paper_c2), fix_ligatures))
 
-# Check: should both return 0
-sum(str_detect(unlist(select(full_cleaned_data, where(is.character))), "\n"), na.rm = TRUE)
-sum(str_detect(unlist(select(full_cleaned_data, where(is.character))), "\\\\n"), na.rm = TRUE)
+```
 
-write.csv(full_cleaned_data, file = "../Data/Processed/Analysis_Data/full_cleaned_data.csv", row.names = FALSE)
+```{r}
+# checks
+long_text <- full_cleaned_data |>
+  select(any_of(text_cols)) |>
+  pivot_longer(everything(), names_to = "column", values_to = "text") |>
+  filter(!is_blank(text))
+
+# 1. Hidden characters (should be 0)
+sum(str_detect(long_text$text, "[\\p{Cc}\\p{Cf}\u00AD]"))
+
+# 2. Broken ligatures (should be ~0)
+broken <- "\\b(signi cant|speci c|con rm|de ned|identi ed|modi ed|nal|rst|in uence|ef cacy|Proli c)\\b"
+long_text |> filter(str_detect(text, broken)) |> count(column)
+
+# 3. PDF symbol artefacts (should be 0)
+long_text |> filter(str_detect(text, "Ã|â€|Â|ð|Þ|¼")) |> count(column)
+
+# 4. Leftover markers/tags (should be 0)
+sum(str_detect(long_text$text, "\\[\\s*(\\.\\.\\.|\u2026)\\s*\\]|relevance_score=|\\[From "))
+
+# 5. "Not reported" entries gone (should be empty)
+long_text |> filter(str_detect(str_to_lower(text), "^(not reported\\.?|-+|na|n/a)$"))
+
+# 6. Real line breaks in text columns (should be 0)
+sum(str_detect(long_text$text, "\n"))
+
+
+# Length check
+long_text |>
+  mutate(
+    rater  = if_else(str_detect(column, "regcheck"), "RC", "Human"),
+    source = if_else(str_detect(column, "paper"), "paper", "prereg"),
+    n_words = str_count(text, "\\S+")
+  ) |>
+  group_by(source, rater) |>
+  summarise(n = n(), min = min(n_words), median = median(n_words),
+            max = max(n_words), .groups = "drop")
 ```
 
 
+# Save the full cleaned data
+```{r }
+write.csv(full_cleaned_data, file = "../Data/Processed/Analysis_Data/full_cleaned_data.csv", row.names = FALSE)
+```
+
+# Check all articles that should be in the dataset are in the dataset
 ```{r}
 # Checks
 article_list_data <- sort(unique(full_cleaned_data$article_num))
@@ -324,7 +454,6 @@ setdiff(seq(min(article_list_all), max(article_list_all)), article_list_all)
 
 #final N should be 100
 length(unique(article_list_data))
-
 ```
 
 
