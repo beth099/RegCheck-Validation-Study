@@ -16,9 +16,12 @@ library(krippendorffsalpha)
 library(irrCAC) # for Gwet's AC1 (not preregistered)
 library(snow)
 library(httr2) # for calculating cosine similarity
+library(purrr)
+library(stringr)
 
 library(lme4)
 library(emmeans)
+
 
 # Read in cleaned data
 data_cleaned <- read_csv("../Data/Processed/Analysis_Data/full_cleaned_data.csv") #articles that may have been coded but should be excluded
@@ -76,70 +79,225 @@ pairwise_data <- bind_rows(
 
 # Compute cosine similarity
 ```{r}
-# --- HELPERS ---
-# Helper: get embeddings for a character vector (single API call)
-get_embeddings <- function(texts, 
+data_pairs_cosine <- pairwise_data |>
+  select(article_num, study_num, dimension, comparison_type,
+         rater1, rater2, coder_pair,
+         prereg_r1, prereg_r2, paper_r1, paper_r2) |>
+  pivot_longer(c(prereg_r1, prereg_r2, paper_r1, paper_r2),
+               names_to = c("source", ".value"),
+               names_pattern = "(prereg|paper)_(r[12])") |>
+  rename(text_r1 = r1, text_r2 = r2)
+
+is_blank <- function(x) is.na(x) | str_trim(x) == ""
+
+# Embeddings in batches, ordered by the API's index field
+get_embeddings <- function(texts,
                            model = "text-embedding-3-large",
-                           api_key = Sys.getenv("OPENAI_API_KEY")) {
-  resp <- request("https://api.openai.com/v1/embeddings") %>%
-    req_auth_bearer_token(api_key) %>%
-    req_body_json(list(input = as.list(texts), model = model)) %>%
-    req_perform()
-  
-  resp_body_json(resp)$data %>%
-    map(~ unlist(.x$embedding))
+                           api_key = Sys.getenv("OPENAI_API_KEY"),
+                           batch_size = 500) {
+  batches <- split(texts, ceiling(seq_along(texts) / batch_size))
+  out <- map(batches, function(b) {
+    resp <- request("https://api.openai.com/v1/embeddings") |>
+      req_auth_bearer_token(api_key) |>
+      req_body_json(list(input = as.list(b), model = model)) |>
+      req_retry(max_tries = 5) |>
+      req_perform()
+    d <- resp_body_json(resp)$data
+    d <- d[order(map_int(d, "index"))]
+    map(d, ~ unlist(.x$embedding))
+  })
+  emb <- unlist(out, recursive = FALSE, use.names = FALSE)
+  names(emb) <- texts
+  emb
 }
 
-# Helper: cosine similarity between two numeric vectors
 cosine_sim <- function(a, b) sum(a * b) / (sqrt(sum(a^2)) * sqrt(sum(b^2)))
+```
 
+```{r eval = FALSE}
+# --- TEST ON A FEW ROWS ---
+run_embeddings <- FALSE   # set to TRUE only when you want to (re-)embed
+
+if (run_embeddings) {
+  test <- data_pairs_cosine |>
+    filter(!is_blank(text_r1), !is_blank(text_r2)) |>
+    slice_sample(n = 6)
+
+  test_emb <- get_embeddings(unique(c(test$text_r1, test$text_r2)))
+
+  test <- test |>
+    mutate(cosine = map2_dbl(text_r1, text_r2, ~ cosine_sim(test_emb[[.x]], test_emb[[.y]]))) |>
+    select(dimension, source, comparison_type, text_r1, text_r2, cosine)
+
+  print(length(test_emb[[1]]))
+  print(cosine_sim(test_emb[[1]], test_emb[[1]]))
+  print(cosine_sim(test_emb[[1]], rev(test_emb[[1]])))
+}
+
+```
+
+
+```{r }
 # --- RUN FUNCTIONS ---
-# Collect all unique non-empty texts across both columns and both coders
-all_texts <- data_pairs %>%
-  select(prereg_c1, prereg_c2, paper_c1, paper_c2) %>%
-  unlist(use.names = FALSE) %>%
-  { .[!is.na(.) & str_trim(.) != ""] } %>%
-  unique()
+# Embed exactly the texts you compare
+all_texts <- c(data_pairs_cosine$text_r1, data_pairs_cosine$text_r2)
+all_texts <- unique(all_texts[!is_blank(all_texts)])
 
-# Single API call for all unique texts
-embeddings <- get_embeddings(all_texts)
-names(embeddings) <- all_texts
+# Load saved embeddings if they exist; embed only new texts
+emb_file <- "embeddings_cleaned_text-embedding-3-large.rds"
+embeddings <- if (file.exists(emb_file)) readRDS(emb_file) else list()
 
-lookup <- function(text) embeddings[[text]]
+to_embed <- setdiff(all_texts, names(embeddings))
+message(length(to_embed), " new texts to embed (", length(all_texts) - length(to_embed), " loaded from file)")
 
-data_pairs_cosine <- data_pairs_cosine %>%
-  mutate(
-    cosine = map2_dbl(text_c1, text_c2, function(a, b) {
-      if (is.na(a) || a == "" || is.na(b) || b == "") return(NA_real_)
-      cosine_sim(lookup(a), lookup(b))
-    })
-  ) %>% 
-  select(-deviation_agree) # this will be duplicated, so let's remove it.
+if (length(to_embed) > 0) {
+  embeddings <- c(embeddings, get_embeddings(to_embed))
+  saveRDS(embeddings, emb_file)
+}
 
-# Ensure columns are the right type
-data_pairs_cosine <- data_pairs_cosine %>%
-  mutate(comparison_type = factor(comparison_type, levels = c("human_human", "rc_human"))) 
+lookup <- function(text) {
+  e <- embeddings[[text]]
+  if (is.null(e)) stop("No embedding for: ", str_trunc(text, 60))
+  e
+}
 
-data_pairs_agree <- data_pairs_agree %>%
-  mutate(
-    comparison_type = factor(comparison_type, levels = c("human_human", "rc_human")),
-    deviation_agree = as.integer(deviation_agree)
-  )
+data_pairs_cosine <- data_pairs_cosine |>
+  mutate(cosine = map2_dbl(text_r1, text_r2, function(a, b) {
+    if (is_blank(a) || is_blank(b)) return(NA_real_)
+    cosine_sim(lookup(a), lookup(b))
+  }))
+
+# Sanity checks
+stopifnot(!any(is.nan(data_pairs_cosine$cosine)))
+stopifnot(all(data_pairs_cosine$comparison_type %in% c("human_human", "rc_human")))
 ```
 
 # Analysis
-# RQ1: Cosine similarity
-Descriptives
+## RQ1: Cosine similarity
+### Descriptives
+#### Overall
 ```{r}
-data_pairs_cosine %>% 
-  group_by(comparison_type) %>% 
-  summarise(
-    mean_cosine = mean(cosine, na.rm = TRUE),
-    sd_cosine = sd(cosine, na.rm = TRUE)
-  )
+# M and SD of cosine by source (prereg vs. paper) and comparison type (h-h vs. rc-h)
+overall_avg_cos <- data_pairs_cosine |>
+  group_by(source, comparison_type) |>
+  summarise(n = sum(!is.na(cosine)),
+            M = mean(cosine, na.rm = TRUE),
+            SD = sd(cosine, na.rm = TRUE),
+            .groups = "drop")
+overall_avg_cos
 ```
 
-Inferential
+#### Cosine baselines (not preregistered)
+```{r}
+# Helper: matrix of normalised embeddings, one row per text
+emb_matrix <- function(texts) {
+  m <- do.call(rbind, lapply(texts, lookup))
+  m / sqrt(rowSums(m^2))
+}
+
+hh <- data_pairs_cosine |> filter(comparison_type == "human_human")
+
+# (a) Within-paper: coder 1 dim X vs coder 2 dim Y (X != Y), same paper
+within_paper <- hh |>
+  group_by(article_num, study_num, source) |>
+  group_modify(\(d, key) {
+    x <- filter(d, !is_blank(text_r1))
+    y <- filter(d, !is_blank(text_r2))
+    if (nrow(x) == 0 || nrow(y) == 0) return(tibble(cos = numeric(0)))
+    s <- emb_matrix(x$text_r1) %*% t(emb_matrix(y$text_r2))
+    tibble(cos = s[outer(x$dimension, y$dimension, "!=")])
+  }) |>
+  summarise(paper_mean = mean(cos), .groups = "drop") |>   # one value per paper
+  group_by(source) |>
+  summarise(n = n(), M = mean(paper_mean), SD = sd(paper_mean)) |>
+  mutate(comparison_type = "baseline_within_article")
+
+# (b) Between-paper: same dimension, coder 1 paper A vs coder 2 paper B (A != B)
+between_paper <- hh |>
+  group_by(source, dimension) |>
+  group_modify(\(d, key) {
+    x <- filter(d, !is_blank(text_r1))
+    y <- filter(d, !is_blank(text_r2))
+    s <- emb_matrix(x$text_r1) %*% t(emb_matrix(y$text_r2))
+    s[!outer(x$article_num, y$article_num, "!=")] <- NA        # drop same-paper pairs
+    tibble(article_num = x$article_num, cos = rowMeans(s, na.rm = TRUE))
+  }) |>
+  group_by(source, article_num) |>
+  summarise(paper_mean = mean(cos), .groups = "drop") |>      # one value per paper
+  group_by(source) |>
+  summarise(n = n(), M = mean(paper_mean), SD = sd(paper_mean)) |>
+  mutate(comparison_type = "baseline_between_article")
+
+# Combined table: H–H and RC–H next to both baselines
+cosine_summary <- bind_rows(overall_avg_cos, within_paper, between_paper) |>
+  mutate(comparison_type = factor(comparison_type,
+             levels = c("human_human", "rc_human", "baseline_within_article", "baseline_between_article"))) |>
+  arrange(source, comparison_type)
+
+cosine_summary
+```
+
+#### Coverage (not preregistered)
+```{r}
+# This uses ROUGE-1-style word overlap: the share of one text’s words found in the other. It’s fast, easy to explain, and separates “RC got everything plus extra” (high recall, low precision) from “RC got the wrong thing” (both low).
+
+tok <- function(x) str_extract_all(str_to_lower(x), "[a-z0-9]+")[[1]]
+
+# Proportion of b's words also found in a (counts clipped)
+overlap_share <- function(a, b) {
+  ta <- table(tok(a)); tb <- table(tok(b))
+  common <- intersect(names(ta), names(tb))
+  sum(pmin(ta[common], tb[common])) / sum(tb)
+}
+
+coverage <- data_pairs_cosine |>
+  filter(!is_blank(text_r1), !is_blank(text_r2)) |>
+  mutate(
+    # rater1 = RC in rc_human rows; coder 1 in human_human rows
+    recall    = map2_dbl(text_r1, text_r2, overlap_share),  # share of rater2's text covered by rater1
+    precision = map2_dbl(text_r2, text_r1, overlap_share)   # share of rater1's text found in rater2's
+  )
+
+coverage |>
+  group_by(source, comparison_type) |>
+  summarise(across(c(recall, precision),
+                   list(M = mean, SD = sd), .names = "{.col}_{.fn}"),
+            .groups = "drop")
+
+ 
+# RC–H rows: recall = how much of the human’s extract RC captured; precision = how much of RC’s extract the human also selected.
+# H–H rows as a baseline: how much of the one coder’s extract the other captured; precision = how much of one coder’s extract the other coder also selected.
+```
+
+#### Length ratios (not preregistered)
+```{r }
+text_cols <- c("prereg_c1", "prereg_c2", "paper_c1", "paper_c2",
+               "regcheck_registration_quotes", "regcheck_paper_quotes")
+
+length_summary <- data_cleaned |>
+  select(any_of(text_cols)) |>
+  pivot_longer(everything(), names_to = "column", values_to = "text") |>
+  filter(!is_blank(text)) |>
+  mutate(
+    rater   = if_else(str_detect(column, "regcheck"), "RegCheck", "Human"),
+    source  = if_else(str_detect(column, "paper"), "paper", "prereg"),
+    n_words = str_count(text, "\\S+")
+  ) |>
+  group_by(source, rater) |>
+  summarise(median_words = median(n_words),
+            IQR = paste0("[", quantile(n_words, .25), ", ", quantile(n_words, .75), "]"),
+            .groups = "drop")
+
+length_summary
+
+length_summary |>
+  select(source, rater, median_words) |>
+  pivot_wider(names_from = rater, values_from = median_words,
+              names_glue = "{rater}_median") |>
+  mutate(ratio = RegCheck_median / Human_median)
+```
+
+### Non-inferiority test
 ```{r}
 # Build the mlm
 m_rq1 <- lmer(
@@ -147,8 +305,13 @@ m_rq1 <- lmer(
   data = data_pairs_cosine
 )
 
+# Check for singularity issues
+isSingular(m_rq1)
+
 # View the model output
 summary(m_rq1)
+
+VarCorr(m_rq1)    
 
 # Non-inferiority check
 # criterion: 0.4 x SD of human-human cosine similarity
@@ -168,18 +331,18 @@ contrast_rq1
 
 # Non-inferiority check: lower one-sided 95% CI must be above -ni_criterion
 # (i.e. RegCheck is not meaningfully worse than human-human)
-ifelse(contrast_rq1$lower.CL > -ni_criterion, "non-inferior", "inferior"
+ifelse(contrast_rq1$asymp.LCL > -ni_criterion, "non-inferior", "inferior")
 ```
 
-# RQ1a -- cosine similarity by dimension (descriptive)
+## RQ1a -- Cosine similarity by dimension (descriptive)
 ```{r}
 rq1a <- data_pairs_cosine %>%
   filter(!is.na(cosine)) %>%
   summarise(
     mean_cosine = mean(cosine),
     sd_cosine  = sd(cosine),
-    iqr_lower = quantile(cosine, .25),
-    iqr_upper = quantile(cosine, .75),
+    #iqr_lower = quantile(cosine, .25),
+    #iqr_upper = quantile(cosine, .75),
     .by = c(dimension, comparison_type)
   ) %>%
   arrange(dimension, comparison_type)
@@ -187,79 +350,272 @@ rq1a <- data_pairs_cosine %>%
 rq1a
 ```
 
-# RQ2: Deviation agreement
+## RQ2: Deviation agreement
+### RQ2.i Rater-panel (preregistered)
+*Note:* We did not preregister how NAs would be treated (cases where coders indicated that the dimension was not preregistered). For the main analyses, we merge these with the "Too vague to tell/ not reported" category. We also report sensitivity checks that exclude these cases.
 ```{r}
-# Build mlm
-m_rq2 <- glmer(
-  deviation_agree ~ comparison_type + (1 | article_num) + (1 | dimension) + (1 | coder_pair) +  (1 | article_num:dimension),
-  data   = pairwise_data,
-  family = binomial(link = "logit")
-)
+# Prepare to merge NA with too vague to tell/ not reported
+clean_deviation <- function(x) {
+  x <- str_trim(x)
+  case_when(
+    str_detect(x, regex("not pre-?registered", ignore_case = TRUE)) ~ NA_character_,
+    str_detect(x, regex("too vague|^missing$", ignore_case = TRUE)) ~
+      "Preregistration/ Manuscript were too vague to tell or information not reported.",
+    str_detect(x, regex("^yes", ignore_case = TRUE)) ~ "Yes",
+    str_detect(x, regex("^no",  ignore_case = TRUE)) ~ "No",
+    TRUE ~ x
+  )
+}
 
-# View the model output
-summary(m_rq2)
+dev_levels <- c("Deviation", "No deviation", "Too vague")
 
-# Non-inferiority test
-# criterion: 0.2 x SD of human-human deviation agreement on the probability scale
-hh_agree <- pairwise_data %>%
-  filter(comparison_type == "human_human", !is.na(deviation_agree)) %>%
-  pull(deviation_agree)
+recode_dev <- function(x) {
+  x <- clean_deviation(x)
+  case_when(
+    x == "Yes" ~ "Deviation",
+    x == "No"  ~ "No deviation",
+    str_detect(x, "too vague") ~ "Too vague",
+    TRUE ~ NA_character_
+  )
+}
 
-ni_criterion_rq2 <- sd(hh_agree) * 0.2
+# Recode each rater's judgement, then rebuild agreement two ways
+rq2i_data <- pairwise_data %>%
+  mutate(
+    dev_r1 = recode_dev(deviation_r1),   # <- CHECK: rater 1's deviation judgement (RC on rc_human rows)
+    dev_r2 = recode_dev(deviation_r2)    # <- CHECK: rater 2's deviation judgement
+  )
 
-# Contrast on the probability scale
-# For a one-sided 95% lower bound, use the lower bound of a two-sided 90% CI.
-contrast_rq2 <- emmeans(m_rq2, ~ comparison_type) %>%
-  regrid("response") %>%
-  contrast(list("rc_human - human_human" = c(-1, 1))) %>%
-  confint(level = 0.90)
+# Main analysis: NA -> Too vague (all rows kept)
+rq2i_main <- rq2i_data %>%
+  mutate(across(c(dev_r1, dev_r2), \(x) coalesce(x, "Too vague")),
+         deviation_agree = as.integer(dev_r1 == dev_r2))
 
-contrast_rq2
+# Sensitivity check: rows with an NA from either rater excluded
+rq2i_sens <- rq2i_data %>%
+  mutate(deviation_agree = as.integer(dev_r1 == dev_r2)) %>%   # NA if either is NA
+  filter(!is.na(deviation_agree))
 
-# Non-inferiority check: lower one-sided 95% CI must be above -ni_criterion_rq2
-ifelse(contrast_rq2$asymp.LCL > -ni_criterion_rq2, "non-inferior", "inferior")
+# Checks
+rq2i_main %>% count(comparison_type, deviation_agree)
+rq2i_sens %>% count(comparison_type, deviation_agree)
 ```
 
-# Build long dataset and convert deviation judgment to numbers
-```{r}
+```{r rq2i-function}
+# Set up so that we can easily run the main analysis and sensitivity check
+run_rq2i <- function(d) {
+  # Multilevel logistic model (as preregistered)
+  m <- glmer(
+    deviation_agree ~ comparison_type + (1 | article_num) + (1 | dimension) +
+      (1 | coder_pair) + (1 | article_num:dimension),
+    data   = d,
+    family = binomial(link = "logit")
+  )
+
+  # Raw agreement (descriptives)
+  raw <- d %>%
+    summarise(n = n(), agreement = mean(deviation_agree), .by = comparison_type)
+
+  # Non-inferiority criterion: 0.2 x SD of human-human agreement (probability scale)
+  hh_agree <- d %>% filter(comparison_type == "human_human") %>% pull(deviation_agree)
+  ni <- sd(hh_agree) * 0.2
+
+  # Contrast on the probability scale; one-sided 95% bound = lower bound of two-sided 90% CI
+  ct <- emmeans(m, ~ comparison_type) %>%
+    regrid("response") %>%
+    contrast(list("rc_human - human_human" = c(-1, 1))) %>%
+    confint(level = 0.90)
+
+  ci    <- as.data.frame(ct)
+  lower <- if ("asymp.LCL" %in% names(ci)) ci$asymp.LCL else ci$lower.CL
+
+  list(
+    model        = m,
+    singular     = isSingular(m),
+    convergence  = m@optinfo$conv$lme4,   # empty list() = no warnings
+    raw          = raw,
+    ni_criterion = ni,
+    contrast     = ct,
+    verdict      = ifelse(lower > -ni, "non-inferior", "inferior")
+  )
+}
+```
+
+```{r rq2i-results}
+rq2i_res_main <- run_rq2i(rq2i_main)
+rq2i_res_sens <- run_rq2i(rq2i_sens)
+
+# Main analysis
+rq2i_res_main$singular #singular fit issues?
+rq2i_res_main$convergence #did model converge?
+summary(rq2i_res_main$model) #model summary
+rq2i_res_main$raw #raw agreement comparison
+rq2i_res_main$ni_criterion #non-inferiority criterion
+rq2i_res_main$contrast
+rq2i_res_main$verdict
+
+# Sensitivity check
+rq2i_res_sens$singular
+rq2i_res_sens$convergence
+summary(rq2i_res_sens$model)
+rq2i_res_sens$raw
+rq2i_res_sens$ni_criterion
+rq2i_res_sens$contrast
+rq2i_res_sens$verdict
+```
+
+### RQ2.ii Reference standard (not preregistered)
+
+```{r rq2ii-data}
+# One row per article x dimension (RC-human rows are duplicated, one per human coder)
+rq2ii_data <- pairwise_data %>%
+  filter(comparison_type == "rc_human") %>%
+  distinct(article_num, dimension, .keep_all = TRUE) %>%
+  filter(!coalesce(str_detect(final_deviation_decision,
+                              regex("could not agree", ignore_case = TRUE)), FALSE)) %>%
+  mutate(
+    humans   = recode_dev(final_deviation_decision),
+    regcheck = recode_dev(deviation_r1)   # <- CHECK: column holding RC's deviation judgement
+  )
+
+# Checks
+rq2ii_data %>% count(article_num, dimension) %>% filter(n > 1)    # should be 0 rows
+pairwise_data %>%                                               # n excluded as "Could not agree"
+  filter(comparison_type == "rc_human") %>%
+  distinct(article_num, dimension, .keep_all = TRUE) %>%
+  count(could_not_agree = str_detect(final_deviation_decision,
+                                     regex("could not agree", ignore_case = TRUE)))
+rq2ii_data %>% count(humans_na = is.na(humans), rc_na = is.na(regcheck))
+
+# Main analysis: NA -> Too vague
+rq2ii_main <- rq2ii_data %>%
+  mutate(across(c(humans, regcheck),
+                \(x) factor(coalesce(x, "Too vague"), levels = dev_levels)))
+
+# Sensitivity check: NA rows excluded
+rq2ii_sens <- rq2ii_data %>%
+  filter(!is.na(humans), !is.na(regcheck)) %>%
+  mutate(across(c(humans, regcheck), \(x) factor(x, levels = dev_levels)))
+```
+
+```{r rq2ii-functions}
+# One-vs-rest metrics per class (rows = RegCheck, columns = Humans)
+ovr <- function(cm) {
+  n <- sum(cm)
+  map_dfr(rownames(cm), function(k) {
+    tp <- cm[k, k]
+    fp <- sum(cm[k, ]) - tp   # RC said k, humans said something else
+    fn <- sum(cm[, k]) - tp   # humans said k, RC said something else
+    tn <- n - tp - fp - fn
+    tibble(class       = k,
+           sensitivity = tp / (tp + fn),
+           ppv         = tp / (tp + fp),
+           specificity = tn / (tn + fp),
+           npv         = tn / (tn + fn),
+           f1          = 2 * tp / (2 * tp + fp + fn))
+  })
+}
+
+# Multiclass MCC (Gorodkin, 2004)
+mcc_multi <- function(cm) {
+  s <- sum(cm); c <- sum(diag(cm))
+  p <- rowSums(cm)   # RC (predicted) totals
+  t <- colSums(cm)   # human (reference) totals
+  (c * s - sum(p * t)) / sqrt((s^2 - sum(p^2)) * (s^2 - sum(t^2)))
+}
+
+run_rq2ii <- function(d) {
+  cm <- table(RegCheck = d$regcheck, Humans = d$humans)
+  tb <- ovr(cm)
+  tb <- bind_rows(tb, tb %>% summarise(across(-class, mean)) %>%
+                    mutate(class = "Macro average"))
+  overall <- tibble(
+    n                 = sum(cm),
+    accuracy          = sum(diag(cm)) / sum(cm),
+    balanced_accuracy = mean(tb$sensitivity[tb$class != "Macro average"]),
+    macro_f1          = mean(tb$f1[tb$class != "Macro average"]),
+    mcc               = mcc_multi(cm)
+  )
+  list(confusion = cm, by_class = tb, overall = overall)
+}
+```
+
+```{r rq2ii-results}
+rq2ii_res_main <- run_rq2ii(rq2ii_main)
+rq2ii_res_sens <- run_rq2ii(rq2ii_sens)
+
+# Table A: confusion matrices (with totals)
+addmargins(rq2ii_res_main$confusion)
+addmargins(rq2ii_res_sens$confusion)
+
+# Table B: one-vs-rest by class + macro average
+rq2ii_res_main$by_class %>% mutate(across(where(is.numeric), \(x) round(x, 2)))
+rq2ii_res_sens$by_class %>% mutate(across(where(is.numeric), \(x) round(x, 2)))
+
+# Overall summaries: main vs sensitivity
+bind_rows(main = rq2ii_res_main$overall, sensitivity = rq2ii_res_sens$overall, .id = "analysis") %>%
+  mutate(across(c(accuracy, balanced_accuracy, macro_f1, mcc), \(x) round(x, 2)))
+
+```
+
+
+
+[To add back in: random sample to evaluate errors from RC and Humans
+```{r rq2-round2-sample}
+#  Round 2 coding: random sample of RC-human disagreements (main analysis data)
+# set.seed(13112026)
+# rq2ii_round2_sample <- rq2ii_main %>%
+#   slice_sample(n = x)   # need to decide on target sample size
+# 
+#  write.csv(rq2ii_round2_sample, "rq2_round2_sample.csv", row.names = FALSE)
+```
+ 
+## RQ2a: Deviation agreement by dimension
+
+### Build long dataset (main: NA -> Too vague; sensitivity: NA excluded)
+```{r rq2a-data}
 # One row per rater x article x dimension (for alpha / AC1)
-ratings_long <- bind_rows(
+rq2a_ratings <- bind_rows(
   pairwise_data |> select(article_num, study_num, dimension, coder = rater1, deviation = deviation_r1),
   pairwise_data |> select(article_num, study_num, dimension, coder = rater2, deviation = deviation_r2)
 ) |>
   distinct() |>   # each rating appears in several pairs
-  mutate(deviation_num = as.integer(factor(deviation, levels = c("No", "Yes", "Preregistration/ Manuscript were too vague to tell or information not reported."))))
+  mutate(deviation = recode_dev(deviation))   # Deviation / No deviation / Too vague / NA
 
 # Check: no rater should have >1 rating per article x dimension
-ratings_long |> count(article_num, dimension, coder) |> filter(n > 1)
+rq2a_ratings |> count(article_num, dimension, coder) |> filter(n > 1)
+
+# Main analysis: NA -> Too vague
+rq2a_ratings_main <- rq2a_ratings |>
+  mutate(deviation     = coalesce(deviation, "Too vague"),
+         deviation_num = as.integer(factor(deviation, levels = dev_levels)))
+
+# Sensitivity check: NA ratings excluded
+rq2a_ratings_sens <- rq2a_ratings |>
+  filter(!is.na(deviation)) |>
+  mutate(deviation_num = as.integer(factor(deviation, levels = dev_levels)))
 ```
 
+### Functions
+```{r rq2a-functions}
+rc_coder     <- "RC"
+human_coders <- setdiff(unique(rq2a_ratings$coder), rc_coder)
 
-# RQ2a: Deviation agreement by dimension
-```{r}
-# Percent agreement
-rq2a_agree <- ratings_long %>%
-  filter(!is.na(deviation_num)) %>%
-  summarise(
-    n_agree = sum(deviation_num),
-    n_total = n(),
-    .by = c(dimension, comparison_type)
-  ) %>%
-  mutate(prop_agree = n_agree / n_total)
+human_coders   # check: should list only the human coders
 
-# Krippendorff's alpha
-compute_alpha_by_dim <- function(coders_filter) {
-  ratings_long %>%
-    filter(coder %in% coders_filter, !is.na(deviation)) %>%
+# Krippendorff's alpha by dimension (nominal: categories are unordered)
+compute_alpha_by_dim <- function(ratings, coders_filter, level = "nominal") {
+  ratings %>%
+    filter(coder %in% coders_filter) %>%
     group_by(dimension) %>%
     group_modify(function(d, key) {
       wide <- d %>%
-        select(article_num, coder, deviation) %>%
-        pivot_wider(names_from = coder, values_from = deviation) %>%
+        select(article_num, coder, deviation_num) %>%
+        pivot_wider(names_from = coder, values_from = deviation_num) %>%
         select(-article_num) %>%
         as.matrix()
       fit <- tryCatch(
-        krippendorffs.alpha(wide, level = "ordinal", confint = FALSE),
+        krippendorffs.alpha(wide, level = level, confint = FALSE),
         error = function(e) NULL
       )
       tibble(alpha = if (is.null(fit)) NA_real_ else fit$alpha.hat)
@@ -267,16 +623,16 @@ compute_alpha_by_dim <- function(coders_filter) {
     ungroup()
 }
 
-# Gwet's AC1 (not preregistered)
-compute_ac1_by_dim <- function(coders_filter, wts = "linear") {
-  ratings_long %>%
-    filter(coder %in% coders_filter, !is.na(deviation)) %>%
+# Gwet's AC1 by dimension (not preregistered; unweighted: categories are unordered)
+compute_ac1_by_dim <- function(ratings, coders_filter, wts = "unweighted") {
+  ratings %>%
+    filter(coder %in% coders_filter) %>%
     group_by(dimension) %>%
     group_modify(function(d, key) {
       wide <- d %>%
-        select(article_num, study_num, coder, deviation) %>%
+        select(article_num, coder, deviation) %>%
         pivot_wider(names_from = coder, values_from = deviation) %>%
-        select(-article_num, -study_num) %>%
+        select(-article_num) %>%
         as.data.frame()
       fit <- tryCatch(
         gwet.ac1.raw(wide, weights = wts),
@@ -296,22 +652,51 @@ compute_ac1_by_dim <- function(coders_filter, wts = "linear") {
     ungroup()
 }
 
-rq2a_alpha <- compute_alpha_by_dim(human_coders) %>% mutate(comparison_type = "human_human") %>%
-  bind_rows(compute_alpha_by_dim(c(human_coders, rc_coder)) %>% mutate(comparison_type = "rc_human"))
+# All RQ2a outputs for one version of the data
+# pairs   = pairwise agreement data from RQ2.i (rq2i_main or rq2i_sens)
+# ratings = long ratings (rq2a_ratings_main or rq2a_ratings_sens)
+run_rq2a <- function(pairs, ratings) {
+  agree <- pairs %>%
+    summarise(
+      n_total    = n(),
+      n_agree    = sum(deviation_agree),
+      prop_agree = mean(deviation_agree),
+      .by = c(dimension, comparison_type)
+    )
 
-rq2a_ac1 <- compute_ac1_by_dim(human_coders) %>% mutate(comparison_type = "human_human") %>%
-  bind_rows(compute_ac1_by_dim(c(human_coders, rc_coder)) %>% mutate(comparison_type = "rc_human"))
+  alpha <- compute_alpha_by_dim(ratings, human_coders) %>%
+    mutate(comparison_type = "human_human") %>%
+    bind_rows(compute_alpha_by_dim(ratings, c(human_coders, rc_coder)) %>%
+                mutate(comparison_type = "rc_human"))
 
-rq2a <- rq2a_agree %>%
-  left_join(rq2a_alpha, by = c("dimension", "comparison_type")) %>%
-  left_join(rq2a_ac1,   by = c("dimension", "comparison_type")) %>%
-  arrange(dimension, comparison_type)
-rq2a
+  ac1 <- compute_ac1_by_dim(ratings, human_coders) %>%
+    mutate(comparison_type = "human_human") %>%
+    bind_rows(compute_ac1_by_dim(ratings, c(human_coders, rc_coder)) %>%
+                mutate(comparison_type = "rc_human"))
+
+  agree %>%
+    left_join(alpha, by = c("dimension", "comparison_type")) %>%
+    left_join(ac1,   by = c("dimension", "comparison_type")) %>%
+    arrange(dimension, comparison_type)
+}
 ```
+
+### Results
+```{r rq2a-results}
+rq2a_res_main <- run_rq2a(rq2i_main, rq2a_ratings_main)
+rq2a_res_sens <- run_rq2a(rq2i_sens, rq2a_ratings_sens)
+
+rq2a_res_main %>% mutate(across(where(is.double), \(x) round(x, 2)))
+rq2a_res_sens %>% mutate(across(where(is.double), \(x) round(x, 2)))
+
+```
+
+############--------------------- END ---------------------############
+Note that from here on, I haven't altered the preregistered code, as these last few RQs require additional data.
 
 # RQ2b: False positives/ true positives (that humans missed) and false negative rate
 ## Part 1. Deviations only RegCheck identifies
-```{r}
+```{r eval = FALSE}
 # Wide format: one row per article_num × dimension, one column per coder
 rq2b_wide <- pairwise_data %>%
   select(article_num, dimension, coder, deviation, concerns) %>%
