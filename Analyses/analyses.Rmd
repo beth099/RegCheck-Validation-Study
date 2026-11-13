@@ -1,6 +1,10 @@
 ---
 title: "data cleaning"
-output: html_document
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
 date: "2026-03-10"
 ---
 
@@ -30,6 +34,8 @@ data_cleaned <- read_csv("../Data/Processed/Analysis_Data/full_cleaned_data.csv"
 
 options(scipen = 999) #turn off scientific notation
 options(digits = 2)
+
+knitr::opts_chunk$set(cache = TRUE, autodep = TRUE)
 ```
 
 # Create pairwise data with RC and humans
@@ -694,8 +700,8 @@ rq2a_res_sens %>% mutate(across(where(is.double), \(x) round(x, 2)))
 ############--------------------- END ---------------------############
 Note that from here on, I haven't altered the preregistered code, as these last few RQs require additional data.
 
-# RQ2b: False positives/ true positives (that humans missed) and false negative rate
-## Part 1. Deviations only RegCheck identifies
+## [WIP] RQ2b: False positives/ true positives (that humans missed) and false negative rate
+### [WIP] Part 1. Deviations only RegCheck identifies
 ```{r eval = FALSE}
 # Wide format: one row per article_num × dimension, one column per coder
 rq2b_wide <- pairwise_data %>%
@@ -728,7 +734,7 @@ tibble(
 ```
 
 
-```{r}
+```{r eval = FALSE}
 # Load pilot round 2 data
 round2_data <- read_csv("regcheck_validation_round2_check_test.csv")
 
@@ -775,8 +781,8 @@ rc_true_pos %>%
   count(deviation_severity, sort = TRUE)
 ```
 
-## Part 2. Deviations RegCheck misses
-```{r}
+### [WIP] Part 2. Deviations RegCheck misses
+```{r eval = FALSE}
 fn_one  <- rq2b_wide %>% filter(rc != 2 | is.na(rc), coder_1 == 2 | coder_2 == 2)
 fn_both <- rq2b_wide %>% filter(rc != 2 | is.na(rc), coder_1 == 2, coder_2 == 2)
 
@@ -842,9 +848,9 @@ severity_rows %>%
 ```
 
 
-# RQ3: Agreement x hyperparameter
+## [WIP] RQ3: Agreement x hyperparameter
 Note: this will require some cleaning to get the dataframe below (this data frame was simulated)
-```{r}
+```{r eval = FALSE}
 # Load example data
 data_rq3 <- read_csv("data_rq3_simulated.csv")
 
